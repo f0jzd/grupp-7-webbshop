@@ -26,8 +26,9 @@ För att skapa ett tryggt och förutsägbart arbetsklimat har vi kommit överens
   Vi vill utmana oss själva men inte vara överambitiösa. Alla nivå 1 features ska implementeras.
   Nivå 2 features är extra om de blir implementerade men inget vi sätter som krav. 
 
+  Nivå 1: Allt ska implementeras.  
   Nivå 2: 🌍 Cloud Deployment, 🔐 Autentisering, ☁️ Databasmigration.  
-  Nivå 3 features implementeras inte.
+  Nivå 3: Skippas.
 
 ---
 
