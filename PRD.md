@@ -110,10 +110,10 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 > 3. Kopiera över den valda koden från Fas 1 och pusha som er första commit (`Initial commit from Phase 1`).  
 > 4. Lägg in detta dokument (`PRD.md`), `kontrakt.md` och `docs/` i repot.
 
-* **Vald Fas 1-kodbas:** Bygger på kod skriven av `[Namn / Repolänk till Fas 1]`
-* **Nytt gemensamt GitHub-repo:** `[Länk till gruppens nya GitHub-repo]`
+* **Vald Fas 1-kodbas:** Bygger på kod skriven av `Tomas / Repolänk till Fas 1(https://github.com/f0jzd/grupp-7-webbshop)`
+* **Nytt gemensamt GitHub-repo:** `[(https://github.com/f0jzd/grupp-7-webbshop)]`
 * **Eventuella städnings- eller refaktoreringsbehov i basen innan start:**
-  - `[Beskriv kort vad som behöver fixas, t.ex. rensa död kod, städa CSS, fixa datastruktur]`
+  - `Admin sidan ska inte vara landingssidan [Beskriv kort vad som behöver fixas, t.ex. rensa död kod, städa CSS, fixa datastruktur]`
 
 ---
 
@@ -149,25 +149,25 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 * **Then** uppdateras URL:en till `?search=jacka` och endast produkter med "jacka" i titeln eller beskrivningen visas.
 * **And** om inga varor matchar visas ett tydligt meddelande: "Inga produkter matchade din sökning".
 
-#### User Story 2: [Fyll i er egen]
-* **Som en** `[roll]`
-* **vill jag** `[handling]`
-* **så att** `[nytta]`
+#### User Story 2: [Produktsida]
+* **Som en** kund som vill se mer information om produkten
+* **vill jag** klicka på en produkt för få en specifikationer om produkten.
+* **så att** jag vet vad den faktiskta produkten är.
 
 **Acceptanskriterier:**
-* **Given** `...`
-* **When** `...`
-* **Then** `...`
+* **Given** att jag befinner mig på produktkatalogen
+* **When** jag klickar på produkten.
+* **Then** den tar mig till en produkt sida, uppdaterar URL:en till den matchande produkten.
 
-#### User Story 3: [Fyll i er egen]
-* **Som en** `[roll]`
-* **vill jag** `[handling]`
-* **så att** `[nytta]`
+#### User Story 3: [Produkt Katalog]
+* **Som en** kund vill jag veta vilka produkter som finns i denna affär
+* **vill jag** ha ett kategorisystem.
+* **så att** jag kan enkelt navigera till rätt produkt och se vilka produkter är tillgängliga och hitta det jag vill ha.
 
 **Acceptanskriterier:**
-* **Given** `...`
-* **When** `...`
-* **Then** `...`
+* **Given** Förutsatt att kunden är på landingsidan, öppnar hemsidan eller klickar på hem knappen.
+* **When**  När dem klickar på knappen "gå till katalogen"
+* **Then**  Visa produkt katalogen.
 
 ---
 
