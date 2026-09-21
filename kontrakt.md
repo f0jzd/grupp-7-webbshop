@@ -102,7 +102,7 @@ Vi lovar att bemöta varandra professionellt och schysst:
 Genom att skriva under/bekräfta godkänner vi att arbeta enligt detta kontrakt:
 
 * **Medlem 1:** [Georgij Li] – [21/09/2026]
-* **Medlem 2:** [Namn] – [Datum]
+* **Medlem 2:** [dkalexanderson] – [21/09/2026]
 * **Medlem 3:** [Namn] – [Datum]
 
 ---
