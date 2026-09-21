@@ -176,10 +176,10 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 * **så att** jag kan enkelt lägga till produkter som jag ska köpa/ funderar på att köpa och ha en sida för vad som finns i varukorgen.
 
 **Acceptanskriterier:**
-* **Förutsatt** att jag har navigerat till kundsidan.
-* **När**  jag öppnar en kategorimeny
-* **Då**  ser jag alla tillgängliga kategorier med tillgängliga produkter.
-* **And** det ska bara visa ett antal produkter, och så använder vi paginering för att gå tiull olika sidor.
+* **Förutsatt** att jag har hittat något jag vill köpa eller funderar på att köpa.
+* **När**  jag klickar på en knapp för att lägga till en produkt i varukorgen.
+* **Då**  läggs produkten till i någon form av container för alla valda produkter.
+* **And** också ha en quick add till varukorgen så att användaren inte behöver gå in i produktsidan för att lägga till produkter/ Varukorgs sida eller modal för att see alla sina produkter i varukorgen. 
 
 ---
 
@@ -189,10 +189,13 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 > **Skriv INTE en ADR för varje litet beslut!** Ni ska **endast skriva 1 (max 2) ADR:er för hela projektet**.  
 > Det är **extra viktigt och naturligt att koppla er ADR till era valbara fördjupningsmoduler** (t.ex. *Varför valde vi Zustand framför Context för varukorgen?* eller *Varför valde vi Supabase framför JSON-server?*). Använd mallen i `docs/ADR-mall.md`.
 
-1. **Modul 1:** `[t.ex. Persistent Varukorg med Zustand]`  
+1. **Modul 1:** 🌍 Cloud Deployment
    * **ADR-dokument:** Länk till `docs/ADR-001-[namn].md`  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
-2. **Modul 2:** `[t.ex. Autentisering med Clerk]`  
+2. **Modul 2:** 🔐 Autentisering
+   * **ADR-dokument:** Länk till `docs/ADR-002-[namn].md` *(frivillig andra ADR)*  
+   * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
+3. **Modul 3:** ☁️ Databasmigration  
    * **ADR-dokument:** Länk till `docs/ADR-002-[namn].md` *(frivillig andra ADR)*  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
 
