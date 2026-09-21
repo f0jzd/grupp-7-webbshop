@@ -168,6 +168,18 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 * **Förutsatt** att jag har navigerat till kundsidan.
 * **När**  jag öppnar en kategorimeny
 * **Då**  ser jag alla tillgängliga kategorier med tillgängliga produkter.
+* **And** det ska bara visa ett antal produkter, och så använder vi paginering för att gå tiull olika sidor.
+
+* #### User Story 4: [Kund Varukorg]
+* **Som en** kund som vill köpa saker från sidan.
+* **vill jag** ha ett varukorg system.
+* **så att** jag kan enkelt lägga till produkter som jag ska köpa/ funderar på att köpa och ha en sida för vad som finns i varukorgen.
+
+**Acceptanskriterier:**
+* **Förutsatt** att jag har navigerat till kundsidan.
+* **När**  jag öppnar en kategorimeny
+* **Då**  ser jag alla tillgängliga kategorier med tillgängliga produkter.
+* **And** det ska bara visa ett antal produkter, och så använder vi paginering för att gå tiull olika sidor.
 
 ---
 
