@@ -27,7 +27,7 @@ För att skapa ett tryggt och förutsägbart arbetsklimat har vi kommit överens
   Nivå 2 features är extra om de blir implementerade men inget vi sätter som krav. 
 
   Nivå 2: 🌍 Cloud Deployment, 🔐 Autentisering, ☁️ Databasmigration.  
-  Nivå 3 features hoppas över."
+  Nivå 3 features implementeras inte.
 
 ---
 
