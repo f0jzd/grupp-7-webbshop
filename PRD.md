@@ -204,12 +204,12 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 ### 5.5 Teamets Definition of Done (DoD)
 *Vad krävs i er grupp för att en Issue/Ticket ska få flyttas till "Done"? (Kryssa i och anpassa)*:
 
-* [ ] Koden löser den specificerade User Storyn och uppfyller acceptanskriterierna.
-* [ ] Koden är testad lokalt och bygger utan fel (`npm run build`).
-* [ ] Inga TypeScript- eller lint-fel i terminalen.
-* [ ] Pull Request är skapad och granskad (Code Review) av minst en annan teammedlem.
-* [ ] Mergad till `main`-branchen.
-* [ ] Relaterad issue är stängd i GitHub Projects.
+* [x] Koden löser den specificerade User Storyn och uppfyller acceptanskriterierna.
+* [x] Koden är testad lokalt och bygger utan fel (`npm run build`).
+* [x] Inga TypeScript- eller lint-fel i terminalen.
+* [x] Pull Request är skapad och granskad (Code Review) av minst en annan teammedlem.
+* [x] Mergad till `main`-branchen.
+* [x] Relaterad issue är stängd i GitHub Projects.
 
 ---
 
