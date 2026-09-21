@@ -1,4 +1,4 @@
-# 🤝 Gruppkontrakt: [TEAMNAMN]
+# 🤝 Gruppkontrakt: Grupp 7
 
 | Information | Detaljer |
 | :--- | :--- |
@@ -19,12 +19,15 @@ För att skapa ett tryggt och förutsägbart arbetsklimat har vi kommit överens
   1. *Vad gjorde jag igår?*
   2. *Vad ska jag göra idag?*
   3. *Har jag några hinder (blockers) där jag behöver hjälp?*
-  * **Vår spikade standup-tid:** Kl. **[08:XX]**
+  * **Vår spikade standup-tid:** Kl. **[08:40]**
 * **Kärntid:** Vi förväntas vara tillgängliga för samarbete, parprogrammering och snabba frågor i **gruppens Teams-kanal** mellan kl. **[09:00]** och **[16:00]**.
 * **Frånvaro & Förhinder:** Om någon blir sjuk eller får förhinder ska detta meddelas i **gruppens Teams-kanal** senast **30 minuter innan vår valda standup-tid**.
 * **Ambitionsnivå i gruppen:**  
-  *Exempel: [ ] "Vi fokuserar på att bygga en stabil MVP och se till att alla i gruppen förstår koden."*  
-  *Exempel: [ ] "Vi siktar högt och vill utmana oss med avancerade moduler och molntjänster."*
+  "Vi vill utmana oss själva men inte vara överambitiösa. Alla nivå 1 features ska implementeras.
+  Nivå 2 features är extra om de blir implementerade men inget vi sätter som krav. 
+
+  Nivå 2: 🌍 Cloud Deployment, 🔐 Autentisering, ☁️ Databasmigration
+  Nivå 3 features hoppas över."
 
 ---
 
@@ -39,10 +42,10 @@ Vi jobbar strukturerat för att behålla överblicken och undvika stress:
 * **Projektbräde:** Vi använder **GitHub Projects** och uppdaterar kolumnerna (*To Do, In Progress, In Review, Done*) i realtid.
 * **Roterande Sprint Lead (Scrum Master):**  
   För att dela på ansvaret och ge alla erfarenhet av agilt ledarskap roterar vi rollen som *Sprint Lead* varje vecka. Sprint Lead öppnar mötena, håller koll på klockan (max 15 min standup) och ser till att GitHub Projects är uppdaterat:
-  * **Vecka 39 (Sprint 1 - Uppstart & PRD):** `[Namn]`
-  * **Vecka 40 (Sprint 2 - MVP-utveckling):** `[Namn]`
-  * **Vecka 41 (Sprint 3 - Moduler & Förfining):** `[Namn]`
-  * **Vecka 42 (Sprint 4 - Slutleverans & Demo):** `[Namn]`
+  * **Vecka 39 (Sprint 1 - Uppstart & PRD):** `[Tomas]`
+  * **Vecka 40 (Sprint 2 - MVP-utveckling):** `[Dmitry]`
+  * **Vecka 41 (Sprint 3 - Moduler & Förfining):** `[Georgij]`
+  * **Vecka 42 (Sprint 4 - Slutleverans & Demo):** `[Tomas]`
 
 ---
 
@@ -52,7 +55,7 @@ Hur vi använder AI-verktyg på ett sätt som gynnar hela gruppens lärande:
 
 * **Inriktning för AI-användning:**
   * [ ] **Rådgivande:** Vi använder AI som ett bollplank för logik och felsökning, men skriver koden manuellt.
-  * [ ] **Generativ med full förståelse:** Vi använder AI för att generera kodblock, men den som checkar in koden ansvarar för att kunna förklara exakt vad den gör för resten av gruppen.
+  * [x] **Generativ med full förståelse:** Vi använder AI för att generera kodblock, men den som checkar in koden ansvarar för att kunna förklara exakt vad den gör för resten av gruppen.
 * **Skydd mot "AI-dumping":**
   * Ingen teammedlem får checka in stora AI-genererade kodsjok eller ändra applikationens grundarkitektur utan att först ha förankrat det med gruppen.
   * Den som pushar kod ska kunna förklara koden rad för rad för vem som helst i teamet på begäran.
@@ -98,11 +101,9 @@ Vi lovar att bemöta varandra professionellt och schysst:
 
 Genom att skriva under/bekräfta godkänner vi att arbeta enligt detta kontrakt:
 
-* **Medlem 1:** [Namn] – [Datum]
+* **Medlem 1:** [Georgij Li] – [21/09/2026]
 * **Medlem 2:** [Namn] – [Datum]
 * **Medlem 3:** [Namn] – [Datum]
-* **Medlem 4:** [Namn] – [Datum]
-* **Medlem 5:** [Namn] – [Datum]
 
 ---
 *Detta kontrakt är ett levande dokument och kan revideras vid gruppens sprint-retrospectives om hela teamet är enigt.*
