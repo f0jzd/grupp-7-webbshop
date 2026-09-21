@@ -165,9 +165,9 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 * **så att** jag kan enkelt navigera till rätt produkt och se vilka produkter är tillgängliga och hitta det jag vill ha.
 
 **Acceptanskriterier:**
-* **Given** Förutsatt att kunden är på landingsidan, öppnar hemsidan eller klickar på hem knappen.
-* **When**  När dem klickar på knappen "gå till katalogen"
-* **Then**  Visa produkt katalogen.
+* **Förutsatt** att jag har navigerat till kundsidan.
+* **När**  jag öppnar en kategorimeny
+* **Då**  ser jag alla tillgängliga kategorier med tillgängliga produkter.
 
 ---
 
