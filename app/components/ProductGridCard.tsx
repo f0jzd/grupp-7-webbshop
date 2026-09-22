@@ -3,33 +3,45 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
-
+import { AspectRatio } from "./ui/aspect-ratio";
+import Image from "next/image";
 interface GridCardProps {
-  products: Product[];
+  product: Product;
 }
 
-export default function GridCard({ products }: GridCardProps) {
+export default function GridCard({ product }: GridCardProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((product) => (
-        <Card key={product.id} className="h-full">
-          <CardHeader>
-            <CardTitle>{product.title}</CardTitle>
-            <CardDescription>
-              {product.brand ?? "Unknown brand"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {product.category?.name ?? "Uncategorized"}
-            </p>
-            <p className="mt-2 font-semibold">€{product.price}</p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <Card key={product.id} className="h-full">
+      <CardHeader>
+        <CardTitle>{product.title}</CardTitle>
+        <CardDescription>{product.brand ?? "Unknown brand"}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {/* <div className="w-full overflow-hidden rounded-t-lg bg-muted">
+          <AspectRatio ratio={1}>
+            {" "} */}
+        {/* 1 = 1:1 square */}
+        {/* <Image
+              src={product.thumbnail}
+              alt="Product name"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </AspectRatio>
+        </div> */}
+
+        <p className="text-sm text-muted-foreground">
+          {product.category?.name ?? "Uncategorized"}
+        </p>
+      </CardContent>
+      <CardFooter className="mt-auto">
+        <p className="mt-2 font-semibold">€{product.price}</p>
+      </CardFooter>
+    </Card>
   );
 }
