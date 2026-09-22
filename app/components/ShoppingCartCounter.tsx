@@ -1,33 +1,7 @@
-"use client";
-
-import { useEffect, useState } from 'react';
 import './ShoppingCartCounter.css';
 import { Product } from '@/types';
 
-export default function ShoppingCartCounter(){
-    const [cart,setCart] = useState<Product[]>([]);
-
-    useEffect(() => {
-        const cart = localStorage.getItem("shopping-cart");
-        if(cart){
-            setCart(JSON.parse(cart));
-        }
-        document.addEventListener("item-added-to-cart", function(e: any) {
-            const addedItem: Product = e.detail;
-            setCart((cart) => [...cart, addedItem]);
-        });
-        document.addEventListener("item-removed-from-cart", function(e: any) {
-            const removedItemId: number = e.detail;
-            setCart((cart) => {
-                const filteredCart = cart.filter(item => item.id !== removedItemId, 10);
-                return [...filteredCart];
-            });
-        });
-        document.addEventListener("clear-cart", function(e: any) {
-            setCart([]);
-        });
-    },[])
-
+export default function ShoppingCartCounter({cart}: {cart:Product[]}){
     return <div className='ShoppingCart'>
         <svg xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 24 24" width="24" height="24"
