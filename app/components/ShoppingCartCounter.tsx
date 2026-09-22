@@ -1,0 +1,42 @@
+"use client";
+
+import { useEffect, useState } from 'react';
+import './ShoppingCartCounter.css';
+import { Product } from '@/types';
+
+export default function ShoppingCartCounter(){
+    const [cart,setCart] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const cart = localStorage.getItem("shopping-cart");
+        if(cart){
+            setCart(JSON.parse(cart));
+        }
+        document.addEventListener("item-added-to-cart", function(e: any) {
+            const addedItem: Product = e.detail;
+            setCart((cart) => [...cart, addedItem]);
+        });
+        document.addEventListener("item-removed-from-cart", function(e: any) {
+            const removedItemId: number = e.detail;
+            setCart((cart) => {
+                const filteredCart = cart.filter(item => item.id !== removedItemId, 10);
+                return [...filteredCart];
+            });
+        });
+        document.addEventListener("clear-cart", function(e: any) {
+            setCart([]);
+        });
+    },[])
+
+    return <div className='ShoppingCart'>
+        <svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24" width="24" height="24"
+      fill="none" stroke="#000000" strokeWidth="2"
+       strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="21" r="1"/>
+        <circle cx="19" cy="21" r="1"/>
+        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+        </svg>
+        {cart.length}
+        </div>
+}
