@@ -23,11 +23,12 @@ För att skapa ett tryggt och förutsägbart arbetsklimat har vi kommit överens
 * **Kärntid:** Vi förväntas vara tillgängliga för samarbete, parprogrammering och snabba frågor i **gruppens Teams-kanal** mellan kl. **[09:00]** och **[16:00]**.
 * **Frånvaro & Förhinder:** Om någon blir sjuk eller får förhinder ska detta meddelas i **gruppens Teams-kanal** senast **30 minuter innan vår valda standup-tid**.
 * **Ambitionsnivå i gruppen:**  
-  Vi vill utmana oss själva men inte vara överambitiösa. Alla nivå 1 features ska implementeras.
-  Nivå 2 features är extra om de blir implementerade men inget vi sätter som krav. 
+  Vi vill utmana oss själva men inte vara överambitiösa. Alla grundkrav ska implementeras.
+  Fördjupningsmodulerna vi valt sätter vi som krav att vi ska hinna med.
 
-  Nivå 1: Allt ska implementeras.  
-  Nivå 2: 🌍 Cloud Deployment, 🔐 Autentisering, ☁️ Databasmigration.  
+  Fördjupningsmodulerna vi valt:  
+  Nivå 1: 📦 Persistent Varukorg, 🎨 Designsystem & UI  
+  Nivå 2: ☁️ Databasmigration.  
   Nivå 3: Skippas.
 
 ---
