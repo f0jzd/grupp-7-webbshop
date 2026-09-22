@@ -189,14 +189,14 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 > **Skriv INTE en ADR för varje litet beslut!** Ni ska **endast skriva 1 (max 2) ADR:er för hela projektet**.  
 > Det är **extra viktigt och naturligt att koppla er ADR till era valbara fördjupningsmoduler** (t.ex. *Varför valde vi Zustand framför Context för varukorgen?* eller *Varför valde vi Supabase framför JSON-server?*). Använd mallen i `docs/ADR-mall.md`.
 
-1. **Modul 1:** 🌍 Cloud Deployment
+1. **Modul 1:** 📦 Persistent Varukorg
    * **ADR-dokument:** Länk till `docs/ADR-001-[namn].md`  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
-2. **Modul 2:** 🔐 Autentisering
+2. **Modul 2:** 🎨 Designsystem & UI
    * **ADR-dokument:** Länk till `docs/ADR-002-[namn].md` *(frivillig andra ADR)*  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
 3. **Modul 3:** ☁️ Databasmigration  
-   * **ADR-dokument:** Länk till `docs/ADR-002-[namn].md` *(frivillig andra ADR)*  
+   * **ADR-dokument:** Länk till `docs/ADR-003-[namn].md` *(frivillig andra ADR)*  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
 
 ---
