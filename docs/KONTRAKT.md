@@ -24,7 +24,7 @@ För att skapa ett tryggt och förutsägbart arbetsklimat har vi kommit överens
 * **Frånvaro & Förhinder:** Om någon blir sjuk eller får förhinder ska detta meddelas i **gruppens Teams-kanal** senast **30 minuter innan vår valda standup-tid**.
 * **Ambitionsnivå i gruppen:**  
   Vi vill utmana oss själva men inte vara överambitiösa. Alla grundkrav ska implementeras.
-  Fördjupningsmodulerna vi valt sätter vi som krav att vi ska hinna med.
+  Fördjupningsmodulerna vi valt sätter vi inte som krav men hoppas vi ska hinna med.
 
   Fördjupningsmodulerna vi valt:  
   Nivå 1: 📦 Persistent Varukorg, 🎨 Designsystem & UI  
