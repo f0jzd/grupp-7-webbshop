@@ -36,7 +36,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Banner />
         {children}
       </body>
     </html>
