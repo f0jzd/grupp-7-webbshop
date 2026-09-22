@@ -16,7 +16,7 @@ export default async function ProductPage() {
     <article >
       <GridCard product={product} />
       <section className="flex flex-col items-center">
-        <nav className="flex flex-row gap-2">
+        <nav className="flex flex-auto flex-row gap-2">
           {/* shadcn buttons */}
           {/* shops tend to have top ribbons for main categories and a sidebar for metadata */}
           {/* example: https://www.ahlens.se/herr/nyheter */}
@@ -29,13 +29,13 @@ export default async function ProductPage() {
         <input defaultValue="Search field, style later" className="
         border bg-gray-100 selection:border-blue-500 rounded-sm"></input>
         <Input></Input>
-        <section>
+        <section className=" w-full border border-amber-300">
           <h1>This should be the main shop grid:</h1>
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full">
           {
 
             // dummy element generation loop
-            [...Array(10)].map((_, i) => (
+            [...Array(99)].map((_, i) => (
               <GridCard key={i} product={product} />
             ))
           }
