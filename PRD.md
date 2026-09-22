@@ -110,8 +110,8 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 > 3. Kopiera över den valda koden från Fas 1 och pusha som er första commit (`Initial commit from Phase 1`).  
 > 4. Lägg in detta dokument (`PRD.md`), `kontrakt.md` och `docs/` i repot.
 
-* **Vald Fas 1-kodbas:** Bygger på kod skriven av `Tomas / Repolänk till Fas 1(https://github.com/f0jzd/grupp-7-webbshop)`
-* **Nytt gemensamt GitHub-repo:** `[(https://github.com/f0jzd/grupp-7-webbshop)]`
+* **Vald Fas 1-kodbas:** Bygger på kod skriven av [Tomas / Repolänk till Fas 1](https://github.com/f0jzd/grupp-7-webbshop)
+* **Nytt gemensamt GitHub-repo:** [Nya Repot](https://github.com/f0jzd/grupp-7-webbshop)
 * **Eventuella städnings- eller refaktoreringsbehov i basen innan start:**
   - `Admin sidan ska inte vara landingssidan [Beskriv kort vad som behöver fixas, t.ex. rensa död kod, städa CSS, fixa datastruktur]`
 
