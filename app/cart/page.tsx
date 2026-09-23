@@ -81,7 +81,7 @@ export default async function Cart() {
             <div className="flex items-center">
               <p>
                 Cost:{` `}
-                {cart.reduce((prev, v) => prev + v.price, 0)}$
+                {Math.ceil(cart.reduce((prev, v) => prev + v.price, 0))}$
               </p>
             </div>
           </div>
