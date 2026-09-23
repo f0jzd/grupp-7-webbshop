@@ -1,6 +1,14 @@
 import { Product } from '@/types'
 import { cookies } from 'next/headers'
 import RemoveFromCartButton from './RemoveFromCartButton'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import Image from 'next/image'
 
 export default async function Cart() {
@@ -25,31 +33,31 @@ export default async function Cart() {
             Your cart
       </h1>
       {cart.length === 0 ? <p>Cart empty</p> :
-      <table className='table-fixed w-full'>
-        <thead>
-          <tr>
-    <th className='text-left pb-2'>Product</th>
-    <th className='text-right pb-2'>Amount</th>
-  </tr>
-        </thead>
-        <tbody className='w-full'>
-        {cartWithCount.map((item) => <tr key={item.id}>
-          <td className='h-12 text-left pt-2'>
+      <Table className='table-fixed w-full'>
+        <TableHeader>
+          <TableRow>
+    <TableHead className='text-left pb-2'>Product</TableHead>
+    <TableHead className='text-right pb-2'>Amount</TableHead>
+  </TableRow>
+        </TableHeader>
+        <TableBody className='w-full'>
+        {cartWithCount.map((item) => <TableRow key={item.id}>
+          <TableCell className='h-12 text-left pt-2'>
             <div className='flex items-center gap-2'>
             <Image alt={item.title} width={70} height={70} src={item.thumbnail}/>
             <p>{item.title}</p>
             </div>
-            </td>
-            <td className='h-12 text-right pt-2'>
+            </TableCell>
+            <TableCell className='h-12 text-right pt-2'>
               <div className='flex justify-end items-center gap-2'>
                 <p>{item.count}</p>
             <RemoveFromCartButton count={item.count} removeId={item.id}/>
             <p className='ml-4'>{item.price*item.count}$</p>
             </div>
-            </td>
-        </tr>)}
-        </tbody>
-      </table>}
+            </TableCell>
+        </TableRow>)}
+        </TableBody>
+      </Table>}
     </div>
   );
 }
