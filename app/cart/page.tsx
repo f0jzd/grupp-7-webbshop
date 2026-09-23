@@ -40,7 +40,7 @@ export default async function Cart() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-left pb-2">Product</TableHead>
-                <TableHead className="text-right pb-2">Amount</TableHead>
+                <TableHead className="text-right pb-2 max-md:hidden">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="w-full">
@@ -54,10 +54,17 @@ export default async function Cart() {
                         height={70}
                         src={item.thumbnail}
                       />
-                      <p>{item.title}</p>
+                      <p className='text-wrap'>{item.title}</p>
                     </div>
+                    <div className="flex justify-end items-center gap-1 min-md:hidden">
+                      <RemoveFromCartButton productTitle={item.title} count={item.count} removeId={item.id} />
+                      <p>{item.count}</p>
+                      <IncreaseCountButton  product={item} />
+                      <p className="ml-4">{item.price * item.count}$</p>
+                    </div>
+
                   </TableCell>
-                  <TableCell className="h-12 text-right pt-2">
+                  <TableCell className="h-12 text-right pt-2 max-md:hidden">
                     <div className="flex justify-end items-center gap-1">
                       <RemoveFromCartButton productTitle={item.title} count={item.count} removeId={item.id} />
                       <p>{item.count}</p>
