@@ -91,12 +91,13 @@ export async function addProductToCart(item: Product){
   cookieStore.set("cart", JSON.stringify(updatedCart));
 }
 
-export async function removeItemFromCart(item: Product){
+export async function removeItemFromCart(removeId: number){
   const cookieStore = await cookies()
   const cart = cookieStore.get('cart')?.value;
 
   const updatedCart: Product[] = cart ? JSON.parse(cart) : [];
-  updatedCart.filter(_item => _item.id !== item.id);
+  const removeIdLast = updatedCart.findLastIndex(v => v.id === removeId);
+  updatedCart.splice(removeIdLast,1);
   cookieStore.set("cart", JSON.stringify(updatedCart));
 }
 
