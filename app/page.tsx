@@ -2,8 +2,6 @@
 import type { Product } from "./types";
 import GridCard from "./components/ProductGridCard";
 import { Button } from "./components/ui/button";
-import { Field } from "./components/ui/field";
-import { Input } from "./components/ui/input";
 
 const API_URL = "http://localhost:4000";
 
