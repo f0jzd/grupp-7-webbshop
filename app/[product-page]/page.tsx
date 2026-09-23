@@ -12,19 +12,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Product } from "@/types";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 
+
+
 export default function ProductDetailPage() {
-  const [selectedImage, setSelectedImage] = React.useState(0);
   const [product, setProduct] = React.useState<Product | null>(null);
 
   // 1. Get the title from the route parameter
@@ -83,6 +82,20 @@ export default function ProductDetailPage() {
     return <div className="p-8 text-center">Product not found.</div>;
   }
 
+  function calculateAverageRating() {
+    const reviews = product?.reviews ?? [];
+
+    if (reviews.length === 0) return 0;
+
+    const totalRating = reviews.reduce(
+      (total, review) => total + review.rating,
+      0,
+    );
+
+    return totalRating / reviews.length;
+
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* 1. Breadcrumbs */}
@@ -116,39 +129,11 @@ export default function ProductDetailPage() {
               priority
             />
           </div>
-
-          {/* Thumbnails */}
-          {/* <div className="flex gap-3">
-            {productImages.map((src, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedImage(idx)}
-                className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                  selectedImage === idx
-                    ? "border-primary"
-                    : "border-transparent opacity-70 hover:opacity-100"
-                }`}
-              >
-                <Image
-                  src={src}
-                  fill
-                  alt={`Thumbnail ${idx + 1}`}
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            ))}
-          </div> */}
         </div>
 
         {/* Right: Buying Box */}
         <div className="flex flex-col gap-6 w-full min-w-0">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge variant="secondary">New Arrival</Badge>
-              <Badge className="bg-emerald-600 hover:bg-emerald-700">
-                In Stock
-              </Badge>
-            </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {product.title}
             </h1>
@@ -164,7 +149,7 @@ export default function ProductDetailPage() {
                 ))}
               </div>
               <span className="text-sm text-muted-foreground font-medium">
-                4.2 (128 reviews)
+                {calculateAverageRating().toFixed(1)} ({product.reviews?.length ?? 0})
               </span>
             </div>
 
@@ -248,9 +233,7 @@ export default function ProductDetailPage() {
             value="description"
             className="mt-6 min-h-[180px] text-muted-foreground leading-relaxed"
           >
-            Engineered for lightweight performance and all-day comfort. Features
-            a breathable knit upper, responsive foam cushioning, and
-            high-traction rubber soles built for both roads and trails.
+           { product.description}
           </TabsContent>
 
           <TabsContent value="specs" className="mt-6 min-h-[180px]">
