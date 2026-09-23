@@ -48,16 +48,19 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {shouldShowHeader?
-        <header className="border border-b-2 border-b-green-300 p-2">
-        <nav className="w-full flex justify-between">
-          <a href="/">Products</a>
-          <a href="/cart"><ShoppingCartCounter cart={cart}/></a>
-        </nav>
-      </header>: null}
-      <main className="m-2 mt-6 mb-6">
-        {children} </main>
+        <body className="min-h-full flex flex-col">
+            {shouldShowHeader?
+              <header className="border border-b-2 border-b-green-300 p-2">
+                  <nav className="w-full flex justify-between">
+                    <a href="/">Products</a>
+                    <a href="/cart"><ShoppingCartCounter cart={cart}/></a>
+                  </nav>
+              </header> :
+               null
+            }
+            <main className="m-2 mt-6 mb-6">
+                {children} 
+            </main>
         </body>
     </html>
   );

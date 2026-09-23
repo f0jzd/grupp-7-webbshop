@@ -29,52 +29,59 @@ export default async function Cart() {
   }, []);
 
   return (
-    <div className='m-auto max-w-150'>
-        <h1 className='font-bold text-xl mb-4'>
-            Your cart
-      </h1>
-      {cart.length === 0 ? <p>Cart empty</p> :
-      <div>
-      <Table className='table-fixed w-full'>
-        <TableHeader>
-          <TableRow>
-    <TableHead className='text-left pb-2'>Product</TableHead>
-    <TableHead className='text-right pb-2'>Amount</TableHead>
-  </TableRow>
-        </TableHeader>
-        <TableBody className='w-full'>
-        {cartWithCount.map((item) => <TableRow key={item.id}>
-          <TableCell className='h-12 text-left pt-2'>
-            <div className='flex items-center gap-2'>
-            <Image alt={item.title} width={70} height={70} src={item.thumbnail}/>
-            <p>{item.title}</p>
+   <div className="m-auto max-w-150">
+      <h1 className="font-bold text-xl mb-4">Your cart</h1>
+      {cart.length === 0 ? (
+        <p>Cart empty</p>
+      ) : (
+        <div>
+          <Table className="table-fixed w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left pb-2">Product</TableHead>
+                <TableHead className="text-right pb-2">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="w-full">
+              {cartWithCount.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="h-12 text-left pt-2">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        alt={item.title}
+                        width={70}
+                        height={70}
+                        src={item.thumbnail}
+                      />
+                      <p>{item.title}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="h-12 text-right pt-2">
+                    <div className="flex justify-end items-center gap-2">
+                      <p>{item.count}</p>
+                      <RemoveFromCartButton count={item.count} removeId={item.id} />
+                      <p className="ml-4">{item.price * item.count}$</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <div className="w-full flex flex-col items-end mt-4">
+            <h2 className="font-bold">Order information</h2>
+            <div className="flex items-center">
+              <p>
+                Cost:{` `}
+                {cart.reduce((prev, v) => prev + v.price, 0)}$
+              </p>
             </div>
-            </TableCell>
-            <TableCell className='h-12 text-right pt-2'>
-              <div className='flex justify-end items-center gap-2'>
-                <p>{item.count}</p>
-            <RemoveFromCartButton count={item.count} removeId={item.id}/>
-            <p className='ml-4'>{item.price*item.count}$</p>
-            </div>
-            </TableCell>
-        </TableRow>)}
-        </TableBody>
-      </Table>
-      <div className='w-full flex flex-col items-end mt-4'>
-        <h2 className='font-bold'>Order information</h2>
-          <div className='flex items-center'>
-          <p>
-            Cost:{` `}
-              {cart.reduce((prev,v) => prev+v.price, 0)}$
-            </p>
-            </div>
-        </div>
+          </div>
 
-<div className='w-full flex justify-center mt-4'>
-<CreateOrderButton/>
-      </div>
-      </div>
-      }
-    </div>
+          <div className="w-full flex justify-center mt-4">
+            <CreateOrderButton />
+          </div>
+        </div>
+      )}
+</div>
   );
 }
