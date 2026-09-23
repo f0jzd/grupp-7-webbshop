@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Product } from "@/types";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { addProductToCart } from "@/actions";
 
 
 
@@ -66,12 +67,15 @@ export default function ProductDetailPage() {
   }, [productTitle]);
 
   const handleAddToCart = () => {
-    toast.success("Added to cart!", {
-      action: {
-        label: "View Cart",
-        onClick: () => console.log("Navigate to cart"),
-      },
-    });
+    
+    if (product !== null) {
+      toast.success("Added to cart!", {
+        action: {
+          label: "View Cart",
+          onClick: () => addProductToCart(product),
+        },
+      });
+    }
   };
 
   if (loading) {
