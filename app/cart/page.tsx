@@ -1,20 +1,13 @@
 import { Product } from '@/types'
 import { cookies } from 'next/headers'
 import RemoveFromCartButton from './RemoveFromCartButton'
+import Image from 'next/image'
 
 export default async function Cart() {
   const cookieStore = await cookies()
   const cartString = cookieStore.get('cart')?.value
 
-  if(!cartString){
-    return <div>Cart empty</div>
-  }
-
-  const cart:Product[] = JSON.parse(cartString);
-
-  if(!cart.length){
-    return <div>Cart empty</div>
-  }
+  const cart:Product[] = cartString ? JSON.parse(cartString) : [];
 
   const cartWithCount = cart.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
@@ -24,21 +17,39 @@ export default async function Cart() {
         arr.push({...product,count:1});
     }
     return arr;
-  }, [])
+  }, []);
 
   return (
-    <div>
-        <h1>
-            Cart
+    <div className='m-auto max-w-150'>
+        <h1 className='font-bold text-xl mb-4'>
+            Your cart
       </h1>
-      <ul>
-        {cartWithCount.map((item) => <li>
-            {item.thumbnail}
-            {item.title}
-            {item.count}
-            <RemoveFromCartButton removeId={item.id}/>
-        </li>)}
-      </ul>
+      {cart.length === 0 ? <p>Cart empty</p> :
+      <table className='table-fixed w-full'>
+        <thead>
+          <tr>
+    <th className='text-left pb-2'>Product</th>
+    <th className='text-right pb-2'>Amount</th>
+  </tr>
+        </thead>
+        <tbody className='w-full'>
+        {cartWithCount.map((item) => <tr key={item.id}>
+          <td className='h-12 text-left pt-2'>
+            <div className='flex items-center gap-2'>
+            <Image alt={item.title} width={70} height={70} src={item.thumbnail}/>
+            <p>{item.title}</p>
+            </div>
+            </td>
+            <td className='h-12 text-right pt-2'>
+              <div className='flex justify-end items-center gap-2'>
+                <p>{item.count}</p>
+            <RemoveFromCartButton count={item.count} removeId={item.id}/>
+            <p className='ml-4'>{item.price*item.count}$</p>
+            </div>
+            </td>
+        </tr>)}
+        </tbody>
+      </table>}
     </div>
   );
 }
