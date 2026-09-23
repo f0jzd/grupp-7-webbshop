@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table"
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
+import IncreaseCountButton from './IncreaseCountButton'
 
 export default async function Cart() {
   const cookieStore = await cookies()
@@ -57,9 +58,10 @@ export default async function Cart() {
                     </div>
                   </TableCell>
                   <TableCell className="h-12 text-right pt-2">
-                    <div className="flex justify-end items-center gap-2">
+                    <div className="flex justify-end items-center gap-1">
+                      <RemoveFromCartButton productTitle={item.title} count={item.count} removeId={item.id} />
                       <p>{item.count}</p>
-                      <RemoveFromCartButton count={item.count} removeId={item.id} />
+                      <IncreaseCountButton  product={item} />
                       <p className="ml-4">{item.price * item.count}$</p>
                     </div>
                   </TableCell>
