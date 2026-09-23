@@ -50,7 +50,7 @@ export default async function RootLayout({
           <a href="/cart"><ShoppingCartCounter cart={cart}/></a>
         </nav>
       </header>
-      <main className="m-4">
+      <main className="m-2 mt-4 mb-4">
         {children} </main>
         </body>
     </html>
