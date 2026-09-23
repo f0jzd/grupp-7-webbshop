@@ -1,6 +1,8 @@
 "use server";
 
+import { cookies } from 'next/headers'
 import { revalidatePath } from "next/cache";
+import { Product } from './types';
 
 const API_URL = "http://localhost:4000";
 
@@ -79,3 +81,26 @@ export async function addProductAction(formdata: FormData) {
   revalidatePath("/");
 }
 
+export async function addProductToCart(item: Product){
+  const cookieStore = await cookies()
+  const cart = cookieStore.get('cart')?.value;
+
+  const updatedCart: Product[] = cart ? JSON.parse(cart) : [];
+  updatedCart.push(item);
+  
+  cookieStore.set("cart", JSON.stringify(updatedCart));
+}
+
+export async function removeItemFromCart(item: Product){
+  const cookieStore = await cookies()
+  const cart = cookieStore.get('cart')?.value;
+
+  const updatedCart: Product[] = cart ? JSON.parse(cart) : [];
+  updatedCart.filter(_item => _item.id !== item.id);
+  cookieStore.set("cart", JSON.stringify(updatedCart));
+}
+
+export async function clearCart(){
+  const cookieStore = await cookies();
+  cookieStore.delete("cart");
+}
