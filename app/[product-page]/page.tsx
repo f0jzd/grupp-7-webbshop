@@ -22,8 +22,6 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { addProductToCart } from "@/actions";
 
-
-
 export default function ProductDetailPage() {
   const [product, setProduct] = React.useState<Product | null>(null);
 
@@ -67,14 +65,10 @@ export default function ProductDetailPage() {
   }, [productTitle]);
 
   const handleAddToCart = () => {
-    
     if (product !== null) {
-      toast.success("Added to cart!", {
-        action: {
-          label: "View Cart",
-          onClick: () => addProductToCart(product),
-        },
-      });
+      console.log("Add to cart:", product);
+      addProductToCart(product);
+      toast.success("Added to cart!");
     }
   };
 
@@ -97,7 +91,6 @@ export default function ProductDetailPage() {
     );
 
     return totalRating / reviews.length;
-
   }
 
   return (
@@ -153,7 +146,8 @@ export default function ProductDetailPage() {
                 ))}
               </div>
               <span className="text-sm text-muted-foreground font-medium">
-                {calculateAverageRating().toFixed(1)} ({product.reviews?.length ?? 0})
+                {calculateAverageRating().toFixed(1)} (
+                {product.reviews?.length ?? 0})
               </span>
             </div>
 
@@ -237,7 +231,7 @@ export default function ProductDetailPage() {
             value="description"
             className="mt-6 min-h-[180px] text-muted-foreground leading-relaxed"
           >
-           { product.description}
+            {product.description}
           </TabsContent>
 
           <TabsContent value="specs" className="mt-6 min-h-[180px]">
