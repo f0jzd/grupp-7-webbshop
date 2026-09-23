@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import Image from 'next/image'
+import CreateOrderButton from './CreateOrderButton'
 
 export default async function Cart() {
   const cookieStore = await cookies()
@@ -33,6 +34,7 @@ export default async function Cart() {
             Your cart
       </h1>
       {cart.length === 0 ? <p>Cart empty</p> :
+      <div>
       <Table className='table-fixed w-full'>
         <TableHeader>
           <TableRow>
@@ -57,7 +59,22 @@ export default async function Cart() {
             </TableCell>
         </TableRow>)}
         </TableBody>
-      </Table>}
+      </Table>
+      <div className='w-full flex flex-col items-end mt-4'>
+        <h2 className='font-bold'>Order information</h2>
+          <div className='flex items-center'>
+          <p>
+            Cost:{` `}
+              {cart.reduce((prev,v) => prev+v.price, 0)}$
+            </p>
+            </div>
+        </div>
+
+<div className='w-full flex justify-center mt-4'>
+<CreateOrderButton/>
+      </div>
+      </div>
+      }
     </div>
   );
 }
