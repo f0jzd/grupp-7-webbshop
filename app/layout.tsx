@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import Banner from "./components/Banner";
+import ShoppingCartCounter from "./components/ShoppingCartCounter";
+import { cookies } from "next/headers";
+import { headers } from 'next/headers';
+import { Product } from "./types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,17 +28,40 @@ export const metadata: Metadata = {
   description: "Admin page for webshop app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies()
+    const cartString = cookieStore.get('cart')?.value;
+
+    const headersList = await headers();
+    const path = headersList.get('x-url')?.replace("http://localhost:3000","").split("?")[0];
+
+    const shouldShowHeader = !path ? false : ["/", "/cart"].includes(path);
+  
+    const cart:Product[] = cartString ? JSON.parse(cartString) : [];
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+        <body className="min-h-full flex flex-col">
+            {shouldShowHeader?
+              <header className="border border-b-2 border-b-green-300 p-2">
+                  <nav className="w-full flex justify-between">
+                    <a href="/">Products</a>
+                    <a href="/cart"><ShoppingCartCounter cart={cart}/></a>
+                  </nav>
+              </header> :
+               null
+            }
+            <main className="m-2 mt-6 mb-6">
+                {children} 
+            </main>
+        </body>
     </html>
   );
 }
