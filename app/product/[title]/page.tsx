@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
 import { Product } from "@/types";
 import Image from "next/image";
 import { addProductToCart } from "@/actions";
@@ -63,7 +62,6 @@ export default function ProductDetailPage() {
     if (product !== null) {
       console.log("Add to cart:", product);
       addProductToCart(product);
-      toast.success("Added to cart!");
     }
   };
 
@@ -136,7 +134,7 @@ export default function ProductDetailPage() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${i < 4 ? "fill-amber-500" : "text-muted"}`}
+                    className={`h-4 w-4 ${i < Math.round(calculateAverageRating()) ? "fill-amber-500" : "text-muted"}`}
                   />
                 ))}
               </div>
