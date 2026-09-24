@@ -2,6 +2,7 @@
 import type { Product } from "./types";
 import GridCard from "./components/ProductGridCard";
 import { Button } from "./components/ui/button";
+import { buttonVariants } from "./components/ui/button";
 import Link from "next/link";
 
 const API_URL = "http://localhost:4000";
@@ -56,8 +57,9 @@ export default async function ProductPage({
           <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">Search</Button>
         </section>
 
-        {/* tagnav */}
+
         <section className="flex flex-row w-full">
+          {/* tagnav */}
           <nav className="relative min-w-70">
             <div className="absolute inset-0 overflow-y-auto flex flex-col">
               {tagSet.map((tag) => (
@@ -69,89 +71,104 @@ export default async function ProductPage({
           {/* Shop grid */}
           <section className="flex-col w-full">
             {/* top nav buttons */}
-            <nav className="flex flex-row justify-between pb-4">
+            <nav className="flex flex-row justify-between pt-4">
+            {data.page > 1 ? (
+              <Link
+                href={`/?page=${data.page - 1}`}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: dirtyTailwindButton,
+                })}
+              >
+                Prev
+              </Link>
+            ) : (
+              <Button
+                className={dirtyTailwindButton}
+                variant="outline"
+                disabled
+              >
+                Prev
+              </Button>
+            )}
 
-              {data.page > 1 ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page - 1}`} />}
-                >
-                  Prev
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                   variant="outline" disabled>
-                  Prev
-                </Button>
-              )}
-              <p>Page: {data.page}</p>
-              {data.page < data.pages ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page + 1}`} />}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button 
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline" disabled>
-                  Next
-                </Button>
-              )}
-            </nav>
+            <p>Page: {data.page}</p>
+
+            {data.page < data.pages ? (
+              <Link
+                href={`/?page=${data.page + 1}`}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: dirtyTailwindButton,
+                })}
+              >
+                Next
+              </Link>
+            ) : (
+              <Button
+                className={dirtyTailwindButton}
+                variant="outline"
+                disabled
+              >
+                Next
+              </Button>
+            )}
+          </nav>
 
 
             {/* Old ver of grid: */}
             {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5  *:w-full">
-            
-            {/* gallery */}
             {
               data.products.map((product:Product) => (
                 <GridCard key={product.id} product={product} />
               ))
-            }
-            </div>
+            }</div>
+
             {/* Bottom nav buttons, same as line 71 */}
             <nav className="flex flex-row justify-between pt-4">
-              {data.page > 1 ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page - 1}`} />}
-                >
-                  Prev
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline" disabled>
-                  Prev
-                </Button>
-              )}
-              <p>Page: {data.page}</p>
-              {data.page < data.pages ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page + 1}`} />}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button className={`${dirtyTailwindButton}`} variant="outline" disabled>
-                  Next
-                </Button>
-              )}
-            </nav>
+            {data.page > 1 ? (
+              <Link
+                href={`/?page=${data.page - 1}`}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: dirtyTailwindButton,
+                })}
+              >
+                Prev
+              </Link>
+            ) : (
+              <Button
+                className={dirtyTailwindButton}
+                variant="outline"
+                disabled
+              >
+                Prev
+              </Button>
+            )}
+
+            <p>Page: {data.page}</p>
+
+            {data.page < data.pages ? (
+              <Link
+                href={`/?page=${data.page + 1}`}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: dirtyTailwindButton,
+                })}
+              >
+                Next
+              </Link>
+            ) : (
+              <Button
+                className={dirtyTailwindButton}
+                variant="outline"
+                disabled
+              >
+                Next
+              </Button>
+            )}
+          </nav>
           </section>
         </section>
       </div>
