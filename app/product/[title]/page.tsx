@@ -27,7 +27,7 @@ export default function ProductDetailPage() {
 
   // 1. Get the title from the route parameter
   const params = useParams();
-  const rawParam = params["product-page"] as string | undefined;
+  const rawParam = params["title"] as string | undefined;
   const productTitle = rawParam ? decodeURIComponent(rawParam) : undefined;
 
   const [loading, setLoading] = React.useState(Boolean(productTitle));

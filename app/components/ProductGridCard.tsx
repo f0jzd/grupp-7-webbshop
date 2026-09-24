@@ -16,7 +16,7 @@ interface GridCardProps {
 
 export default function GridCard({ product }: GridCardProps) {
   return (
-    <Link href={`/${product.title}`}>
+    <Link href={`/product/${product.title}`}>
       <div className="max-w-3xs m-auto">
         <Card key={product.id} className="h-full">
           <CardHeader>
