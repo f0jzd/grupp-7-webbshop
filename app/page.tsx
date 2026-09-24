@@ -2,6 +2,7 @@
 import type { Product } from "./types";
 import GridCard from "./components/ProductGridCard";
 import { Button } from "./components/ui/button";
+import Link from "next/link";
 
 const API_URL = "http://localhost:4000";
 
@@ -32,14 +33,16 @@ export default async function ProductPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  // default page 1
+  // pagination call data
   const { page = "1" } = await searchParams;
+  const paginationLimit = 15
 
-  const res = await fetch(`${API_URL}/products?_page=${page}&_limit=12`)
+  const res = await fetch(`${API_URL}/products?_page=${page}&_limit=${paginationLimit}`)
   const data: ProductsResponse = await res.json();
 
   const allProducts = await fetch(`${API_URL}/products`).then((res) => res.json());
   const tagSet = getTagSet(allProducts.products);
+  
 
   return (
     <article >
@@ -64,21 +67,81 @@ export default async function ProductPage({
 
           {/* Shop grid */}
           <section className="flex-col w-full">
+
+
+
+            {/* top nav buttons */}
             <nav className="flex flex-row justify-between pb-4">
-              <Button className="w-24 h-12">Previous</Button>
-              <Button className="w-24 h-12">Next</Button>
+
+              {data.page > 1 ? (
+                <Button
+                  variant="link"
+                  nativeButton={false}
+                  render={<Link href={`/?page=${data.page - 1}`} />}
+                >
+                  Prev
+                </Button>
+              ) : (
+                <Button variant="link" disabled>
+                  Prev
+                </Button>
+              )}
+
+              {data.page < data.pages ? (
+                <Button
+                  variant="link"
+                  nativeButton={false}
+                  render={<Link href={`/?page=${data.page + 1}`} />}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button variant="link" disabled>
+                  Next
+                </Button>
+              )}
             </nav>
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full">
+
+
+            {/* Old ver of grid: */}
+            {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5  *:w-full">
+            
+            {/* gallery */}
             {
               data.products.map((product:Product) => (
                 <GridCard key={product.id} product={product} />
               ))
             }
             </div>
-            {/* buttons both at top and bottom */}
+            {/* Bottom nav buttons, same as line 71 */}
             <nav className="flex flex-row justify-between pt-4">
-              <Button className="w-24 h-12">Previous</Button>
-              <Button className="w-24 h-12">Next</Button>
+              {data.page > 1 ? (
+                <Button
+                  variant="link"
+                  nativeButton={false}
+                  render={<Link href={`/?page=${data.page - 1}`} />}
+                >
+                  Prev
+                </Button>
+              ) : (
+                <Button variant="link" disabled>
+                  Prev
+                </Button>
+              )}
+              {data.page < data.pages ? (
+                <Button
+                  variant="link"
+                  nativeButton={false}
+                  render={<Link href={`/?page=${data.page + 1}`} />}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button variant="link" disabled>
+                  Next
+                </Button>
+              )}
             </nav>
           </section>
         </section>
