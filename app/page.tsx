@@ -58,12 +58,12 @@ export default async function ProductPage({
 
         {/* tagnav */}
         <section className="flex flex-row w-full">
-          <nav className="flex flex-col min-w-70">
-            {tagSet.map((tag) => (
-              <p key={tag}>
-                {tag}
-              </p>
-            ))}
+          <nav className="relative min-w-70">
+            <div className="absolute inset-0 overflow-y-auto flex flex-col">
+              {tagSet.map((tag) => (
+                <p key={tag}>{tag}</p>
+              ))}
+            </div>
           </nav>
 
           {/* Shop grid */}
