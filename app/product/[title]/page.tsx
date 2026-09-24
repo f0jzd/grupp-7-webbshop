@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { use } from "react";
 import { ShoppingBag, Star, Truck, ShieldCheck } from "lucide-react";
 
 // Shadcn UI components
@@ -21,20 +19,18 @@ import { toast } from "sonner";
 import { Product } from "@/types";
 import Image from "next/image";
 import { addProductToCart } from "@/actions";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function ProductDetailPage({
-  params,
-}: {
-  params: Promise<{ title: string }>;
-}) {
-  const { title } = use(params);
-  const productTitle = decodeURIComponent(title);
+export default function ProductDetailPage() {
+  const params = useParams<{ title: string }>();
+  const productTitle = decodeURIComponent(params.title);
 
-  const [product, setProduct] = React.useState<Product | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const API_URL = "http://localhost:4000";
 
-  React.useEffect(() => {
+  useEffect(() => {
     let ignore = false;
     const loadProduct = async () => {
       setLoading(true);
