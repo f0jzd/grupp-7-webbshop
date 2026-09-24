@@ -19,7 +19,7 @@ export default function GridCard({ product }: GridCardProps) {
     <Link href={`/product/${product.title}`} className="h-full">
       <Card key={product.id} className="h-full">
         <CardHeader>
-          <CardTitle className="line-clamp-2">{product.title}</CardTitle>
+          <CardTitle className="line-clamp-1">{product.title}</CardTitle>
           <CardDescription className="line-clamp-1">
             {product.brand ?? "Unknown brand"}
           </CardDescription>
