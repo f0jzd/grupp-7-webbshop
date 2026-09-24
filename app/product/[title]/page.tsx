@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Heart, ShoppingBag, Star, Truck, ShieldCheck } from "lucide-react";
+import { use } from "react";
+import { ShoppingBag, Star, Truck, ShieldCheck } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -18,24 +19,22 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Product } from "@/types";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import { addProductToCart } from "@/actions";
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = use(params);
+  const productTitle = decodeURIComponent(title);
+
   const [product, setProduct] = React.useState<Product | null>(null);
-
-  // 1. Get the title from the route parameter
-  const params = useParams();
-  const rawParam = params["title"] as string | undefined;
-  const productTitle = rawParam ? decodeURIComponent(rawParam) : undefined;
-
-  const [loading, setLoading] = React.useState(Boolean(productTitle));
+  const [loading, setLoading] = React.useState(true);
   const API_URL = "http://localhost:4000";
 
   React.useEffect(() => {
-    if (!productTitle) return;
-
     let ignore = false;
     const loadProduct = async () => {
       setLoading(true);
@@ -118,7 +117,7 @@ export default function ProductDetailPage() {
         <div className="flex flex-col gap-4 w-full min-w-0 self-start">
           <div className="relative w-full aspect-square overflow-hidden rounded-2xl border bg-muted">
             <Image
-              src={product.thumbnail}
+              src={product.images[0] || product.thumbnail}
               fill
               alt="Product image"
               className="h-full w-full object-cover"
