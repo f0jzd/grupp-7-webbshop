@@ -88,7 +88,7 @@ export async function addProductToCart(item: Product){
   const updatedCart: number[] = cart ? JSON.parse(cart) : [];
   updatedCart.push(item.id);
   
-  cookieStore.set("cart", JSON.stringify(updatedCart));
+  cookieStore.set("cart", JSON.stringify(updatedCart), {maxAge: 604800});
 }
 
 export async function removeItemFromCart(removeId: number){
@@ -98,7 +98,7 @@ export async function removeItemFromCart(removeId: number){
   const updatedCart: number[] = cart ? JSON.parse(cart) : [];
   const removeIdLast = updatedCart.findLastIndex(v => v === removeId);
   updatedCart.splice(removeIdLast,1);
-  cookieStore.set("cart", JSON.stringify(updatedCart));
+  cookieStore.set("cart", JSON.stringify(updatedCart), {maxAge: 604800});
 }
 
 export async function clearCart(){
