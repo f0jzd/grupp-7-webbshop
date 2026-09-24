@@ -13,13 +13,17 @@ import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
 import IncreaseCountButton from './IncreaseCountButton'
 
+const API_URL = "http://localhost:4000";
+
 export default async function Cart() {
   const cookieStore = await cookies()
   const cartString = cookieStore.get('cart')?.value
 
-  const cart:Product[] = cartString ? JSON.parse(cartString) : [];
+  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
 
-  const cartWithCount = cart.reduce<(Product & {count: number})[]>((arr, product) => {
+    const products = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
+
+  const cartWithCount = products.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
     if(existing){
         existing.count += 1;
@@ -32,7 +36,7 @@ export default async function Cart() {
   return (
    <div className="m-auto max-w-150">
       <h1 className="font-bold text-xl mb-4">Your cart</h1>
-      {cart.length === 0 ? (
+      {products.length === 0 ? (
         <p>Cart empty</p>
       ) : (
         <div>
@@ -67,9 +71,9 @@ export default async function Cart() {
                   <TableCell className="h-12 text-right pt-2 max-md:hidden">
                     <div className="flex justify-end items-center gap-1">
                       <RemoveFromCartButton productTitle={item.title} count={item.count} removeId={item.id} />
-                      <p>{item.count}</p>
+                      <p className='w-6 text-center'>{item.count}</p>
                       <IncreaseCountButton  product={item} />
-                      <p className="ml-4">{item.price * item.count}$</p>
+                      <div className="ml-4 w-20 text-right">{item.price * item.count}$</div>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -81,7 +85,7 @@ export default async function Cart() {
             <div className="flex items-center">
               <p>
                 Cost:{` `}
-                {Math.ceil(cart.reduce((prev, v) => prev + v.price, 0))}$
+                {Number.parseFloat(products.reduce((prev, v) => prev + v.price, 0)).toFixed(2)}$
               </p>
             </div>
           </div>
