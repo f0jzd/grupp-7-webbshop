@@ -80,16 +80,6 @@ export const SearchBar = ({ categories, stock }: SearchProps) => {
               </option>
             ))}
           </select>
-
-          <button
-            type="submit"
-            className="w-full bg-indigo-500 text-white sm:w-auto flex items-center gap-1 p-2 border border-indigo-500 hover:bg-white hover:text-black  rounded-md active:translate-y-px ease-in duration-100"
-          >
-            <span className="material-symbols material-symbols-filled ">
-              Filter_alt
-            </span>
-            <span>Search</span>
-          </button>
         </div>
       </form>
     </search>

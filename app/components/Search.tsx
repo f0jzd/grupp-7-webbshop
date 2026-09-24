@@ -21,7 +21,7 @@ export default function Search() {
 
     setMessage(validation.message);
     replace(`${path}?${params.toString()}`, { scroll: false });
-  }, 300);
+  }, 500);
 
   return (
     <div className="relative w-full sm:w-auto flex-1">
