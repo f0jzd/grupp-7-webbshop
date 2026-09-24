@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   description: "Admin page for webshop app",
 };
 
+const API_URL = "http://localhost:4000";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -39,9 +41,11 @@ export default async function RootLayout({
     const headersList = await headers();
     const path = headersList.get('x-url')?.replace("http://localhost:3000","").split("?")[0];
 
-    const shouldShowHeader = !path ? false : ["/", "/cart"].includes(path);
+    const shouldShowHeader = !path ? true : !["/admin-page", "/add-product", "/edit-product"].some((p => path.startsWith(p)));
   
-    const cart:Product[] = cartString ? JSON.parse(cartString) : [];
+    const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
+
+    const products = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
 
   return (
     <html
@@ -53,7 +57,7 @@ export default async function RootLayout({
               <header className="border border-b-2 border-b-green-300 p-2">
                   <nav className="w-full flex justify-between">
                     <a href="/">Products</a>
-                    <a href="/cart"><ShoppingCartCounter cart={cart}/></a>
+                    <a href="/cart"><ShoppingCartCounter cart={products}/></a>
                   </nav>
               </header> :
                null
