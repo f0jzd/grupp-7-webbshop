@@ -14,6 +14,7 @@ interface ProductsResponse {
   pages: number;
 }
 
+const dirtyTailwindButton = "bg-gray-500 text-white h-12 w-22"
 
 
 
@@ -56,7 +57,7 @@ export default async function ProductPage({
         </section>
 
         {/* tagnav */}
-        <section className="flex flex-row w-full ">
+        <section className="flex flex-row w-full">
           <nav className="flex flex-col min-w-70">
             {tagSet.map((tag) => (
               <p key={tag}>
@@ -67,36 +68,39 @@ export default async function ProductPage({
 
           {/* Shop grid */}
           <section className="flex-col w-full">
-
-
-
             {/* top nav buttons */}
             <nav className="flex flex-row justify-between pb-4">
 
               {data.page > 1 ? (
                 <Button
-                  variant="link"
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline"
                   nativeButton={false}
                   render={<Link href={`/?page=${data.page - 1}`} />}
                 >
                   Prev
                 </Button>
               ) : (
-                <Button variant="link" disabled>
+                <Button
+                  className={`${dirtyTailwindButton}`}
+                   variant="outline" disabled>
                   Prev
                 </Button>
               )}
-
+              <p>Page: {data.page}</p>
               {data.page < data.pages ? (
                 <Button
-                  variant="link"
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline"
                   nativeButton={false}
                   render={<Link href={`/?page=${data.page + 1}`} />}
                 >
                   Next
                 </Button>
               ) : (
-                <Button variant="link" disabled>
+                <Button 
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline" disabled>
                   Next
                 </Button>
               )}
@@ -118,27 +122,32 @@ export default async function ProductPage({
             <nav className="flex flex-row justify-between pt-4">
               {data.page > 1 ? (
                 <Button
-                  variant="link"
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline"
                   nativeButton={false}
                   render={<Link href={`/?page=${data.page - 1}`} />}
                 >
                   Prev
                 </Button>
               ) : (
-                <Button variant="link" disabled>
+                <Button
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline" disabled>
                   Prev
                 </Button>
               )}
+              <p>Page: {data.page}</p>
               {data.page < data.pages ? (
                 <Button
-                  variant="link"
+                  className={`${dirtyTailwindButton}`}
+                  variant="outline"
                   nativeButton={false}
                   render={<Link href={`/?page=${data.page + 1}`} />}
                 >
                   Next
                 </Button>
               ) : (
-                <Button variant="link" disabled>
+                <Button className={`${dirtyTailwindButton}`} variant="outline" disabled>
                   Next
                 </Button>
               )}
