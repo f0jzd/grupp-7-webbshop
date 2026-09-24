@@ -39,7 +39,7 @@ export default async function RootLayout({
     const headersList = await headers();
     const path = headersList.get('x-url')?.replace("http://localhost:3000","").split("?")[0];
 
-    const shouldShowHeader = !path ? false : ["/", "/cart"].includes(path);
+    const shouldShowHeader = !path ? true : !["/admin-page", "/add-product", "/edit-product"].some((p => path.startsWith(p)));
   
     const cart:Product[] = cartString ? JSON.parse(cartString) : [];
 
