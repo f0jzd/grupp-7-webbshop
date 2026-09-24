@@ -217,7 +217,9 @@ export default function ProductDetailPage() {
           <TabsList className="grid w-full grid-cols-3 max-w-md">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="specs">Specifications</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews (128)</TabsTrigger>
+            <TabsTrigger value="reviews">
+              Reviews ({product.reviews?.length})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent
@@ -229,14 +231,10 @@ export default function ProductDetailPage() {
 
           <TabsContent value="specs" className="mt-6 min-h-[180px]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
-              <div className="text-muted-foreground">Upper Material</div>
-              <div className="font-medium">100% Recycled Polyester Mesh</div>
-              <div className="text-muted-foreground">Midsole</div>
-              <div className="font-medium">EVA Foam Cushioning</div>
-              <div className="text-muted-foreground">Drop</div>
-              <div className="font-medium">8mm</div>
-              <div className="text-muted-foreground">Weight</div>
-              <div className="font-medium">265g (Size 9)</div>
+              <div className="text-muted-foreground">
+                Weight: {product.weight}
+              </div>
+              <div className="font-medium">{product.dimensions}</div>
             </div>
           </TabsContent>
 
