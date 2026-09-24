@@ -230,19 +230,17 @@ export default function ProductDetailPage() {
                 </>
               )}
               {product.dimensions &&
-                Object.entries(product.dimensions).map(([key, value]) => (
-                  <>
-                    <div
-                      key={key + "-label"}
-                      className="text-muted-foreground capitalize"
-                    >
-                      {key}
-                    </div>
-                    <div key={key + "-value"} className="font-medium">
-                      {value}
-                    </div>
-                  </>
-                ))}
+                Object.entries(product.dimensions).map(([key, value]) => [
+                  <div
+                    key={key + "-label"}
+                    className="text-muted-foreground capitalize"
+                  >
+                    {key}
+                  </div>,
+                  <div key={key + "-value"} className="font-medium">
+                    {value}
+                  </div>,
+                ])}
             </div>
           </TabsContent>
         </Tabs>
