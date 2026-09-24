@@ -180,12 +180,8 @@ export default function ProductDetailPage() {
           {/* Value Props & Shipping */}
           <div className="grid grid-cols-2 gap-4 pt-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Truck className="h-4 w-4 text-primary" />
-              <span>Free shipping over $75</span>
-            </div>
-            <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              <span>2-year warranty included</span>
+              <span>{product.warrantyInformation}</span>
             </div>
           </div>
 
@@ -196,16 +192,12 @@ export default function ProductDetailPage() {
             <div>
               <p className="font-medium mb-1">Shipping &amp; Delivery</p>
               <p className="text-muted-foreground">
-                Orders placed before 2 PM EST ship same day. Standard delivery
-                takes 3–5 business days. Express options available at checkout.
+                {product.shippingInformation}
               </p>
             </div>
             <div>
-              <p className="font-medium mb-1">30-Day Return Policy</p>
-              <p className="text-muted-foreground">
-                Return items within 30 days of receipt in original packaging and
-                unworn condition for a full refund or exchange.
-              </p>
+              <p className="font-medium mb-1">Return Policy</p>
+              <p className="text-muted-foreground">{product.returnPolicy}</p>
             </div>
           </div>
         </div>
@@ -229,19 +221,29 @@ export default function ProductDetailPage() {
             {product.description}
           </TabsContent>
 
-          <TabsContent value="specs" className="mt-6 min-h-[180px]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
-              <div className="text-muted-foreground">
-                Weight: {product.weight}
-              </div>
-              <div className="font-medium">{product.dimensions}</div>
+          <TabsContent value="specs" className="mt-6 min-h-45">
+            <div className="grid grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
+              {product.weight && (
+                <>
+                  <div className="text-muted-foreground">Weight</div>
+                  <div className="font-medium">{product.weight} g</div>
+                </>
+              )}
+              {product.dimensions &&
+                Object.entries(product.dimensions).map(([key, value]) => (
+                  <>
+                    <div
+                      key={key + "-label"}
+                      className="text-muted-foreground capitalize"
+                    >
+                      {key}
+                    </div>
+                    <div key={key + "-value"} className="font-medium">
+                      {value}
+                    </div>
+                  </>
+                ))}
             </div>
-          </TabsContent>
-
-          <TabsContent value="reviews" className="mt-6 min-h-[180px]">
-            <p className="text-sm text-muted-foreground">
-              Review details and cards can be loaded here.
-            </p>
           </TabsContent>
         </Tabs>
       </div>
