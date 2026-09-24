@@ -13,10 +13,10 @@ interface ProductsResponse {
   pages: number;
 }
 
-const res = await fetch(`${API_URL}/products`);
-const data: ProductsResponse = await res.json();
 
-export function getTagSet(products: Product[]): string[] {
+
+
+function getTagSet(products: Product[]): string[] {
   return [
     ...new Set(
       products.flatMap((product) =>
@@ -27,42 +27,43 @@ export function getTagSet(products: Product[]): string[] {
 }
 
 
-export default async function ProductPage() {
-  const product: Product = await fetch(`${API_URL}/products/1`).then((res) =>
-    res.json(),
-  );
+export default async function ProductPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  // default page 1
+  const { page = "1" } = await searchParams;
 
-  const tags = getTagSet(data.products);
+  const res = await fetch(`${API_URL}/products?_page=${page}&_limit=12`)
+  const data: ProductsResponse = await res.json();
+
+  const allProducts = await fetch(`${API_URL}/products`).then((res) => res.json());
+  const tagSet = getTagSet(allProducts.products);
 
   return (
     <article >
       <section className="flex flex-col items-center">
-        <div className="flex flex-col items-center">
-          <nav className="flex flex-auto flex-row gap-2">
-            <Button variant="outline" className="w-50">Shoes</Button>
-            <Button variant="outline" className="w-50">Shirts</Button>
-            <Button variant="outline" className="w-50">Pants</Button>
-            <Button variant="outline" className="w-50">Watches</Button>
-          </nav>
+        <div className="flex flex-row items-center w-full pb-4">
           <input defaultValue="Search field, style later" className="
-          border bg-gray-100 selection:border-blue-500 rounded-sm
-          h-12 w-full text-center"></input>
+          border bg-gray-100 selection:border focus:border-blue-500 focus:outline-0
+          rounded-l-sm h-12 w-full text-center"></input>
+          <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">Search</Button>
         </div>
 
         <div className="flex flex-row w-full">
           <div className="flex flex-col min-w-70">
-            {tags.map((tag) => (
+            {tagSet.map((tag) => (
               <p key={tag}>
                 {tag}
               </p>
             ))}
           </div>
-          <section className="flex-auto w-full border border-amber-300">
-            <h1>This should be the main shop grid:</h1>
+          <section className="flex-auto w-full pt-4">
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full">
             {
-              [...Array(99)].map((_, i) => (
-                <GridCard key={i} product={product} />
+              data.products.map((product:Product) => (
+                <GridCard key={product.id} product={product} />
               ))
             }
             </div>
