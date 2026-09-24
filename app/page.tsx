@@ -52,7 +52,8 @@ export default async function ProductPage({
           <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">Search</Button>
         </section>
 
-        <section className="flex flex-row w-full">
+        {/* tagnav */}
+        <section className="flex flex-row w-full ">
           <nav className="flex flex-col min-w-70">
             {tagSet.map((tag) => (
               <p key={tag}>
@@ -62,7 +63,11 @@ export default async function ProductPage({
           </nav>
 
           {/* Shop grid */}
-          <section className="flex-auto w-full pt-4">
+          <section className="flex-col w-full">
+            <nav className="flex flex-row justify-between pb-4">
+              <Button className="w-24 h-12">Previous</Button>
+              <Button className="w-24 h-12">Next</Button>
+            </nav>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full">
             {
               data.products.map((product:Product) => (
@@ -70,6 +75,11 @@ export default async function ProductPage({
               ))
             }
             </div>
+            {/* buttons both at top and bottom */}
+            <nav className="flex flex-row justify-between pt-4">
+              <Button className="w-24 h-12">Previous</Button>
+              <Button className="w-24 h-12">Next</Button>
+            </nav>
           </section>
         </section>
       </div>
