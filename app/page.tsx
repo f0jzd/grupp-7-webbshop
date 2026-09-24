@@ -43,22 +43,25 @@ export default async function ProductPage({
 
   return (
     <article >
-      <section className="flex flex-col items-center">
-        <div className="flex flex-row items-center w-full pb-4">
+      <div className="flex flex-col items-center">
+        {/* Search */}
+        <section className="flex flex-row items-center w-full pb-4">
           <input defaultValue="Search field, style later" className="
           border bg-gray-100 selection:border focus:border-blue-500 focus:outline-0
           rounded-l-sm h-12 w-full text-center"></input>
           <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">Search</Button>
-        </div>
+        </section>
 
-        <div className="flex flex-row w-full">
-          <div className="flex flex-col min-w-70">
+        <section className="flex flex-row w-full">
+          <nav className="flex flex-col min-w-70">
             {tagSet.map((tag) => (
               <p key={tag}>
                 {tag}
               </p>
             ))}
-          </div>
+          </nav>
+
+          {/* Shop grid */}
           <section className="flex-auto w-full pt-4">
             <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full">
             {
@@ -68,8 +71,8 @@ export default async function ProductPage({
             }
             </div>
           </section>
-        </div>
-      </section>
+        </section>
+      </div>
     </article>
   );
 }
