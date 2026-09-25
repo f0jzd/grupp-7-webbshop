@@ -18,8 +18,8 @@ FR-4: Paginering
 * [ ] Pagineringen ska styras via URL (?page=X) och möjliggöra bläddring framåt, bakåt och direktval av sida.
 
 FR-5: Varukorg (Översiktsvy)
-* [ ] En dedikerad vy/sida för varukorgen som visar hur en sammanställning av ordervärde, produkter, antal och totalbelopp ser ut.
-* [ ] Basnivå: En statisk vy med exempelprodukter som demonstrerar kassan och layouten.
+* [x] En dedikerad vy/sida för varukorgen som visar hur en sammanställning av ordervärde, produkter, antal och totalbelopp ser ut.
+* [x] Basnivå: En statisk vy med exempelprodukter som demonstrerar kassan och layouten.
 (Tips: Full dynamisk/persistent varukorg kan väljas som fördjupningsmodul).
 
 Icke-funktionella krav (NFR)
