@@ -1,10 +1,13 @@
-
+// stock nextjs
+import Link from "next/link";
+// custom/inhouse
 import type { Product } from "./types";
 import GridCard from "./components/ProductGridCard";
-import { Button } from "./components/ui/button";
-import { buttonVariants } from "./components/ui/button";
-import Link from "next/link";
 import { Category } from "./types";
+// shadcn
+import { buttonVariants } from "./components/ui/button";
+import { Button } from "./components/ui/button";
+import { ButtonGroup } from "./components/ui/button-group";
 import {
   Pagination,
   PaginationContent,
@@ -14,7 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { ButtonGroup } from "./components/ui/button-group";
+
 
 const API_URL = "http://localhost:4000";
 
@@ -27,6 +30,7 @@ interface ProductsResponse {
 }
 
 // claude helped dynamically create the hardcoded shadcn pagination component
+// this is just 
 function getPageRange(current: number, total: number): (number | "ellipsis")[] {
   const delta = 1; // how many neighbors to show around current
   const range: (number | "ellipsis")[] = [];
@@ -45,13 +49,14 @@ function getPageRange(current: number, total: number): (number | "ellipsis")[] {
   return range;
 }
 
-// more claude stuff, scrutinized
+// This one is a bit chunky:
+// basically this is a url state handler that takes originalState and overrides it with newState
 function buildHref(
-  current: Record<string, string | undefined>,
-  overrides: Record<string, string | number | undefined>
+  originalState: Record<string, string | undefined>,
+  newState: Record<string, string | number | undefined>
 ): string {
   const params = new URLSearchParams();
-  const merged = { ...current, ...overrides };
+  const merged = { ...originalState, ...newState };
 
   for (const [key, value] of Object.entries(merged)) {
     if (value === undefined || value === "") continue;
@@ -60,7 +65,7 @@ function buildHref(
   }
 
   const qs = params.toString();
-  return qs ? `?${qs}` : "?";
+  return qs ? `?${qs}` : "?"; // i hate manual string building
 }
 
 export default async function ProductPage({
@@ -100,20 +105,25 @@ export default async function ProductPage({
 
 
         <section className="flex flex-row w-full">
-          {/* catnav */}
-          <ButtonGroup aria-label="Filter by category">
-            {categories.map((cat) => (
-              <Button
-                key={cat.id}
-                asChild
-                variant={cat.slug === category ? "default" : "outline"}
-              >
-                <Link href={buildHref({ page, category }, { category: cat.slug, page: undefined })}>
-                  {cat.name}
-                </Link>
-              </Button>
-            ))}
-          </ButtonGroup>
+          
+        {/* catnav */}
+        <ButtonGroup orientation="vertical" className="mr-4">
+          <Link
+            href={buildHref({ page, category }, { category: undefined, page: 1 })}
+          >
+            Reset
+          </Link>
+
+          {categories.map((cat) => (
+            <Link
+              key={cat.id}
+              href={buildHref({ page, category }, { category: cat.slug, page: 1 })}
+              className={buttonVariants({ variant: category === cat.slug ? "default" : "outline" }) + " justify-start"}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </ButtonGroup>
           
 
           {/* Shop grid */}
@@ -121,9 +131,14 @@ export default async function ProductPage({
             {/* top nav buttons */}
             <Pagination>
               <PaginationContent>
+
                 <PaginationItem>
                   <PaginationPrevious
-                    href={currentPage > 1 ? `?page=${currentPage - 1}` : undefined}
+                    href={
+                      currentPage > 1
+                        ? buildHref({ page, category }, { page: currentPage - 1 })
+                        : undefined
+                    }
                     aria-disabled={currentPage <= 1}
                   />
                 </PaginationItem>
@@ -135,7 +150,10 @@ export default async function ProductPage({
                     </PaginationItem>
                   ) : (
                     <PaginationItem key={p}>
-                      <PaginationLink href={`?page=${p}`} isActive={p === currentPage}>
+                      <PaginationLink
+                        href={buildHref({ page, category }, { page: p })}
+                        isActive={p === currentPage}
+                      >
                         {p}
                       </PaginationLink>
                     </PaginationItem>
@@ -144,7 +162,11 @@ export default async function ProductPage({
 
                 <PaginationItem>
                   <PaginationNext
-                    href={currentPage < data.pages ? `?page=${currentPage + 1}` : undefined}
+                    href={
+                      currentPage < data.pages
+                        ? buildHref({ page, category }, { page: currentPage + 1 })
+                        : undefined
+                    }
                     aria-disabled={currentPage >= data.pages}
                   />
                 </PaginationItem>
@@ -164,9 +186,14 @@ export default async function ProductPage({
             {/* Bottom nav buttons, same as line 71 */}
             <Pagination>
               <PaginationContent>
+
                 <PaginationItem>
                   <PaginationPrevious
-                    href={currentPage > 1 ? `?page=${currentPage - 1}` : undefined}
+                    href={
+                      currentPage > 1
+                        ? buildHref({ page, category }, { page: currentPage - 1 })
+                        : undefined
+                    }
                     aria-disabled={currentPage <= 1}
                   />
                 </PaginationItem>
@@ -178,7 +205,10 @@ export default async function ProductPage({
                     </PaginationItem>
                   ) : (
                     <PaginationItem key={p}>
-                      <PaginationLink href={`?page=${p}`} isActive={p === currentPage}>
+                      <PaginationLink
+                        href={buildHref({ page, category }, { page: p })}
+                        isActive={p === currentPage}
+                      >
                         {p}
                       </PaginationLink>
                     </PaginationItem>
@@ -187,7 +217,11 @@ export default async function ProductPage({
 
                 <PaginationItem>
                   <PaginationNext
-                    href={currentPage < data.pages ? `?page=${currentPage + 1}` : undefined}
+                    href={
+                      currentPage < data.pages
+                        ? buildHref({ page, category }, { page: currentPage + 1 })
+                        : undefined
+                    }
                     aria-disabled={currentPage >= data.pages}
                   />
                 </PaginationItem>
