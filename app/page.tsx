@@ -4,6 +4,7 @@ import GridCard from "./components/ProductGridCard";
 import { Button } from "./components/ui/button";
 import { buttonVariants } from "./components/ui/button";
 import Link from "next/link";
+import { Category } from "./types";
 
 const API_URL = "http://localhost:4000";
 
@@ -45,6 +46,10 @@ export default async function ProductPage({
   const allProducts = await fetch(`${API_URL}/products`).then((res) => res.json());
   const tagSet = getTagSet(allProducts.products);
   
+  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
+    (res) => res.json(),
+  );
+  console.log(categories)
 
   return (
     <article >
@@ -62,11 +67,12 @@ export default async function ProductPage({
           {/* tagnav */}
           <nav className="relative min-w-70">
             <div className="absolute inset-0 overflow-y-auto flex flex-col">
-              {tagSet.map((tag) => (
-                <p key={tag}>{tag}</p>
+              {categories.map((category) => (
+                <p key={category.id}>{category.name}</p>
               ))}
             </div>
           </nav>
+          
 
           {/* Shop grid */}
           <section className="flex-col w-full">
