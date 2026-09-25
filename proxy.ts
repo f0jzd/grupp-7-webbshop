@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export function proxy(request: Request) {
+export default clerkMiddleware(async (auth, request) => {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-url', request.url);
 
@@ -9,4 +10,4 @@ export function proxy(request: Request) {
       headers: requestHeaders,
     }
   });
-}
+})

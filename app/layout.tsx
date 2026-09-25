@@ -5,7 +5,9 @@ import "./globals.css";
 import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
-import { Product } from "./types";
+import { ClerkProvider, Show, SignInButton, SignOutButton, SignUpButton } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
+import { Button } from "./components/ui/button";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,17 +49,46 @@ export default async function RootLayout({
 
     const products = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
 
+    const user = await currentUser();
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
         <body className="min-h-full flex flex-col">
+          <ClerkProvider>
             {shouldShowHeader?
               <header className="border border-b-2 border-b-green-300 p-2">
-                  <nav className="w-full flex justify-between">
+                  <nav className="w-full flex justify-between items-center">
                     <a href="/">Products</a>
+                    <div className="flex items-center gap-4">
+                  <Show when="signed-out">
+
+                  <SignInButton>
+                    <Button variant="ghost">Sign in</Button>
+                  </SignInButton>
+                  <SignUpButton>
+                    <Button >
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </Show>
+                <div className="flex gap-4 items-center">
+                <Show when="signed-in">
+                  <div className="flex items-center">
+                  Signed in as &nbsp; <p className="font-bold">{user?.emailAddresses[0].emailAddress}</p>
+                  </div>
+                  <a href="/my-pages">My pages</a>
+                  <a href="/order-history">Order history</a>
+                  <a href="/favorites">Favorites</a>
+                </Show>
+                <Show when="signed-in">
+                  <SignOutButton><Button>Sign out</Button></SignOutButton>
+                </Show>
+                </div>
                     <a href="/cart"><ShoppingCartCounter cart={products}/></a>
+                    </div>
                   </nav>
               </header> :
                null
@@ -65,6 +96,7 @@ export default async function RootLayout({
             <main className="m-2 mt-6 mb-6">
                 {children} 
             </main>
+            </ClerkProvider>
         </body>
     </html>
   );
