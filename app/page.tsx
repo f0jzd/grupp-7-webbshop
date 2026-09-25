@@ -5,6 +5,15 @@ import { Button } from "./components/ui/button";
 import { buttonVariants } from "./components/ui/button";
 import Link from "next/link";
 import { Category } from "./types";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 const API_URL = "http://localhost:4000";
 
@@ -16,19 +25,25 @@ interface ProductsResponse {
   pages: number;
 }
 
-const dirtyTailwindButton = "bg-gray-500 text-white h-12 w-22"
+// claude helped dynamically create the hardcoded shadcn pagination component
+function getPageRange(current: number, total: number): (number | "ellipsis")[] {
+  const delta = 1; // how many neighbors to show around current
+  const range: (number | "ellipsis")[] = [];
 
+  for (let i = 1; i <= total; i++) {
+    const isEdge = i === 1 || i === total;
+    const isNearCurrent = Math.abs(i - current) <= delta;
 
+    if (isEdge || isNearCurrent) {
+      range.push(i);
+    } else if (range[range.length - 1] !== "ellipsis") {
+      range.push("ellipsis");
+    }
+  }
 
-function getTagSet(products: Product[]): string[] {
-  return [
-    ...new Set(
-      products.flatMap((product) =>
-        (product.tags ?? []).map((tag) => tag.trim().toLowerCase())
-      )
-    ),
-  ].sort((a, b) => a.localeCompare(b));
+  return range;
 }
+
 
 
 export default async function ProductPage({
@@ -40,16 +55,18 @@ export default async function ProductPage({
   const { page = "1" } = await searchParams;
   const paginationLimit = 15
 
+  // ===API STUFF===
+  // returns a paginated slice of the product list
   const res = await fetch(`${API_URL}/products?_page=${page}&_limit=${paginationLimit}`)
   const data: ProductsResponse = await res.json();
-
-  const allProducts = await fetch(`${API_URL}/products`).then((res) => res.json());
-  const tagSet = getTagSet(allProducts.products);
-  
+  // returns the list of category objects with name, ID etc
   const categories: Category[] = await fetch(`${API_URL}/categories`).then(
     (res) => res.json(),
   );
-  console.log(categories)
+
+  // shadcn dynamic pagination data
+  const currentPage = Number(page); // page destruct'd at line 55 for default
+  const pageRange = getPageRange(currentPage, data.pages);
 
   return (
     <article >
@@ -64,7 +81,7 @@ export default async function ProductPage({
 
 
         <section className="flex flex-row w-full">
-          {/* tagnav */}
+          {/* catnav */}
           <nav className="relative min-w-70">
             <div className="absolute inset-0 overflow-y-auto flex flex-col">
               {categories.map((category) => (
@@ -77,49 +94,37 @@ export default async function ProductPage({
           {/* Shop grid */}
           <section className="flex-col w-full">
             {/* top nav buttons */}
-            <nav className="flex flex-row justify-between pt-4">
-            {data.page > 1 ? (
-              <Link
-                href={`/?page=${data.page - 1}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className: dirtyTailwindButton,
-                })}
-              >
-                Prev
-              </Link>
-            ) : (
-              <Button
-                className={dirtyTailwindButton}
-                variant="outline"
-                disabled
-              >
-                Prev
-              </Button>
-            )}
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={currentPage > 1 ? `?page=${currentPage - 1}` : undefined}
+                    aria-disabled={currentPage <= 1}
+                  />
+                </PaginationItem>
 
-            <p>Page: {data.page}</p>
+                {pageRange.map((p, idx) =>
+                  p === "ellipsis" ? (
+                    <PaginationItem key={`ellipsis-${idx}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={p}>
+                      <PaginationLink href={`?page=${p}`} isActive={p === currentPage}>
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
 
-            {data.page < data.pages ? (
-              <Link
-                href={`/?page=${data.page + 1}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className: dirtyTailwindButton,
-                })}
-              >
-                Next
-              </Link>
-            ) : (
-              <Button
-                className={dirtyTailwindButton}
-                variant="outline"
-                disabled
-              >
-                Next
-              </Button>
-            )}
-          </nav>
+                <PaginationItem>
+                  <PaginationNext
+                    href={currentPage < data.pages ? `?page=${currentPage + 1}` : undefined}
+                    aria-disabled={currentPage >= data.pages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
 
 
             {/* Old ver of grid: */}
@@ -132,49 +137,37 @@ export default async function ProductPage({
             }</div>
 
             {/* Bottom nav buttons, same as line 71 */}
-            <nav className="flex flex-row justify-between pt-4">
-            {data.page > 1 ? (
-              <Link
-                href={`/?page=${data.page - 1}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className: dirtyTailwindButton,
-                })}
-              >
-                Prev
-              </Link>
-            ) : (
-              <Button
-                className={dirtyTailwindButton}
-                variant="outline"
-                disabled
-              >
-                Prev
-              </Button>
-            )}
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={currentPage > 1 ? `?page=${currentPage - 1}` : undefined}
+                    aria-disabled={currentPage <= 1}
+                  />
+                </PaginationItem>
 
-            <p>Page: {data.page}</p>
+                {pageRange.map((p, idx) =>
+                  p === "ellipsis" ? (
+                    <PaginationItem key={`ellipsis-${idx}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={p}>
+                      <PaginationLink href={`?page=${p}`} isActive={p === currentPage}>
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
 
-            {data.page < data.pages ? (
-              <Link
-                href={`/?page=${data.page + 1}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className: dirtyTailwindButton,
-                })}
-              >
-                Next
-              </Link>
-            ) : (
-              <Button
-                className={dirtyTailwindButton}
-                variant="outline"
-                disabled
-              >
-                Next
-              </Button>
-            )}
-          </nav>
+                <PaginationItem>
+                  <PaginationNext
+                    href={currentPage < data.pages ? `?page=${currentPage + 1}` : undefined}
+                    aria-disabled={currentPage >= data.pages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </section>
         </section>
       </div>
