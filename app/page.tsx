@@ -14,6 +14,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { ButtonGroup } from "./components/ui/button-group";
 
 const API_URL = "http://localhost:4000";
 
@@ -44,16 +45,32 @@ function getPageRange(current: number, total: number): (number | "ellipsis")[] {
   return range;
 }
 
+// more claude stuff, scrutinized
+function buildHref(
+  current: Record<string, string | undefined>,
+  overrides: Record<string, string | number | undefined>
+): string {
+  const params = new URLSearchParams();
+  const merged = { ...current, ...overrides };
 
+  for (const [key, value] of Object.entries(merged)) {
+    if (value === undefined || value === "") continue;
+    if (key === "page" && Number(value) === 1) continue; // keep page=1 out of the URL
+    params.set(key, String(value));
+  }
+
+  const qs = params.toString();
+  return qs ? `?${qs}` : "?";
+}
 
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; category?: string }>;
 }) {
-  // pagination call data
-  const { page = "1" } = await searchParams;
-  const paginationLimit = 15
+  // pagination data
+  const { page = "1", category } = await searchParams;
+  const paginationLimit = 15 // tweak here to change page size
 
   // ===API STUFF===
   // returns a paginated slice of the product list
@@ -67,6 +84,8 @@ export default async function ProductPage({
   // shadcn dynamic pagination data
   const currentPage = Number(page); // page destruct'd at line 55 for default
   const pageRange = getPageRange(currentPage, data.pages);
+
+
 
   return (
     <article >
@@ -82,13 +101,19 @@ export default async function ProductPage({
 
         <section className="flex flex-row w-full">
           {/* catnav */}
-          <nav className="relative min-w-70">
-            <div className="absolute inset-0 overflow-y-auto flex flex-col">
-              {categories.map((category) => (
-                <p key={category.id}>{category.name}</p>
-              ))}
-            </div>
-          </nav>
+          <ButtonGroup aria-label="Filter by category">
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                asChild
+                variant={cat.slug === category ? "default" : "outline"}
+              >
+                <Link href={buildHref({ page, category }, { category: cat.slug, page: undefined })}>
+                  {cat.name}
+                </Link>
+              </Button>
+            ))}
+          </ButtonGroup>
           
 
           {/* Shop grid */}
