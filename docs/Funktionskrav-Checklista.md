@@ -1,3 +1,5 @@
+# Funktionskrav från PRD
+
 FR-1: Produktkatalog (Översiktssida)
 * [ ] Systemet ska visa alla tillgängliga produkter i ett responsivt rutnät (grid).
 * [ ] Varje produktkort ska visa minst: bild, produktnamn, pris och kategori.
