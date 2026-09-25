@@ -72,7 +72,7 @@ export default function ProductDetailPage() {
           }
           return null;
       }
-      const cart:Product[] = JSON.parse(decodeURIComponent(getCookieByName("cart") || "[]"));
+      const cart:number[] = JSON.parse(decodeURIComponent(getCookieByName("cart") || "[]"));
       cart.push(product.id);
       updateCart(cart, Date.now());
     }
