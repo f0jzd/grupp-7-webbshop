@@ -1,4 +1,4 @@
-# Funktionskrav från PRD
+# Funktionskrav från PRD:n
 
 FR-1: Produktkatalog (Översiktssida)
 * [ ] Systemet ska visa alla tillgängliga produkter i ett responsivt rutnät (grid).
