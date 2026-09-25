@@ -1,7 +1,7 @@
-* [] FR-1: Produktkatalog (Översiktssida)
-* [x] Systemet ska visa alla tillgängliga produkter i ett responsivt rutnät (grid).
-Varje produktkort ska visa minst: bild, produktnamn, pris och kategori.
-Klick på ett produktkort ska leda direkt till produktens detaljsida.
+* [ ] FR-1: Produktkatalog (Översiktssida)
+* [ ] Systemet ska visa alla tillgängliga produkter i ett responsivt rutnät (grid).
+* [ ] Varje produktkort ska visa minst: bild, produktnamn, pris och kategori.
+* [ ] Klick på ett produktkort ska leda direkt till produktens detaljsida.
 
 FR-2: Dynamisk Detaljsida (/products/[id])
 Systemet ska använda dynamiska rutter i Next.js App Router för att hämta och rendera information för en specifik vara.
