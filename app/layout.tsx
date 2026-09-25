@@ -5,7 +5,6 @@ import "./globals.css";
 import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
-import { Product } from "./types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
