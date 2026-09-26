@@ -13,7 +13,6 @@ import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { updateCart } from '@/actions';
 
 export default function Cart({cart}: {cart: Product[]}){
 
@@ -30,7 +29,8 @@ export default function Cart({cart}: {cart: Product[]}){
   }, []);
 
   useEffect(() => {
-    updateCart(products.map(p => p.id), Date.now());
+    document.cookie = `cart=${JSON.stringify(products.map(p => p.id))}; max-age=604800`;
+    document.dispatchEvent(new CustomEvent("cart-updated"))
   },[products])
 
     return products.length === 0 ? (
@@ -61,8 +61,8 @@ export default function Cart({cart}: {cart: Product[]}){
                     <div className="flex justify-end items-center gap-1 min-md:hidden">
                       <RemoveFromCartButton removeProduct={() => setProducts((products) => {
                         const removeIdLast = products.findLastIndex(v => v.id === item.id);
-                        products.splice(removeIdLast,1);
-                        return [...products];
+                        const filtered = products.filter((_,i) => i !== removeIdLast);
+                        return [...filtered];
 
                       })} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p>{item.count}</p>
@@ -78,8 +78,8 @@ export default function Cart({cart}: {cart: Product[]}){
                     <div className="flex justify-end items-center gap-1">
                       <RemoveFromCartButton removeProduct={() => setProducts((products) => {
                         const removeIdLast = products.findLastIndex(v => v.id === item.id);
-                        products.splice(removeIdLast,1);
-                        return [...products];
+                        const filtered = products.filter((_,i) => i !== removeIdLast)
+                        return [...filtered];
 
                       })} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p className='w-6 text-center'>{item.count}</p>
@@ -114,7 +114,7 @@ function RemoveFromCartButton({count,productTitle, removeProduct}: {removeId: nu
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
-        onClick={async () => {
+        onClick={() => {
           if(count === 1 && !confirm("Would you like to remove " + '"'+ productTitle + '"' + " from your cart?")){
             return;
           }
@@ -129,7 +129,7 @@ function IncreaseCountButton({addProduct}: {addProduct: () => void}) {
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
-        onClick={async () => {
+        onClick={() => {
         addProduct();
     }}>
       +

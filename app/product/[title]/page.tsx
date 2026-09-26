@@ -17,7 +17,6 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import Image from "next/image";
-import { updateCart } from "@/actions";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -61,20 +60,11 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (product !== null) {
       console.log("Add to cart:", product);
-       const getCookieByName = (name:string) => {
-          const cookieString = document.cookie;
-          const cookies = cookieString.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.startsWith(name + '=')) {
-                  return cookie.substring(name.length + 1);
-              }
-          }
-          return null;
-      }
-      const cart:number[] = JSON.parse(decodeURIComponent(getCookieByName("cart") || "[]"));
+      const cartCookie =  document.cookie.split(";").map(v => v.trim()).find(v => v.startsWith("cart="))?.split("cart=")[1]
+      const cart:number[] = JSON.parse(decodeURIComponent(cartCookie || "[]"));
       cart.push(product.id);
-      updateCart(cart, Date.now());
+      document.cookie = `cart=${JSON.stringify(cart)}; max-age=604800`;
+      document.dispatchEvent(new CustomEvent("cart-updated"))
     }
   };
 

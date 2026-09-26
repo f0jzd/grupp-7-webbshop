@@ -80,13 +80,3 @@ export async function addProductAction(formdata: FormData) {
 
   revalidatePath("/");
 }
-
-let cartUpdatedAt = Date.now();
-
-export async function updateCart(cart: number[], updatedAtInMs:number){
-  if(updatedAtInMs > cartUpdatedAt){
-    const cookieStore = await cookies();
-    cookieStore.set("cart", JSON.stringify(cart), {maxAge: 604800});
-    cartUpdatedAt = updatedAtInMs;
-  }
-}
