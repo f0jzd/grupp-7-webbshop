@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { CartContext } from '@/ContextProvider';
 
