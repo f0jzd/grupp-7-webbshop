@@ -1,30 +1,22 @@
-# Funktionskrav från PRD:n
+## 4. Fas 2b: Fördjupningsmoduler (Kundens Önskelista)
 
-FR-1: Produktkatalog (Översiktssida)
-* [ ] Systemet ska visa alla tillgängliga produkter i ett responsivt rutnät (grid).
-* [ ] Varje produktkort ska visa minst: bild, produktnamn, pris och kategori.
-* [ ] Klick på ett produktkort ska leda direkt till produktens detaljsida.
+För att särskilja ert erbjudande och skapa extra affärsvärde har kunden listat ett antal prioriterade fördjupningsområden. Varje team väljer fritt moduler utifrån sin kompetensprofil, sina ambitioner och intressen.
 
-FR-2: Dynamisk Detaljsida (/products/[id])
-* [ ] Systemet ska använda dynamiska rutter i Next.js App Router för att hämta och rendera information för en specifik vara.
-* [ ] Sidan ska visa utförlig information: titel, högupplöst bild, beskrivning, pris, kategori och lagerstatus/köpknapp.
-* [ ] Felhantering: Om en produkt inte finns ska en användarvänlig 404/not-found-vy visas.
+> 💡 **Riktlinje för teamet:**  
+> Prioritera alltid **kvalitet och förståelse framför kvantitet**. En väl genomarbetad modul som alla i teamet förstår och kan förklara under redovisningen slår tre halvfärdiga moduler.
 
-FR-3: Sök & Filtrering via URL State (searchParams)
-* [ ] Användaren ska kunna söka på produktnamn samt filtrera på kategorier.
-* [ ] Tillståndet för sök och filter måste lagras i URL:en med hjälp av searchParams (så att filtrerade sökningar kan bokmärkas och delas).
-* [ ] Data ska hämtas/filtreras sömlöst på servern baserat på aktuella parametrar.
+| Modul | Svårighetsgrad | Inriktning & Rekommendation |
+| :--- | :---: | :--- |
+| **📦 Persistent Varukorg** | 🟢 Lätt / Medel | Spara varukorgens innehåll mellan sidladdningar och sessioner.<br>*(Rekommenderat: **Zustand med persist-middleware** eller Cookies. Mycket tacksamt då det sker helt i kodbasen utan externa API-konton).* |
+| **🎨 Designsystem & UI** | 🟢 Lätt / Medel | Bygg ett enhetligt, tillgängligt och proffsigt gränssnitt.<br>*(Rekommenderat: **Shadcn/ui + Tailwind CSS**. Undvik att bygga all CSS från scratch för att spara tid).* |
+| **📨 Transaktionell E-post** | 🟢 Lätt / Medel | Fungerande kontaktformulär eller orderbekräftelse via Next.js Server Actions.<br>*(Rekommenderat: **Resend**. Extremt smidigt i Next.js och kräver inga krångliga SMTP-inställningar).* |
+| **🔐 Autentisering** | 🟡 Medel | Kundinloggning och skyddade rutter (*Mina sidor*, orderhistorik, favoriter).<br>*(Rekommenderat: **NextAuth**, **Kinde**, **BetterAuth** eller **Clerk** för snabbast och säkrast integration med Next.js App Router).* |
+| **💳 Betallösning** | 🟡 Medel | Simulera ett riktigt köpflöde i testläge.<br>*(Rekommenderat: **Stripe Hosted Checkout**. Kunden omdirigeras till Stripes säkra sida och tillbaka, vilket minimerar komplexitet).* |
+| **☁️ Databasmigration** | 🟡 Medel | Ersätt Fas 1:s JSON-server med en riktig molndatabas och ett modernt ORM.<br>*(Rekommenderat: **Supabase** eller **Neon PostgreSQL** kopplat med **Prisma** eller **Drizzle**).* |
+| **🌍 Cloud Deployment** | 🟡 Medel | Publik driftsättning i produktionsmiljö.<br>*(Rekommenderat: **Vercel**. **Obs:** Kräver att er datakälla finns online och inte på `localhost:3001`!)* |
+| **〽️ Prestandaoptimering** | 🔴 Avancerad | Avancerad strömning, skelettladdare och optimistiska gränssnittsuppdateringar.<br>*(Rekommenderat: **Suspense-boundaries**, `useOptimistic` och Server Actions).* |
+| **⚙️ Automatiserad Testning** | 🔴 Avancerad | E2E-testning av affärskritiska flöden (sök vara → öppna detaljsida → lägg i korg).<br>*(Rekommenderat: **Playwright**).* |
 
-FR-4: Paginering
-* [ ] Om katalogen innehåller fler varor än vad som ryms på en sida ska paginering finnas.
-* [ ] Pagineringen ska styras via URL (?page=X) och möjliggöra bläddring framåt, bakåt och direktval av sida.
-
-FR-5: Varukorg (Översiktsvy)
-* [x] En dedikerad vy/sida för varukorgen som visar hur en sammanställning av ordervärde, produkter, antal och totalbelopp ser ut.
-* [x] Basnivå: En statisk vy med exempelprodukter som demonstrerar kassan och layouten.
-(Tips: Full dynamisk/persistent varukorg kan väljas som fördjupningsmodul).
-
-Icke-funktionella krav (NFR)
-* [ ] Prestanda & Bildoptimering: Använd Next.js inbyggda <Image />-komponent för optimerade bildstorlekar.
-* [ ] Tillgänglighet & SEO: Semantisk HTML (<header>, <main>, <article>, <nav>), tydliga rubriknivåer (h1-h3) samt unika metadata-titlar per sida.
-* [ ] Dokumentation: Repot ska ha en professionell och välstrukturerad README.md med installationsanvisningar, beskrivning av arkitektur och skärmdumpar.
+> ⚠️ **Arkitekturtips inför val av moduler:**  
+> * **Säkra kort utan externa konton:** Om ni känner er osäkra eller vill minimera beroenden, välj **Persistent Varukorg (Zustand)** och **Designsystem (Shadcn/ui)**.  
+> * **Deployment-fällan:** Om ni vill driftsätta på Vercel måste datan antingen migreras till en molndatabas (t.ex. Supabase) eller serveras via ett publikt API. Vercel kan inte prata med er lokala `json-server`.
