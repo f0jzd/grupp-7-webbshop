@@ -18,11 +18,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { CartContext } from "@/ContextProvider";
 
 export default function ProductDetailPage() {
   const params = useParams<{ title: string }>();
   const productTitle = decodeURIComponent(params.title);
+  const {setCart} = useContext(CartContext);
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,8 +65,7 @@ export default function ProductDetailPage() {
       const cartCookie =  document.cookie.split(";").map(v => v.trim()).find(v => v.startsWith("cart="))?.split("cart=")[1]
       const cart:number[] = JSON.parse(decodeURIComponent(cartCookie || "[]"));
       cart.push(product.id);
-      document.cookie = `cart=${JSON.stringify(cart)}; max-age=604800`;
-      document.dispatchEvent(new CustomEvent("cart-updated"))
+      setCart(cart => ([...cart,product]));
     }
   };
 

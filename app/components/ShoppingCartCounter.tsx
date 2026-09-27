@@ -1,16 +1,9 @@
 "use client"
-import { Product } from '@/types';
-import { useEffect, useState } from 'react';
+import { CartContext } from '@/ContextProvider';
+import { useContext} from 'react';
 
-export default function ShoppingCartCounter({cart: initialCart}: {cart:Product[]}){
-    const [cart, setCart] = useState(initialCart.map(v => v.id))
-    useEffect(() => {
-        document.addEventListener("cart-updated", () => {
-            const cartCookie =  document.cookie.split(";").map(v => v.trim()).find(v => v.startsWith("cart="))!.split("cart=")[1]
-            const cart:number[] = JSON.parse(decodeURIComponent(cartCookie));
-            setCart(cart)
-        })
-    },[])
+export default function ShoppingCartCounter(){
+    const {cart} = useContext(CartContext);
     return <div className='flex items-center gap-1 cursor-pointer w-min'>
         <svg xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 24 24" width="24" height="24"

@@ -5,6 +5,7 @@ import "./globals.css";
 import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
+import { ContextProvider } from './ContextProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,18 +53,20 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
         <body className="min-h-full flex flex-col">
-            {shouldShowHeader?
-              <header className="border border-b-2 border-b-green-300 p-2">
-                  <nav className="w-full flex justify-between">
-                    <a href="/">Products</a>
-                    <a href="/cart"><ShoppingCartCounter cart={products}/></a>
-                  </nav>
-              </header> :
-               null
-            }
-            <main className="m-2 mt-6 mb-6">
-                {children} 
-            </main>
+          <ContextProvider cart={products}>
+              {shouldShowHeader?
+                <header className="border border-b-2 border-b-green-300 p-2">
+                    <nav className="w-full flex justify-between">
+                      <a href="/">Products</a>
+                      <a href="/cart"><ShoppingCartCounter/></a>
+                    </nav>
+                </header> :
+                null
+              }
+              <main className="m-2 mt-6 mb-6">
+                  {children} 
+              </main>
+            </ContextProvider>
         </body>
     </html>
   );

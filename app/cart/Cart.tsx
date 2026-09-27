@@ -11,12 +11,12 @@ import {
 } from "@/components/ui/table"
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { CartContext } from '@/ContextProvider';
 
-export default function Cart({cart}: {cart: Product[]}){
-
-    const [products, setProducts] = useState(cart)
+export default function Cart(){
+    const {cart: products, setCart: setProducts} = useContext(CartContext);
 
     const cartWithCount = products.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
@@ -27,11 +27,6 @@ export default function Cart({cart}: {cart: Product[]}){
     }
     return arr;
   }, []);
-
-  useEffect(() => {
-    document.cookie = `cart=${JSON.stringify(products.map(p => p.id))}; max-age=604800`;
-    document.dispatchEvent(new CustomEvent("cart-updated"))
-  },[products])
 
     return products.length === 0 ? (
         <p>Cart empty</p>
