@@ -12,8 +12,6 @@
 | **💳 Betallösning** | 🟡 Medel | Simulera ett riktigt köpflöde i testläge.<br>*(Rekommenderat: **Stripe Hosted Checkout**. Kunden omdirigeras till Stripes säkra sida och tillbaka, vilket minimerar komplexitet).* |
 | **☁️ Databasmigration** | 🟡 Medel | Ersätt Fas 1:s JSON-server med en riktig molndatabas och ett modernt ORM.<br>*(Rekommenderat: **Supabase** eller **Neon PostgreSQL** kopplat med **Prisma** eller **Drizzle**).* |
 | **🌍 Cloud Deployment** | 🟡 Medel | Publik driftsättning i produktionsmiljö.<br>*(Rekommenderat: **Vercel**. **Obs:** Kräver att er datakälla finns online och inte på `localhost:3001`!)* |
-| **〽️ Prestandaoptimering** | 🔴 Avancerad | Avancerad strömning, skelettladdare och optimistiska gränssnittsuppdateringar.<br>*(Rekommenderat: **Suspense-boundaries**, `useOptimistic` och Server Actions).* |
-| **⚙️ Automatiserad Testning** | 🔴 Avancerad | E2E-testning av affärskritiska flöden (sök vara → öppna detaljsida → lägg i korg).<br>*(Rekommenderat: **Playwright**).* |
 
 > ⚠️ **Arkitekturtips inför val av moduler:**  
 > * **Säkra kort utan externa konton:** Om ni känner er osäkra eller vill minimera beroenden, välj **Persistent Varukorg (Zustand)** och **Designsystem (Shadcn/ui)**.  
