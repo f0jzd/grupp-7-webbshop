@@ -1,7 +1,5 @@
 # Fördjupningsmoduler (Kundens Önskelista)
 
-För att särskilja ert erbjudande och skapa extra affärsvärde har kunden listat ett antal prioriterade fördjupningsområden. Varje team väljer fritt moduler utifrån sin kompetensprofil, sina ambitioner och intressen.
-
 > 💡 **Riktlinje för teamet:**  
 > Prioritera alltid **kvalitet och förståelse framför kvantitet**. En väl genomarbetad modul som alla i teamet förstår och kan förklara under redovisningen slår tre halvfärdiga moduler.
 
