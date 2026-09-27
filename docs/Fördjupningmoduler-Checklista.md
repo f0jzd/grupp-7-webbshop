@@ -1,4 +1,4 @@
-## 4. Fas 2b: Fördjupningsmoduler (Kundens Önskelista)
+Fördjupningsmoduler (Kundens Önskelista)
 
 För att särskilja ert erbjudande och skapa extra affärsvärde har kunden listat ett antal prioriterade fördjupningsområden. Varje team väljer fritt moduler utifrån sin kompetensprofil, sina ambitioner och intressen.
 
