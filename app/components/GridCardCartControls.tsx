@@ -4,7 +4,7 @@ import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addProductToCart, removeItemFromCart } from "@/actions";
 import { Product } from "@/types";
-import { useRouter } from "next/navigation";
+import { useOptimistic, startTransition } from "react";
 
 interface GridCardCartControlsProps {
   product: Product;
@@ -15,18 +15,33 @@ export function GridCardCartControls({
   product,
   count,
 }: GridCardCartControlsProps) {
-  const router = useRouter();
+  const [optimisticCount, updateOptimisticCount] = useOptimistic(
+    count,
+    (current, delta: number) => current + delta
+  );
 
-  if (count === 0) {
+  function handleAdd(e: React.MouseEvent) {
+    e.preventDefault();
+    startTransition(async () => {
+      updateOptimisticCount(1);
+      await addProductToCart(product);
+    });
+  }
+
+  function handleRemove(e: React.MouseEvent) {
+    e.preventDefault();
+    startTransition(async () => {
+      updateOptimisticCount(-1);
+      await removeItemFromCart(product.id);
+    });
+  }
+
+  if (optimisticCount === 0) {
     return (
       <Button
         size="sm"
         className="w-full gap-2"
-        onClick={async (e) => {
-          e.preventDefault();
-          await addProductToCart(product);
-          router.refresh();
-        }}
+        onClick={handleAdd}
       >
         <ShoppingBag className="h-4 w-4" />
         Add to Cart
@@ -43,24 +58,16 @@ export function GridCardCartControls({
         size="sm"
         variant="outline"
         className="h-8 w-8 p-0 cursor-pointer"
-        onClick={async (e) => {
-          e.preventDefault();
-          await removeItemFromCart(product.id);
-          router.refresh();
-        }}
+        onClick={handleRemove}
       >
         –
       </Button>
-      <span className="font-semibold tabular-nums">{count}</span>
+      <span className="font-semibold tabular-nums">{optimisticCount}</span>
       <Button
         size="sm"
         variant="outline"
         className="h-8 w-8 p-0 cursor-pointer"
-        onClick={async (e) => {
-          e.preventDefault();
-          await addProductToCart(product);
-          router.refresh();
-        }}
+        onClick={handleAdd}
       >
         +
       </Button>
