@@ -179,7 +179,7 @@ export default async function ProductDetailPage({
 
           <TabsContent
             value="description"
-            className="mt-6 min-h-[180px] text-muted-foreground leading-relaxed"
+            className="mt-6 min-h-45 text-muted-foreground leading-relaxed"
           >
             {product.description}
           </TabsContent>
