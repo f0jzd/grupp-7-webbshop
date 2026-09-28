@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Product } from "./types";
 import { CartContext } from "./CartContext";
-import { useRouter } from "next/navigation";
 
 export function ContextProvider({ children, cart:initialCart }: {children: React.ReactNode, cart: Product[]}) {
   const [cart, setCart] = useState(initialCart);
