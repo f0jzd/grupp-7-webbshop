@@ -1,5 +1,6 @@
 // stock nextjs
 import Link from "next/link";
+import Form from "next/form";
 // custom/inhouse
 import type { Category, Product } from "./types";
 import GridCard from "./components/ProductGridCard";
@@ -16,6 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Input } from "./components/ui/input";
 
 
 const API_URL = "http://localhost:4000";
@@ -70,22 +72,31 @@ function buildHref(
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string }>;
+  searchParams: Promise<{ page?: string; category?: string; q?: string }>;
 }) {
   // pagination data
-  const { page = "1", category } = await searchParams;
+  const { page = "1", category, q} = await searchParams;
   const paginationLimit = 15 // tweak here to change page size
 
-  // ===API STUFF===
-  // returns the list of category objects with name, ID etc, then parses it to json
-  const data: ProductsResponse = await fetch(
-    `${API_URL}/products?_page=${page}&_limit=${paginationLimit}`
-  ).then(res => res.json());   
-
-  // returns the list of categories
+  // returns the list of categories for the catnav panel
   const categories: Category[] = await fetch(
     `${API_URL}/categories`
   ).then((res) => res.json());
+  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
+  const selectedCategory = categories.find((c) => c.slug === category); 
+  
+  const query = new URLSearchParams({
+    _page: page,
+    _limit: String(paginationLimit),
+  });
+  if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
+  if (q) query.set("title_like", q); // or "search" if you add the middleware block
+
+    const data: ProductsResponse = await fetch(
+    `${API_URL}/products?${query}`
+  ).then((res) => res.json());
+
+
 
   // shadcn dynamic pagination data
   const currentPage = Number(page); // page destruct'd at line 55 for default
@@ -97,17 +108,20 @@ export default async function ProductPage({
     <article>
       <div className="flex flex-col items-center">
         {/* Search */}
-        <section className="flex flex-row items-center w-full pb-4">
-          <input
-            defaultValue="Search field, style later"
-            className="
-          border bg-gray-100 selection:border focus:border-blue-500 focus:outline-0
-          rounded-l-sm h-12 w-full text-center"
-          ></input>
-          <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">
-            Search
-          </Button>
-        </section>
+        <Form action="/" role="search" className="w-full pb-4">
+          {category && <input type="hidden" name="category" value={category} />}
+          <ButtonGroup className="w-full">
+            <Input
+              key={q}
+              name="q"
+              type="search"
+              defaultValue={q}
+              placeholder="Search products…"
+              aria-label="Search products"
+            />
+            <Button type="submit">Search</Button>
+          </ButtonGroup>
+        </Form>
 
 
         <section className="flex flex-row w-full">
