@@ -2,9 +2,9 @@
 
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { addProductToCart, removeItemFromCart } from "@/actions";
 import { Product } from "@/types";
-import { useOptimistic, startTransition } from "react";
+import {useContext, useState } from "react";
+import { CartContext } from "@/CartContext";
 
 interface GridCardCartControlsProps {
   product: Product;
@@ -13,30 +13,32 @@ interface GridCardCartControlsProps {
 
 export function GridCardCartControls({
   product,
-  count,
+  count:initialCount,
 }: GridCardCartControlsProps) {
-  const [optimisticCount, updateOptimisticCount] = useOptimistic(
-    count,
-    (current, delta: number) => current + delta
-  );
+  const [count, setCount] = useState(initialCount);
+  const {setCart} = useContext(CartContext);
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
-    startTransition(async () => {
-      updateOptimisticCount(1);
-      await addProductToCart(product);
-    });
+    setCart((cart) => [...cart, {...product}]);
+    setCount(c => c+1)
   }
 
   function handleRemove(e: React.MouseEvent) {
     e.preventDefault();
-    startTransition(async () => {
-      updateOptimisticCount(-1);
-      await removeItemFromCart(product.id);
+    if(count === 1 && !confirm("Would you like to remove " + '"'+ product.title + '"' + " from your cart?")){
+        return;
+    }
+
+    setCart((cart) => {
+      const productIndex = cart.findLastIndex(p => p.id  === product.id);
+      const filtered = cart.filter((_,i) => i !== productIndex);
+      return [...filtered]
     });
+    setCount(c => c-1)
   }
 
-  if (optimisticCount === 0) {
+  if (count === 0) {
     return (
       <Button
         size="sm"
@@ -61,7 +63,7 @@ export function GridCardCartControls({
       >
         –
       </Button>
-      <span className="font-semibold tabular-nums">{optimisticCount}</span>
+      <span className="font-semibold tabular-nums">{count}</span>
       <Button
         size="icon-sm"
         variant="outline"

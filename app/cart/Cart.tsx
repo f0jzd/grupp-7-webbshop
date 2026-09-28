@@ -28,6 +28,14 @@ export default function Cart(){
     return arr;
   }, []);
 
+  const removeProduct = (item:Product) => () => setProducts((products) => {
+    const removeIdLast = products.findLastIndex(v => v.id === item.id);
+    const filtered = products.filter((_,i) => i !== removeIdLast);
+    return [...filtered];
+  })
+
+  const addProduct = (item:Product) => () => setProducts((products) => ([...products, {...item}]))
+
     return products.length === 0 ? (
         <p>Cart empty</p>
       ) : (
@@ -54,16 +62,9 @@ export default function Cart(){
                     </div>
                     {/* Price for small screens */}
                     <div className="flex justify-end items-center gap-1 min-md:hidden">
-                      <RemoveFromCartButton removeProduct={() => setProducts((products) => {
-                        const removeIdLast = products.findLastIndex(v => v.id === item.id);
-                        const filtered = products.filter((_,i) => i !== removeIdLast);
-                        return [...filtered];
-
-                      })} productTitle={item.title} count={item.count} removeId={item.id} />
+                      <RemoveFromCartButton removeProduct={removeProduct(item)} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p>{item.count}</p>
-                      <IncreaseCountButton addProduct={() => {
-                        setProducts((products) => ([...products, {...item}]))
-                      }}/>
+                      <IncreaseCountButton addProduct={addProduct(item)}/>
                       <p className="ml-4">{Number(item.price * item.count).toFixed(2)}$</p>
                     </div>
 
@@ -71,16 +72,9 @@ export default function Cart(){
                   {/* Price for large screens */}
                   <TableCell className="h-12 text-right pt-2 max-md:hidden">
                     <div className="flex justify-end items-center gap-1">
-                      <RemoveFromCartButton removeProduct={() => setProducts((products) => {
-                        const removeIdLast = products.findLastIndex(v => v.id === item.id);
-                        const filtered = products.filter((_,i) => i !== removeIdLast)
-                        return [...filtered];
-
-                      })} productTitle={item.title} count={item.count} removeId={item.id} />
+                      <RemoveFromCartButton removeProduct={removeProduct(item)} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p className='w-6 text-center'>{item.count}</p>
-                      <IncreaseCountButton addProduct={() => {
-                        setProducts((products) => ([...products, {...item}]))
-                      }}/>
+                      <IncreaseCountButton addProduct={addProduct(item)}/>
                       <div className="ml-4 w-20 text-right">{Number(item.price * item.count).toFixed(2)}$</div>
                     </div>
                   </TableCell>
