@@ -8,7 +8,7 @@ FR-1: Produktkatalog (Översiktssida)
 FR-2: Dynamisk Detaljsida (/products/[id])
 * [x] Systemet ska använda dynamiska rutter i Next.js App Router för att hämta och rendera information för en specifik vara.
 * [x] Sidan ska visa utförlig information: titel, högupplöst bild, beskrivning, pris, kategori och lagerstatus/köpknapp.
-* [ ] Felhantering: Om en produkt inte finns ska en användarvänlig 404/not-found-vy visas.
+* [x] Felhantering: Om en produkt inte finns ska en användarvänlig 404/not-found-vy visas.
 
 FR-3: Sök & Filtrering via URL State (searchParams)
 * [ ] Användaren ska kunna söka på produktnamn samt filtrera på kategorier.
