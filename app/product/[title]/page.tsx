@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { Category } from "@/types";
 
 const API_URL = "http://localhost:4000";
 
@@ -42,6 +43,12 @@ function calculateAverageRating(product: Product) {
   return totalRating / reviews.length;
 }
 
+async function getCategory(id: number | string): Promise<Category | null> {
+  const res = await fetch(`${API_URL}/categories/${id}`, { cache: "no-store" }); //
+  if (!res.ok) return null; // json-server answers 404 for an unknown id
+  return res.json();
+}
+
 export default async function ProductDetailPage({
   params,
 }: {
@@ -56,6 +63,7 @@ export default async function ProductDetailPage({
   }
 
   const averageRating = calculateAverageRating(product);
+  const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -67,7 +75,7 @@ export default async function ProductDetailPage({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/shoes">Shoes</BreadcrumbLink>
+            <BreadcrumbLink href={category ? `/?category=${category.slug}` : "/"}>{category?.name}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
