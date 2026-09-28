@@ -84,7 +84,7 @@ export default async function ProductDetailPage({
             <Image
               src={product.images[0] || product.thumbnail}
               fill
-              alt="Product image"
+              alt={`${product.title}${product.brand ? ` by ${product.brand}` : ""}`}
               className="h-full w-full object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
@@ -179,7 +179,7 @@ export default async function ProductDetailPage({
 
           <TabsContent
             value="description"
-            className="mt-6 min-h-[180px] text-muted-foreground leading-relaxed"
+            className="mt-6 min-h-45 text-muted-foreground leading-relaxed"
           >
             {product.description}
           </TabsContent>
