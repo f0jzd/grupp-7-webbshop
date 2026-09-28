@@ -53,7 +53,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
         <body className="min-h-full flex flex-col">
-          <ContextProvider cart={products} key={JSON.stringify(cartIds)}>
+          <ContextProvider cart={products}>
             {shouldShowHeader?
               <header className="border border-b-2 border-b-green-300 p-2">
                   <nav className="w-full flex justify-between">
