@@ -1,6 +1,4 @@
-"use client";
-
-import { ShoppingBag, Star, Truck, ShieldCheck } from "lucide-react";
+import { Star, ShieldCheck } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -11,80 +9,53 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import Image from "next/image";
-import { addProductToCart } from "@/actions";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { AddToCartButton } from "@/components/AddToCartButton";
 
-export default function ProductDetailPage() {
-  const params = useParams<{ title: string }>();
-  const productTitle = decodeURIComponent(params.title);
+const API_URL = "http://localhost:4000";
 
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const API_URL = "http://localhost:4000";
+async function getProduct(title: string): Promise<Product | null> {
+  const response = await fetch(
+    `${API_URL}/products?title=${encodeURIComponent(title)}`,
+    { cache: "no-store" },
+  );
+  if (!response.ok) return null;
+  const data = await response.json();
 
-  useEffect(() => {
-    let ignore = false;
-    const loadProduct = async () => {
-      setLoading(true);
-      try {
-        // 2. Query json-server by title
-        const response = await fetch(
-          `${API_URL}/products?title=${encodeURIComponent(productTitle)}`,
-        );
-        const data = await response.json();
+  return data.products?.[0] ?? null;
+}
 
-        // Middleware wraps array responses in { products: [...] }
-        const foundProduct = Array.isArray(data) ? data[0] : data.products?.[0];
+function calculateAverageRating(product: Product) {
+  const reviews = product?.reviews ?? [];
 
-        if (!ignore) setProduct(foundProduct || null);
-      } catch (error) {
-        console.error("Failed to load product:", error);
-        if (!ignore) setProduct(null);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
+  if (reviews.length === 0) return 0;
 
-    loadProduct();
-    return () => {
-      ignore = true;
-    };
-  }, [productTitle]);
+  const totalRating = reviews.reduce(
+    (total, review) => total + review.rating,
+    0,
+  );
 
-  const handleAddToCart = () => {
-    if (product !== null) {
-      console.log("Add to cart:", product);
-      addProductToCart(product);
-    }
-  };
+  return totalRating / reviews.length;
+}
 
-  if (loading) {
-    return <div className="p-8 text-center">Loading product...</div>;
-  }
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}) {
+  const { title } = await params;
+  const productTitle = decodeURIComponent(title);
+  const product = await getProduct(productTitle);
 
   if (!product) {
     return <div className="p-8 text-center">Product not found.</div>;
   }
 
-  function calculateAverageRating() {
-    const reviews = product?.reviews ?? [];
-
-    if (reviews.length === 0) return 0;
-
-    const totalRating = reviews.reduce(
-      (total, review) => total + review.rating,
-      0,
-    );
-
-    return totalRating / reviews.length;
-  }
+  const averageRating = calculateAverageRating(product);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -134,13 +105,12 @@ export default function ProductDetailPage() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${i < Math.round(calculateAverageRating()) ? "fill-amber-500" : "text-muted"}`}
+                    className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
                   />
                 ))}
               </div>
               <span className="text-sm text-muted-foreground font-medium">
-                {calculateAverageRating().toFixed(1)} (
-                {product.reviews?.length ?? 0})
+                {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
               </span>
             </div>
 
@@ -167,14 +137,7 @@ export default function ProductDetailPage() {
 
           {/* Action CTAs */}
           <div className="flex gap-3 pt-2">
-            <Button
-              size="lg"
-              className="flex-1 gap-2 text-base"
-              onClick={handleAddToCart}
-            >
-              <ShoppingBag className="h-5 w-5" />
-              Add to Cart
-            </Button>
+            <AddToCartButton product={product} />
           </div>
 
           {/* Value Props & Shipping */}
