@@ -25,8 +25,8 @@ async function getProduct(title: string): Promise<Product | null> {
   );
   if (!response.ok) return null;
   const data = await response.json();
-  const found = Array.isArray(data) ? data[0] : data.products?.[0];
-  return found ?? null;
+
+  return data.products?.[0] ?? null;
 }
 
 function calculateAverageRating(product: Product) {
