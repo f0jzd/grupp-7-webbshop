@@ -6,7 +6,6 @@ import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
 import { ContextProvider } from './ContextProvider';
-import RefreshData from "./RefreshData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,7 +67,6 @@ export default async function RootLayout({
                 {children} 
             </main>
             </ContextProvider>
-            <RefreshData/>
         </body>
     </html>
   );
