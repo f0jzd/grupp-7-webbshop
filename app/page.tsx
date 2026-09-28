@@ -1,7 +1,24 @@
+// stock nextjs
+import Link from "next/link";
+import Form from "next/form";
+// custom/inhouse
 import type { Category, Product } from "./types";
 import GridCard from "./components/ProductGridCard";
+// shadcn
+import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
-import Link from "next/link";
+import { ButtonGroup } from "./components/ui/button-group";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { Input } from "./components/ui/input";
+
 
 const API_URL = "http://localhost:4000";
 
@@ -13,163 +30,225 @@ interface ProductsResponse {
   pages: number;
 }
 
-const dirtyTailwindButton = "bg-gray-500 text-white h-12 w-22";
+// claude helped dynamically create the hardcoded shadcn pagination component
+// this is just 
+function getPageRange(current: number, total: number): (number | "ellipsis")[] {
+  const delta = 2; // how many neighbors to show around current
+  const range: (number | "ellipsis")[] = [];
 
-function getTagSet(products: Product[]): string[] {
-  return [
-    ...new Set(
-      products.flatMap((product) =>
-        (product.tags ?? []).map((tag) => tag.trim().toLowerCase()),
-      ),
-    ),
-  ].sort((a, b) => a.localeCompare(b));
+  for (let i = 1; i <= total; i++) {
+    const isEdge = i === 1 || i === total;
+    const isNearCurrent = Math.abs(i - current) <= delta;
+
+    if (isEdge || isNearCurrent) {
+      range.push(i);
+    } else if (range[range.length - 1] !== "ellipsis") {
+      range.push("ellipsis");
+    }
+  }
+
+  return range;
+}
+
+// This one is a bit chunky:
+// basically this is a url state handler that takes originalState and overrides it with newState
+function buildHref(
+  originalState: Record<string, string | undefined>,
+  newState: Record<string, string | number | undefined>
+): string {
+  const params = new URLSearchParams();
+  const merged = { ...originalState, ...newState };
+
+  for (const [key, value] of Object.entries(merged)) {
+    if (value === undefined || value === "") continue;
+    if (key === "page" && Number(value) === 1) continue; // keep page=1 out of the URL
+    params.set(key, String(value));
+  }
+
+  const qs = params.toString();
+  return qs ? `?${qs}` : "?"; // i hate manual string building
 }
 
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; category?: string; q?: string }>;
 }) {
-  // pagination call data
-  const { page = "1" } = await searchParams;
-  const paginationLimit = 15;
+  // pagination data
+  const { page = "1", category, q} = await searchParams;
+  const paginationLimit = 15 // tweak here to change page size
+  const state = { page, category, q }; // current search state, built from search params
 
-  const [res, categories]: [Response, Category[]] = await Promise.all([
-    fetch(`${API_URL}/products?_page=${page}&_limit=${paginationLimit}`),
-    fetch(`${API_URL}/categories`).then((r) => r.json()),
-  ]);
-  const data: ProductsResponse = await res.json();
+  // returns the list of categories for the catnav panel
+  const categories: Category[] = await fetch(
+    `${API_URL}/categories`
+  ).then((res) => res.json());
+  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
+  const selectedCategory = categories.find((c) => c.slug === category); 
+  
+  const query = new URLSearchParams({
+    _page: page,
+    _limit: String(paginationLimit),
+  });
+  if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
+  if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
-  const categoryMap = new Map(
-    categories.map((category) => [category.id, category]),
-  );
-  const products = data.products.map((product) => ({
-    ...product,
-    category: categoryMap.get(product.categoryId),
-  }));
+    const data: ProductsResponse = await fetch(
+    `${API_URL}/products?${query}`
+  ).then((res) => res.json());
 
-  const allProducts = await fetch(`${API_URL}/products`).then((res) =>
-    res.json(),
-  );
-  const tagSet = getTagSet(allProducts.products);
+
+
+  // shadcn dynamic pagination data
+  const currentPage = Number(page); // page destruct'd at line 55 for default
+  const pageRange = getPageRange(currentPage, data.pages);
+
+
 
   return (
     <article>
       <div className="flex flex-col items-center">
         {/* Search */}
-        <section className="flex flex-row items-center w-full pb-4">
-          <input
-            defaultValue="Search field, style later"
-            className="
-          border bg-gray-100 selection:border focus:border-blue-500 focus:outline-0
-          rounded-l-sm h-12 w-full text-center"
-          ></input>
-          <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">
-            Search
-          </Button>
-        </section>
+        <Form action="/" role="search" className="w-full pb-4">
+          {category && <input type="hidden" name="category" value={category} />}
+          <ButtonGroup className="w-full">
+            <Input
+              key={q}
+              name="q"
+              type="search"
+              defaultValue={q}
+              placeholder="Search products…"
+              aria-label="Search products"
+            />
+            <Button type="submit">Search</Button>
+          </ButtonGroup>
+        </Form>
 
-        {/* tagnav */}
+
         <section className="flex flex-row w-full">
-          <nav className="relative min-w-70">
-            <div className="absolute inset-0 overflow-y-auto flex flex-col">
-              {tagSet.map((tag) => (
-                <p key={tag}>{tag}</p>
-              ))}
-            </div>
-          </nav>
+          
+        {/* catnav */}
+        <ButtonGroup orientation="vertical" className="mr-4">
+          <Link
+            scroll={false}
+            href={buildHref({ page, category }, { category: undefined, page: 1 })}
+          >
+            Reset
+          </Link>
+
+          {categories.map((cat) => (
+            <Link
+              scroll={false}
+              key={cat.id}
+              href={buildHref({ page, category }, { category: cat.slug, page: 1 })}
+              className={buttonVariants({ variant: category === cat.slug ? "default" : "outline" }) + " justify-start"}
+            >
+              {cat.name}
+            </Link>
+          ))}
+        </ButtonGroup>
+          
 
           {/* Shop grid */}
           <section className="flex-col w-full">
             {/* top nav buttons */}
-            <nav className="flex flex-row justify-between pb-4">
-              {data.page > 1 ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page - 1}`} />}
-                >
-                  Prev
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  disabled
-                >
-                  Prev
-                </Button>
-              )}
-              <p>Page: {data.page}</p>
-              {data.page < data.pages ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page + 1}`} />}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  disabled
-                >
-                  Next
-                </Button>
-              )}
-            </nav>
+            <Pagination>
+              <PaginationContent>
+
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={
+                      currentPage > 1
+                        ? buildHref({ page, category }, { page: currentPage - 1 })
+                        : undefined
+                    }
+                    aria-disabled={currentPage <= 1}
+                  />
+                </PaginationItem>
+
+                {pageRange.map((p, idx) =>
+                  p === "ellipsis" ? (
+                    <PaginationItem key={`ellipsis-${idx}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={p}>
+                      <PaginationLink
+                        href={buildHref(state, { page: p })}
+                        isActive={p === currentPage}
+                      >
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href={
+                      currentPage < data.pages
+                        ? buildHref({ page, category }, { page: currentPage + 1 })
+                        : undefined
+                    }
+                    aria-disabled={currentPage >= data.pages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
 
             {/* Old ver of grid: */}
             {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
             <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5  *:w-full">
-              {/* gallery */}
-              {products.map((product: Product) => (
+            {
+              data.products.map((product:Product) => (
                 <GridCard key={product.id} product={product} />
-              ))}
-            </div>
+              ))
+            }</div>
+
             {/* Bottom nav buttons, same as line 71 */}
-            <nav className="flex flex-row justify-between pt-4">
-              {data.page > 1 ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page - 1}`} />}
-                >
-                  Prev
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  disabled
-                >
-                  Prev
-                </Button>
-              )}
-              <p>Page: {data.page}</p>
-              {data.page < data.pages ? (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href={`/?page=${data.page + 1}`} />}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  className={`${dirtyTailwindButton}`}
-                  variant="outline"
-                  disabled
-                >
-                  Next
-                </Button>
-              )}
-            </nav>
+            <Pagination>
+              <PaginationContent>
+
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={
+                      currentPage > 1
+                        ? buildHref({ page, category }, { page: currentPage - 1 })
+                        : undefined
+                    }
+                    aria-disabled={currentPage <= 1}
+                  />
+                </PaginationItem>
+
+                {pageRange.map((p, idx) =>
+                  p === "ellipsis" ? (
+                    <PaginationItem key={`ellipsis-${idx}`}>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  ) : (
+                    <PaginationItem key={p}>
+                      <PaginationLink
+                        href={buildHref(state, { page: p })}
+                        isActive={p === currentPage}
+                      >
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href={
+                      currentPage < data.pages
+                        ? buildHref({ page, category }, { page: currentPage + 1 })
+                        : undefined
+                    }
+                    aria-disabled={currentPage >= data.pages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </section>
         </section>
       </div>
