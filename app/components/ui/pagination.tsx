@@ -58,6 +58,7 @@ function PaginationLink({
       render={
         <Link
           href={href ?? "#"}
+          scroll={false}
           aria-current={isActive ? "page" : undefined}
           data-slot="pagination-link"
           data-active={isActive}

@@ -115,6 +115,7 @@ export default async function ProductPage({
         {/* catnav */}
         <ButtonGroup orientation="vertical" className="mr-4">
           <Link
+            scroll={false}
             href={buildHref({ page, category }, { category: undefined, page: 1 })}
           >
             Reset
@@ -122,6 +123,7 @@ export default async function ProductPage({
 
           {categories.map((cat) => (
             <Link
+              scroll={false}
               key={cat.id}
               href={buildHref({ page, category }, { category: cat.slug, page: 1 })}
               className={buttonVariants({ variant: category === cat.slug ? "default" : "outline" }) + " justify-start"}
