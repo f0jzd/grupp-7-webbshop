@@ -62,10 +62,7 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (product !== null) {
       console.log("Add to cart:", product);
-      const cartCookie =  document.cookie.split(";").map(v => v.trim()).find(v => v.startsWith("cart="))?.split("cart=")[1]
-      const cart:number[] = JSON.parse(decodeURIComponent(cartCookie || "[]"));
-      cart.push(product.id);
-      setCart(cart => ([...cart,product]));
+      setCart(cart => ([...cart,({...product})]));
     }
   };
 

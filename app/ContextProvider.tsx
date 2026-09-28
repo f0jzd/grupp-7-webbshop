@@ -8,7 +8,7 @@ export function ContextProvider({ children, cart:initialCart }: {children: React
   const [cart, setCart] = useState(initialCart);
 
   useEffect(() => {
-    document.cookie = `cart=${JSON.stringify(cart.map(p => p.id))}; max-age=604800`;
+    cookieStore.set({maxAge: 604800, name:"cart", value: JSON.stringify(cart.map(p => p.id))} as any)
   }, [cart])
 
   return (
