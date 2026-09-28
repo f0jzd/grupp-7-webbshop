@@ -13,7 +13,7 @@ import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
 import { useContext } from 'react';
 import { Button } from '@/components/ui/button';
-import { CartContext } from '@/ContextProvider';
+import { CartContext } from '@/CartContext';
 
 export default function Cart(){
     const {cart: products, setCart: setProducts} = useContext(CartContext);

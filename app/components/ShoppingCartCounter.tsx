@@ -1,5 +1,5 @@
 "use client"
-import { CartContext } from '@/ContextProvider';
+import { CartContext } from '@/CartContext';
 import { useContext} from 'react';
 
 export default function ShoppingCartCounter(){
