@@ -208,7 +208,7 @@ export default async function ProductDetailPage({
           </TabsContent>
 
           {/* Reviews Tab */}
-          <TabsContent value="reviews" className="mt-6 min-h-[180px]">
+          <TabsContent value="reviews" className="mt-6 min-h-45">
             {!product.reviews || product.reviews.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
                 <UserCircle className="h-10 w-10 opacity-30" />
@@ -218,7 +218,7 @@ export default async function ProductDetailPage({
               <div className="flex flex-col gap-6 max-w-2xl">
                 {/* Summary bar */}
                 <div className="flex items-center gap-4 p-4 rounded-xl border bg-muted/40">
-                  <div className="text-center min-w-[60px]">
+                  <div className="text-center min-w-15">
                     <p className="text-4xl font-bold leading-none">
                       {averageRating.toFixed(1)}
                     </p>
@@ -262,7 +262,9 @@ export default async function ProductDetailPage({
                               style={{ width: `${pct}%` }}
                             />
                           </div>
-                          <span className="w-4 text-right shrink-0">{count}</span>
+                          <span className="w-4 text-right shrink-0">
+                            {count}
+                          </span>
                         </div>
                       );
                     })}
@@ -278,10 +280,13 @@ export default async function ProductDetailPage({
                     .toUpperCase()
                     .slice(0, 2);
 
-                  const formattedDate = new Date(review.date).toLocaleDateString(
-                    "en-GB",
-                    { day: "numeric", month: "short", year: "numeric" },
-                  );
+                  const formattedDate = new Date(
+                    review.date,
+                  ).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
 
                   return (
                     <div key={i} className="flex gap-4">
