@@ -16,38 +16,36 @@ interface GridCardProps {
 
 export default function GridCard({ product }: GridCardProps) {
   return (
-    <Link href={`/product/${product.title}`}>
-      <div className="max-w-3xs m-auto">
-        <Card key={product.id} className="h-full">
-          <CardHeader>
-            <CardTitle>{product.title}</CardTitle>
-            <CardDescription>
-              {product.brand ?? "Unknown brand"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="w-full overflow-hidden rounded-t-lg bg-muted">
-              <AspectRatio ratio={1}>
-                {" "}
-                {/* 1 = 1:1 square */}
-                <Image
-                  src={product.thumbnail}
-                  alt="Product name"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </AspectRatio>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {product.category?.name ?? "Uncategorized"}
-            </p>
-          </CardContent>
-          <CardFooter className="mt-auto">
-            <p className="mt-2 font-semibold">€{product.price}</p>
-          </CardFooter>
-        </Card>
-      </div>
+    <Link href={`/product/${product.title}`} className="h-full">
+      <Card key={product.id} className="h-full">
+        <CardHeader>
+          <CardTitle className="line-clamp-1">{product.title}</CardTitle>
+          <CardDescription className="line-clamp-1">
+            {product.brand ?? "Unknown brand"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="w-full overflow-hidden rounded-t-lg bg-muted">
+            <AspectRatio ratio={1}>
+              {" "}
+              {/* 1 = 1:1 square */}
+              <Image
+                src={product.thumbnail}
+                alt="Product name"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </AspectRatio>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {product.category?.name ?? "Uncategorized"}
+          </p>
+        </CardContent>
+        <CardFooter className="mt-auto">
+          <p className="mt-2 font-semibold">€{product.price}</p>
+        </CardFooter>
+      </Card>
     </Link>
   );
 }

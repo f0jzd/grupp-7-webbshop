@@ -1,9 +1,8 @@
 // stock nextjs
 import Link from "next/link";
 // custom/inhouse
-import type { Product } from "./types";
+import type { Category, Product } from "./types";
 import GridCard from "./components/ProductGridCard";
-import { Category } from "./types";
 // shadcn
 import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
@@ -93,14 +92,19 @@ export default async function ProductPage({
 
 
   return (
-    <article >
+    <article>
       <div className="flex flex-col items-center">
         {/* Search */}
         <section className="flex flex-row items-center w-full pb-4">
-          <input defaultValue="Search field, style later" className="
+          <input
+            defaultValue="Search field, style later"
+            className="
           border bg-gray-100 selection:border focus:border-blue-500 focus:outline-0
-          rounded-l-sm h-12 w-full text-center"></input>
-          <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">Search</Button>
+          rounded-l-sm h-12 w-full text-center"
+          ></input>
+          <Button className="h-12 w-30 bg-gray-500 border border-gray-600 rounded-r-sm rounded-l-none">
+            Search
+          </Button>
         </section>
 
 
@@ -172,7 +176,6 @@ export default async function ProductPage({
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-
 
             {/* Old ver of grid: */}
             {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
