@@ -31,7 +31,7 @@ interface ProductsResponse {
 // claude helped dynamically create the hardcoded shadcn pagination component
 // this is just 
 function getPageRange(current: number, total: number): (number | "ellipsis")[] {
-  const delta = 1; // how many neighbors to show around current
+  const delta = 2; // how many neighbors to show around current
   const range: (number | "ellipsis")[] = [];
 
   for (let i = 1; i <= total; i++) {
@@ -77,13 +77,15 @@ export default async function ProductPage({
   const paginationLimit = 15 // tweak here to change page size
 
   // ===API STUFF===
-  // returns a paginated slice of the product list
-  const res = await fetch(`${API_URL}/products?_page=${page}&_limit=${paginationLimit}`)
-  const data: ProductsResponse = await res.json();
-  // returns the list of category objects with name, ID etc
-  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
-    (res) => res.json(),
-  );
+  // returns the list of category objects with name, ID etc, then parses it to json
+  const data: ProductsResponse = await fetch(
+    `${API_URL}/products?_page=${page}&_limit=${paginationLimit}`
+  ).then(res => res.json());   
+
+  // returns the list of categories
+  const categories: Category[] = await fetch(
+    `${API_URL}/categories`
+  ).then((res) => res.json());
 
   // shadcn dynamic pagination data
   const currentPage = Number(page); // page destruct'd at line 55 for default
