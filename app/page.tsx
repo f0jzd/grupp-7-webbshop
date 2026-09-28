@@ -77,6 +77,7 @@ export default async function ProductPage({
   // pagination data
   const { page = "1", category, q} = await searchParams;
   const paginationLimit = 15 // tweak here to change page size
+  const state = { page, category, q }; // current search state, built from search params
 
   // returns the list of categories for the catnav panel
   const categories: Category[] = await fetch(
@@ -173,7 +174,7 @@ export default async function ProductPage({
                   ) : (
                     <PaginationItem key={p}>
                       <PaginationLink
-                        href={buildHref({ page, category }, { page: p })}
+                        href={buildHref(state, { page: p })}
                         isActive={p === currentPage}
                       >
                         {p}
@@ -227,7 +228,7 @@ export default async function ProductPage({
                   ) : (
                     <PaginationItem key={p}>
                       <PaginationLink
-                        href={buildHref({ page, category }, { page: p })}
+                        href={buildHref(state, { page: p })}
                         isActive={p === currentPage}
                       >
                         {p}
