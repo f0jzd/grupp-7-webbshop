@@ -55,18 +55,16 @@ export function GridCardCartControls({
       onClick={(e) => e.preventDefault()}
     >
       <Button
-        size="sm"
+        size="icon-sm"
         variant="outline"
-        className="h-8 w-8 p-0 cursor-pointer"
         onClick={handleRemove}
       >
         –
       </Button>
       <span className="font-semibold tabular-nums">{optimisticCount}</span>
       <Button
-        size="sm"
+        size="icon-sm"
         variant="outline"
-        className="h-8 w-8 p-0 cursor-pointer"
         onClick={handleAdd}
       >
         +
