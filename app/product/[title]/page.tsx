@@ -1,4 +1,4 @@
-import { Star, ShieldCheck } from "lucide-react";
+import { Star, ShieldCheck, UserCircle } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { Category } from "@/types";
 
 const API_URL = "http://localhost:4000";
 
@@ -42,6 +43,12 @@ function calculateAverageRating(product: Product) {
   return totalRating / reviews.length;
 }
 
+async function getCategory(id: number | string): Promise<Category | null> {
+  const res = await fetch(`${API_URL}/categories/${id}`, { cache: "no-store" }); //
+  if (!res.ok) return null; // json-server answers 404 for an unknown id
+  return res.json();
+}
+
 export default async function ProductDetailPage({
   params,
 }: {
@@ -56,6 +63,7 @@ export default async function ProductDetailPage({
   }
 
   const averageRating = calculateAverageRating(product);
+  const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -67,7 +75,7 @@ export default async function ProductDetailPage({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/shoes">Shoes</BreadcrumbLink>
+            <BreadcrumbLink href={category ? `/?category=${category.slug}` : "/"}>{category?.name}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -84,7 +92,7 @@ export default async function ProductDetailPage({
             <Image
               src={product.images[0] || product.thumbnail}
               fill
-              alt="Product image"
+              alt={`${product.title}${product.brand ? ` by ${product.brand}` : ""}`}
               className="h-full w-full object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
@@ -205,6 +213,133 @@ export default async function ProductDetailPage({
                   </div>,
                 ])}
             </div>
+          </TabsContent>
+
+          {/* Reviews Tab */}
+          <TabsContent value="reviews" className="mt-6 min-h-45">
+            {!product.reviews || product.reviews.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
+                <UserCircle className="h-10 w-10 opacity-30" />
+                <p className="text-sm">No reviews yet for this product.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-6 max-w-2xl">
+                {/* Summary bar */}
+                <div className="flex items-center gap-4 p-4 rounded-xl border bg-muted/40">
+                  <div className="text-center min-w-15">
+                    <p className="text-4xl font-bold leading-none">
+                      {averageRating.toFixed(1)}
+                    </p>
+                    <div className="flex justify-center mt-1 text-amber-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${
+                            i < Math.round(averageRating)
+                              ? "fill-amber-500"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {product.reviews.length}{" "}
+                      {product.reviews.length === 1 ? "review" : "reviews"}
+                    </p>
+                  </div>
+
+                  <Separator orientation="vertical" className="h-14" />
+
+                  {/* Star breakdown bars */}
+                  <div className="flex flex-col gap-1 flex-1 text-xs text-muted-foreground">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const count = product.reviews!.filter(
+                        (r) => r.rating === star,
+                      ).length;
+                      const pct =
+                        product.reviews!.length > 0
+                          ? (count / product.reviews!.length) * 100
+                          : 0;
+                      return (
+                        <div key={star} className="flex items-center gap-2">
+                          <span className="w-3 shrink-0">{star}</span>
+                          <Star className="h-3 w-3 fill-amber-500 text-amber-500 shrink-0" />
+                          <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-amber-400 transition-all"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                          <span className="w-4 text-right shrink-0">
+                            {count}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Individual review cards */}
+                {product.reviews.map((review, i) => {
+                  const initials = review.reviewerName
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2);
+
+                  const formattedDate = new Date(
+                    review.date,
+                  ).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+
+                  return (
+                    <div key={i} className="flex gap-4">
+                      {/* Avatar */}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                        {initials}
+                      </div>
+
+                      <div className="flex flex-col gap-1 flex-1">
+                        <div className="flex items-center justify-between flex-wrap gap-x-2">
+                          <span className="font-medium text-sm">
+                            {review.reviewerName}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {formattedDate}
+                          </span>
+                        </div>
+
+                        {/* Stars */}
+                        <div className="flex text-amber-500">
+                          {[...Array(5)].map((_, s) => (
+                            <Star
+                              key={s}
+                              className={`h-3.5 w-3.5 ${
+                                s < review.rating
+                                  ? "fill-amber-500"
+                                  : "text-muted-foreground"
+                              }`}
+                            />
+                          ))}
+                        </div>
+
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {review.comment}
+                        </p>
+
+                        {i < product.reviews!.length - 1 && (
+                          <Separator className="mt-4" />
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
