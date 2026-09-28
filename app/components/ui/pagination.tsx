@@ -48,7 +48,7 @@ function PaginationLink({
 }: PaginationLinkProps) {
   return (
     <Button
-      variant={isActive ? "outline" : "ghost"}
+      variant={isActive ? "default" : "ghost"}
       size={size}
       className={cn(
         "aria-disabled:pointer-events-none aria-disabled:opacity-50",
