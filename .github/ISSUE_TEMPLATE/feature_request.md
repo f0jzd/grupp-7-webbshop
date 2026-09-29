@@ -1,5 +1,5 @@
 ---
-name: Feature spec template
+name: Feature implementation template
 about: Declares new functionality
 title: 'Feature: [name]'
 labels: ''
