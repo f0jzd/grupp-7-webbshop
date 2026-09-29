@@ -7,13 +7,13 @@ import { useContext } from "react";
 import { CartContext } from '@/CartContext';
 
 export function AddToCartButton({ product }: { product: Product }) {
-  const {setCart} = useContext(CartContext);
+  const {addProductToCart} = useContext(CartContext);
   return (
     <Button
       size="lg"
       className="flex-1 gap-2 text-base"
       onClick={() => {
-        setCart(cart => [...cart, {...product}]);
+        addProductToCart(product);
       }}
     >
       <ShoppingBag className="h-5 w-5" />

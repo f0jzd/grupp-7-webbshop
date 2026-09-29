@@ -16,11 +16,11 @@ export function GridCardCartControls({
   count:initialCount,
 }: GridCardCartControlsProps) {
   const [count, setCount] = useState(initialCount);
-  const {setCart} = useContext(CartContext);
+  const {addProductToCart, removeProductFromCart} = useContext(CartContext);
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
-    setCart((cart) => [...cart, {...product}]);
+    addProductToCart(product);
     setCount(c => c+1)
   }
 
@@ -30,11 +30,7 @@ export function GridCardCartControls({
         return;
     }
 
-    setCart((cart) => {
-      const productIndex = cart.findLastIndex(p => p.id  === product.id);
-      const filtered = cart.filter((_,i) => i !== productIndex);
-      return [...filtered]
-    });
+    removeProductFromCart(product);
     setCount(c => c-1)
   }
 

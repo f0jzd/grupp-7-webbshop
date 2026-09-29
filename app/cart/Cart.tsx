@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { CartContext } from '@/CartContext';
 
 export default function Cart(){
-    const {cart: products, setCart: setProducts} = useContext(CartContext);
+    const {cart: products, addProductToCart: addProduct, removeProductFromCart: removeProduct} = useContext(CartContext);
 
     const cartWithCount = products.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
@@ -27,14 +27,6 @@ export default function Cart(){
     }
     return arr;
   }, []);
-
-  const removeProduct = (item:Product) => () => setProducts((products) => {
-    const removeIdLast = products.findLastIndex(v => v.id === item.id);
-    const filtered = products.filter((_,i) => i !== removeIdLast);
-    return [...filtered];
-  })
-
-  const addProduct = (item:Product) => () => setProducts((products) => ([...products, {...item}]))
 
     return products.length === 0 ? (
         <p>Cart empty</p>
@@ -62,9 +54,9 @@ export default function Cart(){
                     </div>
                     {/* Price for small screens */}
                     <div className="flex justify-end items-center gap-1 min-md:hidden">
-                      <RemoveFromCartButton removeProduct={removeProduct(item)} productTitle={item.title} count={item.count} removeId={item.id} />
+                      <RemoveFromCartButton product={item} removeProduct={removeProduct} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p>{item.count}</p>
-                      <IncreaseCountButton addProduct={addProduct(item)}/>
+                      <IncreaseCountButton product={item} addProduct={addProduct}/>
                       <p className="ml-4">{Number(item.price * item.count).toFixed(2)}$</p>
                     </div>
 
@@ -72,9 +64,9 @@ export default function Cart(){
                   {/* Price for large screens */}
                   <TableCell className="h-12 text-right pt-2 max-md:hidden">
                     <div className="flex justify-end items-center gap-1">
-                      <RemoveFromCartButton removeProduct={removeProduct(item)} productTitle={item.title} count={item.count} removeId={item.id} />
+                      <RemoveFromCartButton product={item} removeProduct={removeProduct} productTitle={item.title} count={item.count} removeId={item.id} />
                       <p className='w-6 text-center'>{item.count}</p>
-                      <IncreaseCountButton addProduct={addProduct(item)}/>
+                      <IncreaseCountButton product={item} addProduct={addProduct}/>
                       <div className="ml-4 w-20 text-right">{Number(item.price * item.count).toFixed(2)}$</div>
                     </div>
                   </TableCell>
@@ -99,7 +91,7 @@ export default function Cart(){
       )
 }
 
-function RemoveFromCartButton({count,productTitle, removeProduct}: {removeId: number;count:number; productTitle: string; removeProduct: () => void}) {
+function RemoveFromCartButton({product, count,productTitle, removeProduct}: {product: Product; removeId: number;count:number; productTitle: string; removeProduct: (product: Product) => void}) {
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
@@ -107,19 +99,19 @@ function RemoveFromCartButton({count,productTitle, removeProduct}: {removeId: nu
           if(count === 1 && !confirm("Would you like to remove " + '"'+ productTitle + '"' + " from your cart?")){
             return;
           }
-          removeProduct();
+          removeProduct(product);
     }}>
       -
     </Button>
   );
 }
 
-function IncreaseCountButton({addProduct}: {addProduct: () => void}) {
+function IncreaseCountButton({product,addProduct}: {product: Product; addProduct: (product: Product) => void}) {
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
         onClick={() => {
-        addProduct();
+        addProduct(product);
     }}>
       +
     </Button>

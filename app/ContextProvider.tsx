@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Product } from "./types";
 import { CartContext } from "./CartContext";
 
@@ -12,10 +12,20 @@ export function ContextProvider({ children, cart:providedCart }: {children: Reac
 
   useEffect(() => {
     setCart([...providedCart]);
-  }, [providedCart])
+  }, [providedCart]);
+
+  const addProductToCart = useCallback((product: Product) => 
+    setCart(products => [...products,{...product}]),
+  []);
+
+  const removeProductFromCart = useCallback((product: Product) => setCart(products => {
+      const removeIdLast = products.findLastIndex(v => v.id === product.id);
+      const filtered = products.filter((_,i) => i !== removeIdLast);
+      return [...filtered];
+    }),[])
 
   return (
-    <CartContext.Provider value={{cart, setCart}}>
+    <CartContext.Provider value={{cart, addProductToCart,removeProductFromCart}}>
       {children}
     </CartContext.Provider>
   );
