@@ -1,20 +1,22 @@
 ---
-name: Feature template
+name: Feature spec template
 about: Declares new functionality
 title: 'Feature: [name]'
 labels: ''
 assignees: ''
 
 ---
-<!-- test-->
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## Current state: What's missing and why this functionality is needed
+Such as "Button currently doesnt match rest of the site in style"
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## Desired state: What this ticket seeks to implement
+Freely describe implementation goals or
+- [ ] Use a checklist
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## Definition of done
+Specifications of desired functionality, ex:
+- [ ] The app builds cleanly (`npm run build` or equivalent) with no errors.
+
+## Attached images, examples, external links etc.
+For images, just copypaste it here and github handles the rest.
