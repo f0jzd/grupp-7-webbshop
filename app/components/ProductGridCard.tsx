@@ -10,11 +10,19 @@ import {
 import { AspectRatio } from "./ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { GridCardCartControls } from "./GridCardCartControls";
+
 interface GridCardProps {
   product: Product;
 }
 
-export default function GridCard({ product }: GridCardProps) {
+export default async function GridCard({ product }: GridCardProps) {
+  const cookieStore = await cookies();
+  const cartString = cookieStore.get("cart")?.value;
+  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
+  const count = cartIds.filter((id) => id === product.id).length;
+
   return (
     <Link href={`/product/${product.title}`} className="h-full">
       <Card key={product.id} className="h-full">
@@ -42,8 +50,9 @@ export default function GridCard({ product }: GridCardProps) {
             {product.category?.name ?? "Uncategorized"}
           </p>
         </CardContent>
-        <CardFooter className="mt-auto">
-          <p className="mt-2 font-semibold">€{product.price}</p>
+        <CardFooter className="mt-auto w-full flex-col items-start gap-2">
+          <p className="w-full font-semibold">€{product.price}</p>
+          <GridCardCartControls product={product} count={count} />
         </CardFooter>
       </Card>
     </Link>
