@@ -33,7 +33,7 @@ export function createUrlSearchParams(searchParams: {
 }
 
 
-// a searchparam handler for the catalog page:
+// a searchparam handler for the catalog page ():
 // args are current state of searchparams and desired overrides
 // returns a merged state, i.e. retains non-overridden values
 // also drops page=1 which is default elsewhere
