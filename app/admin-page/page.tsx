@@ -4,6 +4,12 @@ import { ProductList } from "@/components/ProductList";
 import { SearchBar } from "../components/SearchBar";
 import { Pagination } from "../components/Pagination";
 import { createUrlSearchParams } from "../lib/utils";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Admin - Product catalog',
+  description: 'Find products by searching or filtering by category',
+}
 
 const API_URL = "http://localhost:4000";
 const defaultLimit = "6";

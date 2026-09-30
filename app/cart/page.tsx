@@ -12,6 +12,12 @@ import {
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
 import IncreaseCountButton from './IncreaseCountButton'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cart checkout',
+  description: 'View cart and order information and create order',
+}
 
 const API_URL = "http://localhost:4000";
 
