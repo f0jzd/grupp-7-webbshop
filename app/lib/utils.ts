@@ -53,3 +53,22 @@ export function buildHref(
   const qs = params.toString();
   return qs ? `?${qs}` : "?"; // i hate manual string building
 }
+
+
+// pagination component. Needs extraction as part of migration. Lives here for now.
+export function getPageRange(current: number, total: number): (number | "ellipsis")[] {
+  const delta = 2; // how many neighbors to show around current
+  const range: (number | "ellipsis")[] = [];
+
+  for (let i = 1; i <= total; i++) {
+    const isEdge = i === 1 || i === total;
+    const isNearCurrent = Math.abs(i - current) <= delta;
+
+    if (isEdge || isNearCurrent) {
+      range.push(i);
+    } else if (range[range.length - 1] !== "ellipsis") {
+      range.push("ellipsis");
+    }
+  }
+  return range;
+}
