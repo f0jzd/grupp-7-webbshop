@@ -20,6 +20,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Input } from "./components/ui/input";
+import ShopCatalog from "./components/ShopCatalog";
 
 
 const API_URL = "http://localhost:4000";
@@ -124,15 +125,7 @@ export default async function ProductPage({
             {/* top nav buttons */}
             <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
-
-            {/* Old ver of grid: */}
-            {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
-            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5  *:w-full">
-            {
-              data.products.map((product:Product) => (
-                <GridCard key={product.id} product={product} />
-              ))
-            }</div>
+            <ShopCatalog className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 *:w-full" data={data.products}/>
 
             {/* Bottom nav buttons, same as line 71 */}
              <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
