@@ -17,6 +17,17 @@ import Image from "next/image";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { Category } from "@/types";
 import { cookies } from "next/headers";
+import { Metadata } from "next";
+
+export async function generateMetadata(
+  { params }:{params: Promise<{ title: string }>}): Promise<Metadata> {
+  const title = (await params).title
+ 
+  return {
+    title: title,
+    description: "View product information like title, price, description, specifications, stock, reviews, etc. and add product to cart",
+  }
+}
 
 const API_URL = "http://localhost:4000";
 
