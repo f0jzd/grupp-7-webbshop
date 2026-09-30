@@ -6,6 +6,8 @@ import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
 import { Product } from "./types";
+import Link from "next/link";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +32,9 @@ export const metadata: Metadata = {
 
 const API_URL = "http://localhost:4000";
 
+// Change this single number to adjust the logo icon size in pixels
+const LOGO_SIZE = 64;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -45,7 +50,7 @@ export default async function RootLayout({
   
     const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
 
-    const products = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
+    const products: Product[] = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
 
   return (
     <html
@@ -54,10 +59,24 @@ export default async function RootLayout({
     >
         <body className="min-h-full flex flex-col">
             {shouldShowHeader?
-              <header className="border border-b-2 border-b-green-300 p-2">
-                  <nav className="w-full flex justify-between">
-                    <a href="/">Products</a>
-                    <a href="/cart"><ShoppingCartCounter cart={products}/></a>
+              <header className="border border-b-2 border-b-green-300 p-2 px-4">
+                  <nav className="w-full flex justify-between items-center">
+                    <Link
+                      href="/"
+                      className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
+                    >
+                      <Image
+                        src="/shop-logo.png"
+                        alt="webshop icon"
+                        width={LOGO_SIZE}
+                        height={LOGO_SIZE}
+                        className="object-contain"
+                      />
+                      <span>webshop</span>
+                    </Link>
+                    <Link href="/cart">
+                      <ShoppingCartCounter cart={products} />
+                    </Link>
                   </nav>
               </header> :
                null
