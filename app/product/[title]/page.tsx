@@ -166,7 +166,7 @@ export default async function ProductDetailPage({
 
           {/* Action CTAs */}
           <div className="flex gap-3 pt-2">
-            <AddToCartButton product={product} count={cartCount} />
+            <AddToCartButton product={product} />
           </div>
 
           {/* Value Props & Shipping */}
