@@ -37,7 +37,7 @@ export function createUrlSearchParams(searchParams: {
 // args are current state of searchparams and desired overrides
 // returns a merged state, i.e. retains non-overridden values
 // also drops page=1 which is default elsewhere
-function buildHref(
+export function buildHref(
   originalState: Record<string, string | undefined>,
   newState: Record<string, string | number | undefined>
 ): string {
