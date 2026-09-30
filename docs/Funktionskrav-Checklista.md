@@ -25,6 +25,6 @@ FR-5: Varukorg (Översiktsvy)
 (Tips: Full dynamisk/persistent varukorg kan väljas som fördjupningsmodul).
 
 Icke-funktionella krav (NFR)
-* [ ] Prestanda & Bildoptimering: Använd Next.js inbyggda <Image />-komponent för optimerade bildstorlekar.
+* [X] Prestanda & Bildoptimering: Använd Next.js inbyggda <Image />-komponent för optimerade bildstorlekar.
 * [ ] Tillgänglighet & SEO: Semantisk HTML (<header>, <main>, <article>, <nav>), tydliga rubriknivåer (h1-h3) samt unika metadata-titlar per sida.
 * [ ] Dokumentation: Repot ska ha en professionell och välstrukturerad README.md med installationsanvisningar, beskrivning av arkitektur och skärmdumpar.
