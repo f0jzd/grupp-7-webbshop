@@ -72,7 +72,7 @@ export default async function RootLayout({
                         height={LOGO_SIZE}
                         className="object-contain"
                       />
-                      <span>webshop</span>
+                      <span>Product Catalog</span>
                     </Link>
                     <Link href="/cart">
                       <ShoppingCartCounter cart={products} />
