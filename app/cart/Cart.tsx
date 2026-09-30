@@ -1,5 +1,5 @@
 "use client";
-
+import { Metadata } from 'next'
 import { Product } from '@/types'
 import {
   Table,
@@ -11,12 +11,14 @@ import {
 } from "@/components/ui/table"
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
-import { useContext } from 'react';
-import { Button } from '@/components/ui/button';
-import { CartContext } from '@/CartContext';
+import Link from 'next/link'
+import { useContext } from 'react'
+import { CartContext } from '@/CartContext'
+import { Button } from '@/components/ui/button'
 
-export default function Cart(){
-    const {cart: products, addProductToCart: addProduct, removeProductFromCart: removeProduct} = useContext(CartContext);
+export default function Cart() {
+
+  const {cart: products, addProductToCart: addProduct, removeProductFromCart: removeProduct} = useContext(CartContext);
 
     const cartWithCount = products.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
@@ -28,47 +30,47 @@ export default function Cart(){
     return arr;
   }, []);
 
-    return products.length === 0 ? (
+  return (
+   <div className="m-auto max-w-150">
+      {products.length === 0 ? (
         <p>Cart empty</p>
       ) : (
         <div>
           <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="text-left pb-2">Product</TableHead>
-                <TableHead className="text-right pb-2 max-md:hidden">Amount</TableHead>
+                <TableHead className="text-left pb-2 flex items-center justify-between"><p>Product</p><p >Amount</p></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="w-full">
               {cartWithCount.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="h-12 text-left pt-2">
+                  <TableCell className="h-24 text-left pt-2">
                     <div className="flex items-center gap-2">
-                      <Image
-                        alt={item.title}
-                        width={70}
-                        height={70}
-                        src={item.thumbnail}
-                      />
-                      <p className='text-wrap'>{item.title}</p>
+                      <Link href={"/product/"+encodeURIComponent(item.title)} >
+                        <Image
+                          alt={item.title}
+                          width={70}
+                          height={70}
+                          src={item.thumbnail}
+                        />
+                      </Link>
+                      <div>
+                      <Link href={"/product/"+encodeURIComponent(item.title)} >
+                        <p >{item.title}</p>
+                      </Link>
+                        <p className='text-gray-500' >{item.sku}</p>
+                        <p className='text-gray-500' >{item.shippingInformation}</p>
+                      </div>
+                      <div className='ml-auto'>{item.price.toFixed(2)}$</div>
                     </div>
-                    {/* Price for small screens */}
-                    <div className="flex justify-end items-center gap-1 min-md:hidden">
-                      <RemoveFromCartButton product={item} removeProduct={removeProduct} productTitle={item.title} count={item.count} removeId={item.id} />
+                    <div className="flex justify-end items-center gap-1 mt-2">
+                      <RemoveFromCartButton product={item} productTitle={item.title} count={item.count} removeProduct={removeProduct} />
                       <p>{item.count}</p>
-                      <IncreaseCountButton product={item} addProduct={addProduct}/>
-                      <p className="ml-4">{Number(item.price * item.count).toFixed(2)}$</p>
+                      <IncreaseCountButton addProduct={addProduct} product={item} />
+                      <p className="ml-4">{(item.price * item.count).toFixed(2)}$</p>
                     </div>
 
-                  </TableCell>
-                  {/* Price for large screens */}
-                  <TableCell className="h-12 text-right pt-2 max-md:hidden">
-                    <div className="flex justify-end items-center gap-1">
-                      <RemoveFromCartButton product={item} removeProduct={removeProduct} productTitle={item.title} count={item.count} removeId={item.id} />
-                      <p className='w-6 text-center'>{item.count}</p>
-                      <IncreaseCountButton product={item} addProduct={addProduct}/>
-                      <div className="ml-4 w-20 text-right">{Number(item.price * item.count).toFixed(2)}$</div>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -79,7 +81,7 @@ export default function Cart(){
             <div className="flex items-center">
               <p>
                 Cost:{` `}
-                {Number(products.reduce((prev, v) => prev + v.price, 0)).toFixed(2)}$
+                {(products.reduce((prev, v) => prev + v.price, 0)).toFixed(2)}$
               </p>
             </div>
           </div>
@@ -88,10 +90,13 @@ export default function Cart(){
             <CreateOrderButton />
           </div>
         </div>
-      )
+      )}
+</div>
+  );
 }
 
-function RemoveFromCartButton({product, count,productTitle, removeProduct}: {product: Product; removeId: number;count:number; productTitle: string; removeProduct: (product: Product) => void}) {
+
+function RemoveFromCartButton({product, count,productTitle, removeProduct}: {product: Product; count:number; productTitle: string; removeProduct: (product: Product) => void}) {
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
