@@ -68,7 +68,7 @@ export default function Cart() {
                       <RemoveFromCartButton product={item} productTitle={item.title} count={item.count} removeProduct={removeProduct} />
                       <p>{item.count}</p>
                       <IncreaseCountButton addProduct={addProduct} product={item} />
-                      <p className="ml-4">{(item.price * item.count).toFixed(2)}$</p>
+                      <p className="ml-4 w-24 text-right">{(item.price * item.count).toFixed(2)}$</p>
                     </div>
 
                   </TableCell>
@@ -78,9 +78,11 @@ export default function Cart() {
           </Table>
           <div className="w-full flex flex-col items-end mt-4">
             <h2 className="font-bold">Order information</h2>
-            <div className="flex items-center">
-              <p>
+            <div className="flex items-center gap-1">
+              <p className='w-[59px]'>
                 Cost:{` `}
+              </p>
+              <p className='w-[202px] text-right'>
                 {(products.reduce((prev, v) => prev + v.price, 0)).toFixed(2)}$
               </p>
             </div>
