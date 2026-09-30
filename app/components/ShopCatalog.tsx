@@ -9,7 +9,7 @@ import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "./ui/empty";
 export default function ShopCatalog({className, data}:{className:string, data:Product[]}){
     if (data.length === 0) {
       return (
-        <Empty className={className}>
+        <Empty>
           <EmptyHeader>
             <EmptyTitle>No products found</EmptyTitle>
             <EmptyDescription>
