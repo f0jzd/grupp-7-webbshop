@@ -33,13 +33,6 @@ interface ProductsResponse {
   pages: number;
 }
 
-// claude helped dynamically create the hardcoded shadcn pagination component
-// this is just 
-
-// This one is a bit chunky:
-// basically this is a url state handler that takes originalState and overrides it with newState
-
-
 export default async function ProductPage({
   searchParams,
 }: {
