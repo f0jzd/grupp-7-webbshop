@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Find products by searching or filtering by category',
 }
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
 
 const API_URL = "http://localhost:4000";
 const defaultLimit = "6";
