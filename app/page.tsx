@@ -21,6 +21,8 @@ import { Input } from "./components/ui/input";
 
 
 import type { Metadata } from 'next'
+
+export const dynamic = "force-dynamic"
  
 export const metadata: Metadata = {
   title: 'Product catalog',

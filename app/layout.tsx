@@ -23,12 +23,9 @@ const materialSymbols = localFont({
   variable: "--font-material-symbols",
 });
 
-export const metadata: Metadata = {
-  title: "Webshop - Admin",
-  description: "Admin page for webshop app",
-};
-
 const API_URL = "http://localhost:4000";
+
+export const dynamic = "force-dynamic"
 
 export default async function RootLayout({
   children,
