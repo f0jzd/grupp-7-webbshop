@@ -19,6 +19,8 @@ import { Category } from "@/types";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata(
   { params }:{params: Promise<{ title: string }>}): Promise<Metadata> {
   const title = (await params).title

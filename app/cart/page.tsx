@@ -5,6 +5,8 @@ export const metadata: Metadata = {
   description: 'View cart and order information and create order',
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function Cart() {
   return (
    <div className="max-w-150 mx-auto px-4 py-8 sm:px-6 lg:px-8">

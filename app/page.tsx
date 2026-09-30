@@ -4,6 +4,8 @@ import Form from "next/form";
 // custom/inhouse
 import type { Category, Product } from "./types";
 import GridCard from "./components/ProductGridCard";
+import { buildHref, getPageRange, Filters } from "./lib/utils";
+import ShopPagination from "./components/ShopPagination";
 // shadcn
 import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
@@ -18,9 +20,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Input } from "./components/ui/input";
+import ShopCatalog from "./components/ShopCatalog";
 
 
 import type { Metadata } from 'next'
+
+export const dynamic = "force-dynamic"
  
 export const metadata: Metadata = {
   title: 'Product catalog',
@@ -35,45 +40,6 @@ interface ProductsResponse {
   limit: number;
   page: number;
   pages: number;
-}
-
-// claude helped dynamically create the hardcoded shadcn pagination component
-// this is just 
-function getPageRange(current: number, total: number): (number | "ellipsis")[] {
-  const delta = 2; // how many neighbors to show around current
-  const range: (number | "ellipsis")[] = [];
-
-  for (let i = 1; i <= total; i++) {
-    const isEdge = i === 1 || i === total;
-    const isNearCurrent = Math.abs(i - current) <= delta;
-
-    if (isEdge || isNearCurrent) {
-      range.push(i);
-    } else if (range[range.length - 1] !== "ellipsis") {
-      range.push("ellipsis");
-    }
-  }
-
-  return range;
-}
-
-// This one is a bit chunky:
-// basically this is a url state handler that takes originalState and overrides it with newState
-function buildHref(
-  originalState: Record<string, string | undefined>,
-  newState: Record<string, string | number | undefined>
-): string {
-  const params = new URLSearchParams();
-  const merged = { ...originalState, ...newState };
-
-  for (const [key, value] of Object.entries(merged)) {
-    if (value === undefined || value === "") continue;
-    if (key === "page" && Number(value) === 1) continue; // keep page=1 out of the URL
-    params.set(key, String(value));
-  }
-
-  const qs = params.toString();
-  return qs ? `?${qs}` : "?"; // i hate manual string building
 }
 
 export default async function ProductPage({
@@ -159,103 +125,12 @@ export default async function ProductPage({
           {/* Shop grid */}
           <section className="flex-col w-full">
             {/* top nav buttons */}
-            <Pagination>
-              <PaginationContent>
+            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={
-                      currentPage > 1
-                        ? buildHref({ page, category }, { page: currentPage - 1 })
-                        : undefined
-                    }
-                    aria-disabled={currentPage <= 1}
-                  />
-                </PaginationItem>
-
-                {pageRange.map((p, idx) =>
-                  p === "ellipsis" ? (
-                    <PaginationItem key={`ellipsis-${idx}`}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  ) : (
-                    <PaginationItem key={p}>
-                      <PaginationLink
-                        href={buildHref(state, { page: p })}
-                        isActive={p === currentPage}
-                      >
-                        {p}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
-                )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href={
-                      currentPage < data.pages
-                        ? buildHref({ page, category }, { page: currentPage + 1 })
-                        : undefined
-                    }
-                    aria-disabled={currentPage >= data.pages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-
-            {/* Old ver of grid: */}
-            {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] *:w-full"> */}
-            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5  *:w-full">
-            {
-              data.products.map((product:Product) => (
-                <GridCard key={product.id} product={product} />
-              ))
-            }</div>
+            <ShopCatalog className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 *:w-full" data={data.products}/>
 
             {/* Bottom nav buttons, same as line 71 */}
-            <Pagination>
-              <PaginationContent>
-
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={
-                      currentPage > 1
-                        ? buildHref({ page, category }, { page: currentPage - 1 })
-                        : undefined
-                    }
-                    aria-disabled={currentPage <= 1}
-                  />
-                </PaginationItem>
-
-                {pageRange.map((p, idx) =>
-                  p === "ellipsis" ? (
-                    <PaginationItem key={`ellipsis-${idx}`}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  ) : (
-                    <PaginationItem key={p}>
-                      <PaginationLink
-                        href={buildHref(state, { page: p })}
-                        isActive={p === currentPage}
-                      >
-                        {p}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
-                )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    href={
-                      currentPage < data.pages
-                        ? buildHref({ page, category }, { page: currentPage + 1 })
-                        : undefined
-                    }
-                    aria-disabled={currentPage >= data.pages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+             <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
           </section>
         </section>
       </div>

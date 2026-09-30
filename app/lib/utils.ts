@@ -31,3 +31,45 @@ export function createUrlSearchParams(searchParams: {
   });
   return urlParams;
 }
+
+
+// a searchparam handler for the catalog page ():
+// args are current state of searchparams and desired overrides
+// returns a merged state, i.e. retains non-overridden values
+// also drops page=1 which is default elsewhere
+export function buildHref(
+  originalState: Record<string, string | undefined>,
+  newState: Record<string, string | number | undefined>
+): string {
+  const params = new URLSearchParams();
+  const merged = { ...originalState, ...newState };
+
+  for (const [key, value] of Object.entries(merged)) {
+    if (value === undefined || value === "") continue;
+    if (key === "page" && Number(value) === 1) continue; // keep page=1 out of the URL
+    params.set(key, String(value));
+  }
+
+  const qs = params.toString();
+  return qs ? `?${qs}` : "?"; // i hate manual string building
+}
+
+// pagination components. Needs extraction as part of migration. Lives here for now.
+export type Filters = { category?: string; q?: string };
+
+export function getPageRange(current: number, total: number): (number | "ellipsis")[] {
+  const delta = 2; // how many neighbors to show around current
+  const range: (number | "ellipsis")[] = [];
+
+  for (let i = 1; i <= total; i++) {
+    const isEdge = i === 1 || i === total;
+    const isNearCurrent = Math.abs(i - current) <= delta;
+
+    if (isEdge || isNearCurrent) {
+      range.push(i);
+    } else if (range[range.length - 1] !== "ellipsis") {
+      range.push("ellipsis");
+    }
+  }
+  return range;
+}
