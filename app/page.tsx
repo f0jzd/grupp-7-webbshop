@@ -20,6 +20,13 @@ import {
 import { Input } from "./components/ui/input";
 
 
+import type { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'Product catalog',
+  description: 'Find products by searching or filtering by category and add products to cart',
+}
+
 const API_URL = "http://localhost:4000";
 
 interface ProductsResponse {
