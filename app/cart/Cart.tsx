@@ -66,8 +66,8 @@ export default function Cart() {
                       <div className='ml-auto'>{item.price.toFixed(2)}$</div>
                     </div>
                     <div className="flex justify-end items-center gap-1 mt-2 flex-col items-end">
-                      <div className={`flex gap-1 flex-col items-center ${removeConfirmationShown !== item.id ? "hidden": ""}`}><p>Remove from cart?</p> <div> <Button onClick={() => {removeProduct(item); setRemoveConfirmationShown(-1);}} variant={"destructive"}>Remove</Button><Button onClick={() => setRemoveConfirmationShown(-1)} variant={"ghost"}>Cancel</Button></div></div>
-                      {removeConfirmationShown !== item.id ? <div className='flex items-center gap-1'>
+                      <div className={`flex h-[84px] gap-1 flex-col items-center ${removeConfirmationShown !== item.id ? "hidden": ""}`}><p>Remove from cart?</p> <div> <Button onClick={() => {removeProduct(item); setRemoveConfirmationShown(-1);}} variant={"destructive"}>Remove</Button><Button onClick={() => setRemoveConfirmationShown(-1)} variant={"ghost"}>Cancel</Button></div></div>
+                      {removeConfirmationShown !== item.id ? <div className='flex items-center gap-1 h-[84px]'>
                         <RemoveFromCartButton setRemoveConfirmationShown={setRemoveConfirmationShown} product={item} count={item.count} removeProduct={removeProduct} />
                           <p>{item.count}</p>
                         <IncreaseCountButton addProduct={addProduct} product={item} /> </div> : null
