@@ -78,7 +78,7 @@ export default function Cart() {
           </Table>
           <div className="w-full flex flex-col items-end mt-4">
             <h2 className="font-bold">Order information</h2>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 mt-1">
               <p className='w-[59px]'>
                 Cost:{` `}
               </p>
