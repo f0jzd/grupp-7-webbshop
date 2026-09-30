@@ -36,11 +36,7 @@ export function GridCardCartControls({
 
   if (count === 0) {
     return (
-      <Button
-        size="sm"
-        className="w-full gap-2"
-        onClick={handleAdd}
-      >
+      <Button size="sm" className="w-full gap-2" onClick={handleAdd}>
         <ShoppingBag className="h-4 w-4" />
         Add to Cart
       </Button>
@@ -52,11 +48,7 @@ export function GridCardCartControls({
       className="flex items-center justify-between w-full gap-2"
       onClick={(e) => e.preventDefault()}
     >
-      <Button
-        size="icon-sm"
-        variant="outline"
-        onClick={handleRemove}
-      >
+      <Button size="icon-sm" variant="outline" onClick={handleRemove}>
         –
       </Button>
       <span className="font-semibold tabular-nums">{count}</span>

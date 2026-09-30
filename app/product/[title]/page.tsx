@@ -1,4 +1,4 @@
-import { Star, ShieldCheck, UserCircle } from "lucide-react";
+import { Star, ShieldCheck, UserCircle, Package } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -16,6 +16,7 @@ import { Product } from "@/types";
 import Image from "next/image";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { Category } from "@/types";
+import { cookies } from "next/headers";
 
 const API_URL = "http://localhost:4000";
 
@@ -65,6 +66,11 @@ export default async function ProductDetailPage({
   const averageRating = calculateAverageRating(product);
   const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
 
+  const cookieStore = await cookies();
+  const cartString = cookieStore.get("cart")?.value;
+  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
+  const cartCount = cartIds.filter((id) => id === product.id).length;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* 1. Breadcrumbs */}
@@ -75,7 +81,11 @@ export default async function ProductDetailPage({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href={category ? `/?category=${category.slug}` : "/"}>{category?.name}</BreadcrumbLink>
+            <BreadcrumbLink
+              href={category ? `/?category=${category.slug}` : "/"}
+            >
+              {category?.name}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -145,7 +155,7 @@ export default async function ProductDetailPage({
 
           {/* Action CTAs */}
           <div className="flex gap-3 pt-2">
-            <AddToCartButton product={product} />
+            <AddToCartButton product={product} count={cartCount} />
           </div>
 
           {/* Value Props & Shipping */}
@@ -153,6 +163,33 @@ export default async function ProductDetailPage({
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />
               <span>{product.warrantyInformation}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Package className="h-4 w-4 text-primary" />
+              <span>
+                {product.stock != null ? (
+                  <>
+                    <span
+                      className={
+                        product.stock === 0
+                          ? "font-semibold text-destructive"
+                          : product.stock <= 10
+                            ? "font-semibold text-amber-500"
+                            : "font-semibold text-emerald-600"
+                      }
+                    >
+                      {product.stock} in stock
+                    </span>
+                    {product.availabilityStatus && (
+                      <span className="ml-1">
+                        · {product.availabilityStatus}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  (product.availabilityStatus ?? "Availability unknown")
+                )}
+              </span>
             </div>
           </div>
 

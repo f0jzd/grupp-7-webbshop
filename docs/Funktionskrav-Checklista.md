@@ -16,8 +16,8 @@ FR-3: Sök & Filtrering via URL State (searchParams)
 * [ ] Data ska hämtas/filtreras sömlöst på servern baserat på aktuella parametrar.
 
 FR-4: Paginering
-* [ ] Om katalogen innehåller fler varor än vad som ryms på en sida ska paginering finnas.
-* [ ] Pagineringen ska styras via URL (?page=X) och möjliggöra bläddring framåt, bakåt och direktval av sida.
+* [x] Om katalogen innehåller fler varor än vad som ryms på en sida ska paginering finnas.
+* [x] Pagineringen ska styras via URL (?page=X) och möjliggöra bläddring framåt, bakåt och direktval av sida.
 
 FR-5: Varukorg (Översiktsvy)
 * [x] En dedikerad vy/sida för varukorgen som visar hur en sammanställning av ordervärde, produkter, antal och totalbelopp ser ut.
@@ -25,6 +25,6 @@ FR-5: Varukorg (Översiktsvy)
 (Tips: Full dynamisk/persistent varukorg kan väljas som fördjupningsmodul).
 
 Icke-funktionella krav (NFR)
-* [ ] Prestanda & Bildoptimering: Använd Next.js inbyggda <Image />-komponent för optimerade bildstorlekar.
+* [X] Prestanda & Bildoptimering: Använd Next.js inbyggda <Image />-komponent för optimerade bildstorlekar.
 * [ ] Tillgänglighet & SEO: Semantisk HTML (<header>, <main>, <article>, <nav>), tydliga rubriknivåer (h1-h3) samt unika metadata-titlar per sida.
 * [ ] Dokumentation: Repot ska ha en professionell och välstrukturerad README.md med installationsanvisningar, beskrivning av arkitektur och skärmdumpar.
