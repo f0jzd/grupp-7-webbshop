@@ -10,7 +10,7 @@ export const dynamic = "auto";
 
 export default async function CartPage() {
   return (
-   <div className="max-w-150 mx-auto px-4 py-8 sm:px-6 lg:px-8">
+   <div className="max-w-150 mx-auto px-4 py-8 max-md:px-0">
       <h1 className="font-bold text-xl mb-4">Your cart</h1>
       <Cart/>
 </div>

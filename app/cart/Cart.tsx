@@ -12,13 +12,14 @@ import {
 import Image from 'next/image'
 import CreateOrderButton from './CreateOrderButton'
 import Link from 'next/link'
-import { useContext } from 'react'
+import { Dispatch, SetStateAction, useContext, useState } from 'react'
 import { CartContext } from '@/CartContext'
 import { Button } from '@/components/ui/button'
 
 export default function Cart() {
 
   const {cart: products, addProductToCart: addProduct, removeProductFromCart: removeProduct} = useContext(CartContext);
+  const [removeConfirmationShown, setRemoveConfirmationShown] = useState<number>(-1);
 
     const cartWithCount = products.reduce<(Product & {count: number})[]>((arr, product) => {
     const existing = arr.find(v => v.id === product.id);
@@ -55,19 +56,22 @@ export default function Cart() {
                           src={item.thumbnail}
                         />
                       </Link>
-                      <div>
+                      <div className='overflow-hidden'>
                       <Link href={"/product/"+encodeURIComponent(item.title)} >
-                        <p >{item.title}</p>
+                        <p className='text-wrap'>{item.title}</p>
                       </Link>
-                        <p className='text-gray-500' >{item.sku}</p>
-                        <p className='text-gray-500' >{item.shippingInformation}</p>
+                        <p className='text-gray-500 text-wrap' >{item.sku}</p>
+                        <p className='text-gray-500 text-wrap' >{item.shippingInformation}</p>
                       </div>
                       <div className='ml-auto'>{item.price.toFixed(2)}$</div>
                     </div>
-                    <div className="flex justify-end items-center gap-1 mt-2">
-                      <RemoveFromCartButton product={item} productTitle={item.title} count={item.count} removeProduct={removeProduct} />
-                      <p>{item.count}</p>
-                      <IncreaseCountButton addProduct={addProduct} product={item} />
+                    <div className="flex justify-end items-center gap-1 mt-2 flex-col items-end">
+                      <div className={`flex gap-1 flex-col items-center ${removeConfirmationShown !== item.id ? "hidden": ""}`}><p>Remove from cart?</p> <div> <Button onClick={() => {removeProduct(item); setRemoveConfirmationShown(-1);}} variant={"destructive"}>Remove</Button><Button onClick={() => setRemoveConfirmationShown(-1)} variant={"ghost"}>Cancel</Button></div></div>
+                      {removeConfirmationShown !== item.id ? <div className='flex items-center gap-1'>
+                        <RemoveFromCartButton setRemoveConfirmationShown={setRemoveConfirmationShown} product={item} count={item.count} removeProduct={removeProduct} />
+                          <p>{item.count}</p>
+                        <IncreaseCountButton addProduct={addProduct} product={item} /> </div> : null
+                      }
                       <p className="ml-4 w-24 text-right">{(item.price * item.count).toFixed(2)}$</p>
                     </div>
 
@@ -98,12 +102,13 @@ export default function Cart() {
 }
 
 
-function RemoveFromCartButton({product, count,productTitle, removeProduct}: {product: Product; count:number; productTitle: string; removeProduct: (product: Product) => void}) {
+function RemoveFromCartButton({product, count, removeProduct,setRemoveConfirmationShown}: {product: Product; setRemoveConfirmationShown: Dispatch<SetStateAction<number>>; count:number; removeProduct: (product: Product) => void}) {
   return (
     <Button variant="link" 
         className="no-underline hover:no-underline cursor-pointer"
         onClick={() => {
-          if(count === 1 && !confirm("Would you like to remove " + '"'+ productTitle + '"' + " from your cart?")){
+          if(count === 1){
+            setRemoveConfirmationShown(product.id);
             return;
           }
           removeProduct(product);
