@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Add product to product catalog',
 }
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
 
 export default async function ProductPage() {
   return (

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'View cart and order information and create order',
 }
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
 
 export default async function Cart() {
   return (

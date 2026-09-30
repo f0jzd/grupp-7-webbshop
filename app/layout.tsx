@@ -25,7 +25,7 @@ const materialSymbols = localFont({
 
 const API_URL = "http://localhost:4000";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
 
 export default async function RootLayout({
   children,

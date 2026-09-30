@@ -24,8 +24,9 @@ import ShopCatalog from "./components/ShopCatalog";
 
 
 import type { Metadata } from 'next'
+import { cn } from "cn";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
  
 export const metadata: Metadata = {
   title: 'Product catalog',
@@ -105,8 +106,12 @@ export default async function ProductPage({
           <Link
             scroll={false}
             href={buildHref({ page, category }, { category: undefined, page: 1 })}
-          >
-            Reset
+              className={cn(
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                "justify-start text-base font-semibold "
+              )}
+            >
+              Show all products
           </Link>
 
           {categories.map((cat) => (

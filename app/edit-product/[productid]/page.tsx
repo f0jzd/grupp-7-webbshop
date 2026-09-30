@@ -15,7 +15,7 @@ async function getProduct(id: string): Promise<Product | null> {
   return data;
 }
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
 
 export async function generateMetadata(
   { params }:{params: Promise<{ productid: string }>}): Promise<Metadata> {
