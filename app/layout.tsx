@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
 import { headers } from 'next/headers';
-import { Product } from "./types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,8 +56,8 @@ export default async function RootLayout({
             {shouldShowHeader?
               <header className="border border-b-2 border-b-green-300 p-2">
                   <nav className="w-full flex justify-between">
-                    <a href="/">Products</a>
-                    <a href="/cart"><ShoppingCartCounter cart={products}/></a>
+                    <Link href="/">Products</Link>
+                    <Link href="/cart"><ShoppingCartCounter cart={products}/></Link>
                   </nav>
               </header> :
                null
