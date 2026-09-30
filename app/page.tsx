@@ -25,7 +25,7 @@ import ShopCatalog from "./components/ShopCatalog";
 
 import type { Metadata } from 'next'
 
-export const dynamic = "force-dynamic"
+export const dynamic = "auto";
  
 export const metadata: Metadata = {
   title: 'Product catalog',
