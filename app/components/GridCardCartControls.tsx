@@ -8,13 +8,13 @@ import { CartContext } from "@/CartContext";
 
 interface GridCardCartControlsProps {
   product: Product;
-  count: number;
 }
 
 export function GridCardCartControls({
-  product,
-  count:initialCount,
+  product
 }: GridCardCartControlsProps) {
+  const {cart} = useContext(CartContext);
+  const initialCount = cart.reduce((acc, p) => p.id === product.id ? acc + 1 : acc, 0);
   const [count, setCount] = useState(initialCount);
   const {addProductToCart, removeProductFromCart} = useContext(CartContext);
 

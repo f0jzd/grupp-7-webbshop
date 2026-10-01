@@ -18,11 +18,6 @@ interface GridCardProps {
 }
 
 export default async function GridCard({ product }: GridCardProps) {
-  const cookieStore = await cookies();
-  const cartString = cookieStore.get("cart")?.value;
-  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
-  const count = cartIds.filter((id) => id === product.id).length;
-
   return (
     <Link href={`/product/${product.title}`} className="h-full">
       <Card key={product.id} className="h-full">
@@ -52,7 +47,7 @@ export default async function GridCard({ product }: GridCardProps) {
         </CardContent>
         <CardFooter className="mt-auto w-full flex-col items-start gap-2">
           <p className="w-full font-semibold">€{product.price}</p>
-          <GridCardCartControls product={product} count={count} />
+          <GridCardCartControls product={product} />
         </CardFooter>
       </Card>
     </Link>
