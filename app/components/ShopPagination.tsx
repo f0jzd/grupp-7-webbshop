@@ -13,12 +13,12 @@ import { buildHref, getPageRange, Filters } from "@/lib/utils";
 
 
 export default function ShopPagination({
-  currentPage, totalPages, filters,
-}: { currentPage: number; totalPages: number; filters: Filters }) {
+  currentPage, totalPages, filters, className = "",
+}: { currentPage: number; totalPages: number; filters: Filters; className?: string}) {
   const hrefFor = (page: number) => buildHref(filters, { page });
 
   return (
-    <Pagination>
+    <Pagination className={className}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious

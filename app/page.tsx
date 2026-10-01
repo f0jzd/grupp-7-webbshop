@@ -79,21 +79,8 @@ export default async function ProductPage({
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
-        {/* Search */}
-        <Form action="/" role="search" className="w-full pb-4">
-          {category && <input type="hidden" name="category" value={category} />}
-          <ButtonGroup className="w-full">
-            <Input
-              key={q}
-              name="q"
-              type="search"
-              defaultValue={q}
-              placeholder="Search products…"
-              aria-label="Search products"
-            />
-            <Button type="submit">Search</Button>
-          </ButtonGroup>
-        </Form>
+
+
 
 
         <section className="flex flex-row w-full">
@@ -137,17 +124,38 @@ export default async function ProductPage({
               </div>
             </SheetContent>
           </Sheet>
-            
 
-          {/* Shop grid */}
+          {/* catalong wrapper */}
           <section className="flex-col w-full">
-            {/* top nav buttons */}
-            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
-            <ShopCatalog className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 *:w-full" data={data.products}/>
+            {/* Search */}
+            <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
+            {category && <input type="hidden" name="category" value={category} />}
+              <ButtonGroup className="w-full">
+                <Input
+                  key={q}
+                  name="q"
+                  type="search"
+                  defaultValue={q}
+                  placeholder="Search products…"
+                  aria-label="Search products"
+                />
+                <Button type="submit">Search</Button>
+              </ButtonGroup>
+            </Form>
+            {/* top nav buttons */}
+            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+
+            {/* Shop grid */}
+            <ShopCatalog className="
+              grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
+              gap-4
+              *:w-full"
+              data={data.products}
+            />
 
             {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
           </section>
         </section>
       </div>
