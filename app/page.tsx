@@ -118,18 +118,23 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4">
-              <SheetHeader>
+            <SheetContent side="left" className="w-64 p-4 flex flex-col">
+              <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
                   Filter products by category
                 </SheetDescription>
               </SheetHeader>
-              <CatNav
-                categories={categories} category={category} page={page}
-                closeOnSelect
-                className="w-full"
-              />
+
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+                <CatNav
+                  categories={categories}
+                  category={category}
+                  page={page}
+                  closeOnSelect
+                  className="w-full"
+                />
+              </div>
             </SheetContent>
           </Sheet>
             
