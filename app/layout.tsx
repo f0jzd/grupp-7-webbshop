@@ -25,15 +25,11 @@ const materialSymbols = localFont({
   variable: "--font-material-symbols",
 });
 
-export const metadata: Metadata = {
-  title: "Webshop - Admin",
-  description: "Admin page for webshop app",
-};
-
 const API_URL = "http://localhost:4000";
 
 // Change this single number to adjust the logo icon size in pixels
 const LOGO_SIZE = 64;
+export const dynamic = "auto";
 
 export default async function RootLayout({
   children,
