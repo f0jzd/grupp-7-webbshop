@@ -161,6 +161,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+img, video {
+    max-width: none;
+    height: auto;
+}
+
 /* ---break---
   */
 @layer base {

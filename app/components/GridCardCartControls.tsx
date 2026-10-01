@@ -2,41 +2,35 @@
 
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { addProductToCart, removeItemFromCart } from "@/actions";
 import { Product } from "@/types";
-import { useOptimistic, startTransition } from "react";
+import {useContext, useState } from "react";
+import { CartContext } from "@/CartContext";
 
 interface GridCardCartControlsProps {
   product: Product;
-  count: number;
 }
 
 export function GridCardCartControls({
-  product,
-  count,
+  product
 }: GridCardCartControlsProps) {
-  const [optimisticCount, updateOptimisticCount] = useOptimistic(
-    count,
-    (current, delta: number) => current + delta,
-  );
+  const {cart} = useContext(CartContext);
+  const initialCount = cart.reduce((acc, p) => p.id === product.id ? acc + 1 : acc, 0);
+  const [count, setCount] = useState(initialCount);
+  const {addProductToCart, removeProductFromCart} = useContext(CartContext);
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
-    startTransition(async () => {
-      updateOptimisticCount(1);
-      await addProductToCart(product);
-    });
+    addProductToCart(product);
+    setCount(c => c+1)
   }
 
   function handleRemove(e: React.MouseEvent) {
     e.preventDefault();
-    startTransition(async () => {
-      updateOptimisticCount(-1);
-      await removeItemFromCart(product.id);
-    });
+    removeProductFromCart(product);
+    setCount(c => c-1)
   }
 
-  if (optimisticCount === 0) {
+  if (count === 0) {
     return (
       <Button size="sm" className="w-full gap-2" onClick={handleAdd}>
         <ShoppingBag className="h-4 w-4" />
@@ -53,8 +47,12 @@ export function GridCardCartControls({
       <Button size="icon-sm" variant="outline" onClick={handleRemove}>
         –
       </Button>
-      <span className="font-semibold tabular-nums">{optimisticCount}</span>
-      <Button size="icon-sm" variant="outline" onClick={handleAdd}>
+      <span className="font-semibold tabular-nums">{count}</span>
+      <Button
+        size="icon-sm"
+        variant="outline"
+        onClick={handleAdd}
+      >
         +
       </Button>
     </div>

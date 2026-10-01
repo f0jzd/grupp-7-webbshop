@@ -1,8 +1,10 @@
-import './ShoppingCartCounter.css';
-import { Product } from '@/types';
+"use client"
+import { CartContext } from '@/CartContext';
+import { useContext} from 'react';
 
-export default function ShoppingCartCounter({cart}: {cart:Product[]}){
-    return <div className='ShoppingCart'>
+export default function ShoppingCartCounter(){
+    const {cart} = useContext(CartContext);
+    return <div className='flex items-center gap-1 cursor-pointer w-min'>
         <svg xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 24 24" width="24" height="24"
       fill="none" stroke="#000000" strokeWidth="2"
