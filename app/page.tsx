@@ -47,7 +47,7 @@ export default async function ProductPage({
 }) {
   // pagination data
   const { page = "1", category, q} = await searchParams;
-  const paginationLimit = 15 // tweak here to change page size
+  const paginationLimit = 18 // tweak here to change page size
   const state = { page, category, q }; // current search state, built from search params
 
   // returns the list of categories for the catnav panel
@@ -134,16 +134,16 @@ export default async function ProductPage({
           </Sheet>
             
 
-            {/* Shop grid */}
-            <section className="flex-col w-full">
-              {/* top nav buttons */}
-              <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+          {/* Shop grid */}
+          <section className="flex-col w-full">
+            {/* top nav buttons */}
+            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
-              <ShopCatalog className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 *:w-full" data={data.products}/>
+            <ShopCatalog className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 *:w-full" data={data.products}/>
 
-              {/* Bottom nav buttons, same as line 71 */}
-              <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
-            </section>
+            {/* Bottom nav buttons, same as line 71 */}
+            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+          </section>
         </section>
       </div>
     </article>
