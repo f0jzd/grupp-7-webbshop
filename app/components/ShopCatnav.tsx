@@ -63,7 +63,7 @@ export default function CatNav({
             cat.id,
             buildHref({ page, category }, { category: cat.slug, page: 1 }),
             cn(
-              buttonVariants({ variant: category === cat.slug ? "default" : "outline" }),
+              buttonVariants({ variant: category === cat.slug ? "default" : "outline", size: "lg" }),
               "justify-start"
             ),
             cat.name,
