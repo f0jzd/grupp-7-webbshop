@@ -26,10 +26,6 @@ export function GridCardCartControls({
 
   function handleRemove(e: React.MouseEvent) {
     e.preventDefault();
-    if(count === 1 && !confirm("Would you like to remove " + '"'+ product.title + '"' + " from your cart?")){
-        return;
-    }
-
     removeProductFromCart(product);
     setCount(c => c-1)
   }
