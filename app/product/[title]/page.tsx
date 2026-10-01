@@ -236,7 +236,7 @@ export default async function ProductDetailPage({
                 {!product.returnPolicy ? (
                   <span>No Return Policy</span>
                 ) : (
-                  <span>{product.shippingInformation}</span>
+                  <span>{product.returnPolicy}</span>
                 )}
               </p>
             </div>
@@ -264,7 +264,7 @@ export default async function ProductDetailPage({
 
           {/*Specifications Tab*/}
           <TabsContent value="specs" className="mt-6 min-h-45">
-            {!product.reviews || product.reviews.length === 0 ? (
+            {!product.dimensions || product.weight === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
                 <UserCircle className="h-10 w-10 opacity-30" />
                 <p className="text-sm">Specification Details are Missing.</p>
