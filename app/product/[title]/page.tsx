@@ -223,12 +223,22 @@ export default async function ProductDetailPage({
             <div>
               <p className="font-medium mb-1">Shipping &amp; Delivery</p>
               <p className="text-muted-foreground">
-                {product.shippingInformation}
+                {!product.shippingInformation ? (
+                  <span>No Shipping Information</span>
+                ) : (
+                  <span>{product.shippingInformation}</span>
+                )}
               </p>
             </div>
             <div>
               <p className="font-medium mb-1">Return Policy</p>
-              <p className="text-muted-foreground">{product.returnPolicy}</p>
+              <p className="text-muted-foreground">
+                {!product.returnPolicy ? (
+                  <span>No Return Policy</span>
+                ) : (
+                  <span>{product.shippingInformation}</span>
+                )}
+              </p>
             </div>
           </div>
         </div>
