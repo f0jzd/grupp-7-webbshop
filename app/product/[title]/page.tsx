@@ -113,7 +113,7 @@ export default async function ProductDetailPage({
         <div className="flex flex-col gap-4 w-full min-w-0 self-start">
           <div className="relative w-full aspect-square overflow-hidden rounded-2xl border bg-muted">
             <Image
-              src={product.images[0] || product.thumbnail}
+              src={product.images?.[0] || product.thumbnail}
               fill
               alt={`${product.title}${product.brand ? ` by ${product.brand}` : ""}`}
               className="h-full w-full object-cover"
