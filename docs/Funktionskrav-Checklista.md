@@ -11,9 +11,9 @@ FR-2: Dynamisk Detaljsida (/products/[id])
 * [x] Felhantering: Om en produkt inte finns ska en användarvänlig 404/not-found-vy visas.
 
 FR-3: Sök & Filtrering via URL State (searchParams)
-* [ ] Användaren ska kunna söka på produktnamn samt filtrera på kategorier.
+* [x] Användaren ska kunna söka på produktnamn samt filtrera på kategorier.
 * [x] Tillståndet för sök och filter måste lagras i URL:en med hjälp av searchParams (så att filtrerade sökningar kan bokmärkas och delas).
-* [ ] Data ska hämtas/filtreras sömlöst på servern baserat på aktuella parametrar.
+* [x] Data ska hämtas/filtreras sömlöst på servern baserat på aktuella parametrar.
 
 FR-4: Paginering
 * [x] Om katalogen innehåller fler varor än vad som ryms på en sida ska paginering finnas.
