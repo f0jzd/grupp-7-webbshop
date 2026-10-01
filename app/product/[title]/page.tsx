@@ -181,7 +181,11 @@ export default async function ProductDetailPage({
           <div className="grid grid-cols-2 gap-4 pt-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              <span>{product.warrantyInformation}</span>
+              {!product.reviews || product.reviews.length === 0 ? (
+                <span>Warranty Information Missing</span>
+              ) : (
+                <span>{product.warrantyInformation}</span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-primary" />
@@ -248,27 +252,35 @@ export default async function ProductDetailPage({
             {product.description}
           </TabsContent>
 
+          {/*Specifications Tab*/}
           <TabsContent value="specs" className="mt-6 min-h-45">
-            <div className="grid grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
-              {product.weight && (
-                <>
-                  <div className="text-muted-foreground">Weight</div>
-                  <div className="font-medium">{product.weight} g</div>
-                </>
-              )}
-              {product.dimensions &&
-                Object.entries(product.dimensions).map(([key, value]) => [
-                  <div
-                    key={key + "-label"}
-                    className="text-muted-foreground capitalize"
-                  >
-                    {key}
-                  </div>,
-                  <div key={key + "-value"} className="font-medium">
-                    {value}
-                  </div>,
-                ])}
-            </div>
+            {!product.reviews || product.reviews.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
+                <UserCircle className="h-10 w-10 opacity-30" />
+                <p className="text-sm">Specification Details are Missing.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
+                {product.weight && (
+                  <>
+                    <div className="text-muted-foreground">Weight</div>
+                    <div className="font-medium">{product.weight} g</div>
+                  </>
+                )}
+                {product.dimensions &&
+                  Object.entries(product.dimensions).map(([key, value]) => [
+                    <div
+                      key={key + "-label"}
+                      className="text-muted-foreground capitalize"
+                    >
+                      {key}
+                    </div>,
+                    <div key={key + "-value"} className="font-medium">
+                      {value}
+                    </div>,
+                  ])}
+              </div>
+            )}
           </TabsContent>
 
           {/* Reviews Tab */}
