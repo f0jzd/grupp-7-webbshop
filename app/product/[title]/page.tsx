@@ -21,14 +21,18 @@ import { Metadata } from "next";
 
 export const dynamic = "auto";
 
-export async function generateMetadata(
-  { params }:{params: Promise<{ title: string }>}): Promise<Metadata> {
-  const title = (await params).title
- 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}): Promise<Metadata> {
+  const title = (await params).title;
+
   return {
     title: title,
-    description: "View product information like title, price, description, specifications, stock, reviews, etc. and add product to cart",
-  }
+    description:
+      "View product information like title, price, description, specifications, stock, reviews, etc. and add product to cart",
+  };
 }
 
 const API_URL = "http://localhost:4000";
@@ -131,19 +135,21 @@ export default async function ProductDetailPage({
             </h1>
 
             {/* Rating */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
-                  />
-                ))}
+            {product.reviews && product.reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
+                </span>
               </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
-              </span>
-            </div>
+            )}
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
