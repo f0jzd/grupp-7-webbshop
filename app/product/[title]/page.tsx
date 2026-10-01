@@ -231,7 +231,7 @@ export default async function ProductDetailPage({
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="specs">Specifications</TabsTrigger>
             <TabsTrigger value="reviews">
-              Reviews ({product.reviews?.length})
+              Reviews ({product?.reviews?.length ?? 0})
             </TabsTrigger>
           </TabsList>
 
