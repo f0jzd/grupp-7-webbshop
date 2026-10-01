@@ -77,7 +77,7 @@ export default async function ProductPage({
 
 
   return (
-    <article>
+    <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
         {/* Search */}
         <Form action="/" role="search" className="w-full pb-4">
