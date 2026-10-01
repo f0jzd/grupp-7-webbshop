@@ -21,14 +21,18 @@ import { Metadata } from "next";
 
 export const dynamic = "auto";
 
-export async function generateMetadata(
-  { params }:{params: Promise<{ title: string }>}): Promise<Metadata> {
-  const title = (await params).title
- 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ title: string }>;
+}): Promise<Metadata> {
+  const title = (await params).title;
+
   return {
     title: title,
-    description: "View product information like title, price, description, specifications, stock, reviews, etc. and add product to cart",
-  }
+    description:
+      "View product information like title, price, description, specifications, stock, reviews, etc. and add product to cart",
+  };
 }
 
 const API_URL = "http://localhost:4000";
@@ -113,7 +117,7 @@ export default async function ProductDetailPage({
         <div className="flex flex-col gap-4 w-full min-w-0 self-start">
           <div className="relative w-full aspect-square overflow-hidden rounded-2xl border bg-muted">
             <Image
-              src={product.images[0] || product.thumbnail}
+              src={product.images?.[0] || product.thumbnail}
               fill
               alt={`${product.title}${product.brand ? ` by ${product.brand}` : ""}`}
               className="h-full w-full object-cover"
@@ -131,19 +135,21 @@ export default async function ProductDetailPage({
             </h1>
 
             {/* Rating */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
-                  />
-                ))}
+            {product.reviews && product.reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
+                </span>
               </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
-              </span>
-            </div>
+            )}
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
@@ -175,7 +181,11 @@ export default async function ProductDetailPage({
           <div className="grid grid-cols-2 gap-4 pt-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              <span>{product.warrantyInformation}</span>
+              {!product.reviews || product.reviews.length === 0 ? (
+                <span>Warranty Information Missing</span>
+              ) : (
+                <span>{product.warrantyInformation}</span>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-primary" />
@@ -213,12 +223,22 @@ export default async function ProductDetailPage({
             <div>
               <p className="font-medium mb-1">Shipping &amp; Delivery</p>
               <p className="text-muted-foreground">
-                {product.shippingInformation}
+                {!product.shippingInformation ? (
+                  <span>No Shipping Information</span>
+                ) : (
+                  <span>{product.shippingInformation}</span>
+                )}
               </p>
             </div>
             <div>
               <p className="font-medium mb-1">Return Policy</p>
-              <p className="text-muted-foreground">{product.returnPolicy}</p>
+              <p className="text-muted-foreground">
+                {!product.returnPolicy ? (
+                  <span>No Return Policy</span>
+                ) : (
+                  <span>{product.returnPolicy}</span>
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -231,7 +251,7 @@ export default async function ProductDetailPage({
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="specs">Specifications</TabsTrigger>
             <TabsTrigger value="reviews">
-              Reviews ({product.reviews?.length})
+              Reviews ({product?.reviews?.length ?? 0})
             </TabsTrigger>
           </TabsList>
 
@@ -242,27 +262,35 @@ export default async function ProductDetailPage({
             {product.description}
           </TabsContent>
 
+          {/*Specifications Tab*/}
           <TabsContent value="specs" className="mt-6 min-h-45">
-            <div className="grid grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
-              {product.weight && (
-                <>
-                  <div className="text-muted-foreground">Weight</div>
-                  <div className="font-medium">{product.weight} g</div>
-                </>
-              )}
-              {product.dimensions &&
-                Object.entries(product.dimensions).map(([key, value]) => [
-                  <div
-                    key={key + "-label"}
-                    className="text-muted-foreground capitalize"
-                  >
-                    {key}
-                  </div>,
-                  <div key={key + "-value"} className="font-medium">
-                    {value}
-                  </div>,
-                ])}
-            </div>
+            {!product.dimensions || product.weight === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
+                <UserCircle className="h-10 w-10 opacity-30" />
+                <p className="text-sm">Specification Details are Missing.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-y-3 gap-x-8 text-sm max-w-xl">
+                {product.weight && (
+                  <>
+                    <div className="text-muted-foreground">Weight</div>
+                    <div className="font-medium">{product.weight} g</div>
+                  </>
+                )}
+                {product.dimensions &&
+                  Object.entries(product.dimensions).map(([key, value]) => [
+                    <div
+                      key={key + "-label"}
+                      className="text-muted-foreground capitalize"
+                    >
+                      {key}
+                    </div>,
+                    <div key={key + "-value"} className="font-medium">
+                      {value}
+                    </div>,
+                  ])}
+              </div>
+            )}
           </TabsContent>
 
           {/* Reviews Tab */}
