@@ -1,32 +1,29 @@
 // stock nextjs
 import Link from "next/link";
 import Form from "next/form";
+import type { Metadata } from 'next'
 // custom/inhouse
 import type { Category, Product } from "./types";
-import GridCard from "./components/ProductGridCard";
 import { buildHref, getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
+import CatNav from "./components/ShopCatnav";
 // shadcn
 import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 import { Input } from "./components/ui/input";
 import ShopCatalog from "./components/ShopCatalog";
+import { ChevronRight } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./components/ui/sheet";
 
-
-import type { Metadata } from 'next'
-import { cn } from "cn";
-
-export const dynamic = "auto";
+export const dynamic = "force-dynamic"
  
 export const metadata: Metadata = {
   title: 'Product catalog',
@@ -101,42 +98,52 @@ export default async function ProductPage({
 
         <section className="flex flex-row w-full">
           
-        {/* catnav */}
-        <ButtonGroup orientation="vertical" className="mr-4">
-          <Link
-            scroll={false}
-            href={buildHref({ page, category }, { category: undefined, page: 1 })}
-              className={cn(
-                buttonVariants({ variant: "secondary", size: "lg" }),
-                "justify-start text-base font-semibold "
-              )}
+          {/* catnav desktop */}
+          <div className="hidden md:block mr-4">
+            <CatNav categories={categories} category={category} page={page} />
+          </div>
+          {/* catnav mobile */}
+          <Sheet>
+            {/* Catnav unfold chevron */}
+            <SheetTrigger
+              render={
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  aria-label="Open categories"
+                  className="md:hidden fixed left-0 top-1/2 z-40 h-16 w-6 -translate-y-1/2 rounded-l-none rounded-r-lg"
+                />
+              }
             >
-              Show all products
-          </Link>
+              <ChevronRight />
+            </SheetTrigger>
 
-          {categories.map((cat) => (
-            <Link
-              scroll={false}
-              key={cat.id}
-              href={buildHref({ page, category }, { category: cat.slug, page: 1 })}
-              className={buttonVariants({ variant: category === cat.slug ? "default" : "outline" }) + " justify-start"}
-            >
-              {cat.name}
-            </Link>
-          ))}
-        </ButtonGroup>
-          
+            <SheetContent side="left" className="w-64 p-4">
+              <SheetHeader>
+                <SheetTitle>Categories</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Filter products by category
+                </SheetDescription>
+              </SheetHeader>
+              <CatNav
+                categories={categories} category={category} page={page}
+                closeOnSelect
+                className="w-full"
+              />
+            </SheetContent>
+          </Sheet>
+            
 
-          {/* Shop grid */}
-          <section className="flex-col w-full">
-            {/* top nav buttons */}
-            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            {/* Shop grid */}
+            <section className="flex-col w-full">
+              {/* top nav buttons */}
+              <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
-            <ShopCatalog className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 *:w-full" data={data.products}/>
+              <ShopCatalog className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 *:w-full" data={data.products}/>
 
-            {/* Bottom nav buttons, same as line 71 */}
-             <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
-          </section>
+              {/* Bottom nav buttons, same as line 71 */}
+              <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            </section>
         </section>
       </div>
     </article>
