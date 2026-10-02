@@ -1,5 +1,4 @@
 "use client";
-import { Metadata } from 'next'
 import { Product } from '@/types'
 import {
   Table,
