@@ -184,7 +184,7 @@ export default async function ProductPage({
               </BreadcrumbList>
             </Breadcrumb>
             : null}
-            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
               {pageTitle}
             </h2>
 
