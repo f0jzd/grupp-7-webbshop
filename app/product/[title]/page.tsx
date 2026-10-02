@@ -247,7 +247,8 @@ export default async function ProductDetailPage({
       {/* 3. Lower Section: Added min-h-[180px] to tab contents */}
       <div className="mt-16">
         <Tabs defaultValue="description">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+          {/*The ! was used to override the shadcn component instead of rewriting the component, it should generally be avoided.*/}
+          <TabsList className="grid w-full grid-cols-1 min-[340px]:grid-cols-3 h-auto! min-[340px]:h-8! max-w-md">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="specs">Specifications</TabsTrigger>
             <TabsTrigger value="reviews">
