@@ -9,6 +9,7 @@ import { ContextProvider } from './ContextProvider';
 import { Product } from "./types";
 import Link from "next/link";
 import Image from "next/image";
+import { ButtonGroup } from "./components/ui/button-group";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,25 +58,29 @@ export default async function RootLayout({
         <body className="min-h-full flex flex-col">
           <ContextProvider cart={products}>
             {shouldShowHeader?
-              <header className="border border-b-2 border-b-green-300 p-2 px-4">
-                  <nav className="w-full flex justify-between items-center">
-                    <Link
-                      href="/"
-                      className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
-                    >
-                      <Image
-                        src="/shop-logo.png"
-                        alt="webshop icon"
-                        width={LOGO_SIZE}
-                        height={LOGO_SIZE}
-                        className="object-contain"
-                      />
-                      <span>Product Catalog</span>
-                    </Link>
-                    <Link href="/cart">
-                      <ShoppingCartCounter />
-                    </Link>
-                  </nav>
+              <header className="border border-b-2 border-b-green-300 p-2">
+                <nav className="w-full flex justify-between items-center max-w-375 mx-auto">
+                  <Link
+                    href="/"
+                    className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
+                  >
+                    <Image
+                      src="/shop-logo.png"
+                      alt="webshop icon"
+                      width={LOGO_SIZE}
+                      height={LOGO_SIZE}
+                      className="object-contain"
+                    />
+                    <span>Bengts Bildoktor</span>
+                  </Link>
+
+                  <div className="centerwrapper flex flex-row flex-nowrap gap-3">
+                  </div>
+
+                  <Link href="/cart">
+                    <ShoppingCartCounter />
+                  </Link>
+                </nav>
               </header> :
                null
             }
