@@ -23,6 +23,7 @@ import {
   SheetTrigger,
 } from "./components/ui/sheet";
 import { groupedCategories } from "./categories";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./components/ui/breadcrumb";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,12 @@ export default async function ProductPage({
   const currentPage = Number(page); // page destruct'd at line 55 for default
   const pageRange = getPageRange(currentPage, data.pages);
 
+  const pageTitle = groupedCategory
+    ? `${groupedCategory}`
+    : category
+    ? `${categories.find(c => c.slug === category)?.name}`
+    : "All products";
+
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
@@ -111,7 +118,7 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable">
+            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable min-w-full">
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
@@ -151,6 +158,36 @@ export default async function ProductPage({
                 <Button type="submit">Search</Button>
               </ButtonGroup>
             </Form>
+            {category || groupedCategory ?
+            <Breadcrumb className="mb-6 mt-4">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Products</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                {!groupedCategory ? 
+                  <BreadcrumbLink
+                    href={!groupedCategory ? `?groupedCategory=${encodeURIComponent(groupedCategories.find(gc => gc.categories.some(c => c.slug === category))!.name)}` : `?category=` + category}
+                  >
+                    {!groupedCategory ? groupedCategories.find(gc => gc.categories.some(c => c.slug === category))?.name : groupedCategory}
+                  </BreadcrumbLink>
+                  : <BreadcrumbPage>{groupedCategory}</BreadcrumbPage>
+                }
+                </BreadcrumbItem>
+                {!groupedCategory ? <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{categories.find(c => c.slug === category)?.name}</BreadcrumbPage>
+                </BreadcrumbItem> </> : null
+    }
+              </BreadcrumbList>
+            </Breadcrumb>
+            : null}
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+              {pageTitle}
+            </h2>
+
             {/* top nav buttons */}
             <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
 

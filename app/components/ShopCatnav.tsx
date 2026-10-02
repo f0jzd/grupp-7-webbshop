@@ -40,8 +40,7 @@ export default function CatNav({
     className: cn(
       buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
       "justify-start",
-      active && "border-primary", 
-      "text-lg"
+      active && "border-primary"
     ),
     "aria-current": active ? ("true" as const) : undefined,
   }
@@ -66,10 +65,9 @@ export default function CatNav({
             "data-slot": "button",
             href: buildHref({ page }, { groupedCategory: name, page: 1 }),
             className: cn(
-              buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
+              buttonVariants({ variant: active ? "default" : "outline" }),
               "justify-start",
-              active && "border-primary", 
-              "text-lg"
+              active && "border-primary"
             ),
             "aria-current": active ? ("true" as const) : undefined,
           }
@@ -97,7 +95,7 @@ export default function CatNav({
               buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
               "justify-start",
               active && "border-primary",
-              "pl-4"
+              "pl-6"
             ),
             "aria-current": active ? ("true" as const) : undefined,
           }
