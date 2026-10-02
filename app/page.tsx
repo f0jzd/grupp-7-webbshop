@@ -146,6 +146,7 @@ export default async function ProductPage({
             {/* Search */}
             <Form action={"/"} role="search" className="max-w-150 mx-auto w-full pb-4">
             {category && <input type="hidden" name="category" value={category} />}
+            {groupedCategory && <input type="hidden" name="groupedCategory" value={groupedCategory} />}
               <ButtonGroup className="w-full">
                 <Input
                   key={q}
