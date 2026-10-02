@@ -90,31 +90,19 @@ export default async function RootLayout({
                   </div>
 
                   {/* Categories responsive */}
-                  <div className="centerwrapper flex flex-col flex-nowrap gap-3 md:hidden">
-                    <div className="flex flex-row flex-nowrap gap-3">
-                        {groupedCategories.slice(0, 3).map(({ name }) => (
+                  <div className="centerwrapper flex flex-col flex-nowrap md:hidden">
+                    <div className="flex flex-row flex-wrap gap-4">
+                        {groupedCategories.map(({ name }) => (
                           <div key={name} className="relative">
                             <Link
                               href={`/?groupedCategory=${encodeURIComponent(name)}`}
-                              className="font-medium"
+                              className="font-medium text-nowrap"
                             >
                               {name}
                             </Link>
                           </div>
                         ))}
                         </div>
-                        <div className="flex flex-row flex-nowrap gap-3">
-                        {groupedCategories.slice(4).map(({ name, categories: subCategories }) => (
-                          <div key={name} className="relative">
-                            <Link
-                              href={`/?groupedCategory=${encodeURIComponent(name)}`}
-                              className="font-medium"
-                            >
-                              {name}
-                            </Link>
-                          </div>
-                        ))}
-                    </div>
                   </div>
 
                   <Link href="/cart">
