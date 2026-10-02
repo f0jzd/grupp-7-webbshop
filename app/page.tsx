@@ -1,7 +1,7 @@
 // stock nextjs
 import Link from "next/link";
 import Form from "next/form";
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
 // custom/inhouse
 import type { Category, Product } from "./types";
 import { buildHref, getPageRange, Filters } from "./lib/utils";
@@ -23,12 +23,13 @@ import {
   SheetTrigger,
 } from "./components/ui/sheet";
 
-export const dynamic = "force-dynamic"
- 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: 'Product catalog',
-  description: 'Find products by searching or filtering by category and add products to cart',
-}
+  title: "Product catalog",
+  description:
+    "Find products by searching or filtering by category and add products to cart",
+};
 
 const API_URL = "http://localhost:4000";
 
@@ -46,17 +47,17 @@ export default async function ProductPage({
   searchParams: Promise<{ page?: string; category?: string; q?: string }>;
 }) {
   // pagination data
-  const { page = "1", category, q} = await searchParams;
-  const paginationLimit = 18 // tweak here to change page size
+  const { page = "1", category, q } = await searchParams;
+  const paginationLimit = 18; // tweak here to change page size
   const state = { page, category, q }; // current search state, built from search params
 
   // returns the list of categories for the catnav panel
-  const categories: Category[] = await fetch(
-    `${API_URL}/categories`
-  ).then((res) => res.json());
+  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
+    (res) => res.json(),
+  );
   // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
-  const selectedCategory = categories.find((c) => c.slug === category); 
-  
+  const selectedCategory = categories.find((c) => c.slug === category);
+
   const query = new URLSearchParams({
     _page: page,
     _limit: String(paginationLimit),
@@ -64,17 +65,20 @@ export default async function ProductPage({
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
-    const data: ProductsResponse = await fetch(
-    `${API_URL}/products?${query}`
+  const data: ProductsResponse = await fetch(
+    `${API_URL}/products?${query}`,
   ).then((res) => res.json());
 
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
+  const enrichedProducts = data.products.map((p) => ({
+    ...p,
+    category: categoryMap.get(p.categoryId),
+  }));
 
   // shadcn dynamic pagination data
   const currentPage = Number(page); // page destruct'd at line 55 for default
   const pageRange = getPageRange(currentPage, data.pages);
-
-
 
   return (
     <article>
@@ -95,9 +99,7 @@ export default async function ProductPage({
           </ButtonGroup>
         </Form>
 
-
         <section className="flex flex-row w-full">
-          
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
             <CatNav categories={categories} category={category} page={page} />
@@ -137,17 +139,27 @@ export default async function ProductPage({
               </div>
             </SheetContent>
           </Sheet>
-            
 
           {/* Shop grid */}
           <section className="flex-col w-full">
             {/* top nav buttons */}
-            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={{ category, q }}
+            />
 
-            <ShopCatalog className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 *:w-full" data={data.products}/>
+            <ShopCatalog
+              className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 *:w-full"
+              data={enrichedProducts}
+            />
 
             {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={{ category, q }}
+            />
           </section>
         </section>
       </div>
