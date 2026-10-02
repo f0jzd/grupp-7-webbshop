@@ -105,7 +105,7 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4 flex flex-col">
+            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable">
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
@@ -119,7 +119,7 @@ export default async function ProductPage({
                   category={category}
                   page={page}
                   closeOnSelect
-                  className="w-full"
+                  className="w-full pr-3"
                 />
               </div>
             </SheetContent>
