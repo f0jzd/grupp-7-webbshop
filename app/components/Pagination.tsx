@@ -1,9 +1,7 @@
 import { ProductsResponse } from "@/types";
 import Link from "next/link";
 
-type PaginationProps = Omit<ProductsResponse, "products" | "stats"> & {
-  urlParams: URLSearchParams;
-};
+type PaginationProps = {page:number, pages:number, urlParams:URLSearchParams};
 
 export const Pagination = ({ page, pages, urlParams }: PaginationProps) => {
   const getPageUrl = (pageNumber: number) => {

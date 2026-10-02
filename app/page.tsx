@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet";
+import { groupedCategories } from "./categories";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 const API_URL = "http://localhost:4000";
 
 interface ProductsResponse {
-  products: Product[];
+  data: Product[];
   total: number;
   limit: number;
   page: number;
@@ -44,12 +45,14 @@ interface ProductsResponse {
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; q?: string }>;
+  searchParams: Promise<{ page?: string; category?: string; q?: string; groupedCategory?: string }>;
 }) {
   // pagination data
-  const { page = "1", category, q } = await searchParams;
+  const { page = "1", category: categoryParam, q, groupedCategory: groupedCategoryParam } = await searchParams;
+  const category = categoryParam ? decodeURIComponent(categoryParam) : undefined;
+  const groupedCategory = groupedCategoryParam ? decodeURIComponent(groupedCategoryParam) : undefined;
   const paginationLimit = 18; // tweak here to change page size
-  const state = { page, category, q }; // current search state, built from search params
+  const state = { page, category, q, groupedCategory }; // current search state, built from search params
 
   // returns the list of categories for the catnav panel
   const categories: Category[] = await fetch(`${API_URL}/categories`).then(
@@ -60,10 +63,11 @@ export default async function ProductPage({
 
   const query = new URLSearchParams({
     _page: page,
-    _limit: String(paginationLimit),
+    _per_page: String(paginationLimit),
   });
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
-  if (q) query.set("title_like", q); // or "search" if you add the middleware block
+  if (groupedCategory) query.set("categoryId:in", String(groupedCategories.find((gc) => gc.name === groupedCategory)?.categories.map((c) => c.id)));
+  if (q) query.set("title:contains", q); // or "search" if you add the middleware block
 
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
@@ -71,7 +75,7 @@ export default async function ProductPage({
 
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
-  const enrichedProducts = data.products.map((p) => ({
+  const enrichedProducts = data.data.map((p) => ({
     ...p,
     category: categoryMap.get(p.categoryId),
   }));
@@ -89,7 +93,7 @@ export default async function ProductPage({
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
-            <CatNav categories={categories} category={category} page={page} />
+            <CatNav groupedCategories={groupedCategories} categories={categories} category={category} groupedCategory={groupedCategory} page={page} />
           </div>
           {/* catnav mobile */}
           <Sheet>
@@ -117,6 +121,8 @@ export default async function ProductPage({
 
               <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
                 <CatNav
+                  groupedCategories={groupedCategories}
+                  groupedCategory={groupedCategory}
                   categories={categories}
                   category={category}
                   page={page}
@@ -131,7 +137,7 @@ export default async function ProductPage({
           <section className="flex-col w-full">
 
             {/* Search */}
-            <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
+            <Form action={"/"} role="search" className="max-w-150 mx-auto w-full pb-4">
             {category && <input type="hidden" name="category" value={category} />}
               <ButtonGroup className="w-full">
                 <Input
@@ -146,18 +152,18 @@ export default async function ProductPage({
               </ButtonGroup>
             </Form>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
 
             {/* Shop grid */}
             <ShopCatalog className="
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={data.products}
+              data={data.data}
             />
 
             {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
           </section>
         </section>
       </div>

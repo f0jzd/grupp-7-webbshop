@@ -10,6 +10,7 @@ import { Product } from "./types";
 import Link from "next/link";
 import Image from "next/image";
 import { ButtonGroup } from "./components/ui/button-group";
+import { groupedCategories } from "./categories";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,7 +60,7 @@ export default async function RootLayout({
           <ContextProvider cart={products}>
             {shouldShowHeader?
               <header className="border border-b-2 border-b-green-300 p-2">
-                <nav className="w-full flex justify-between items-center max-w-375 mx-auto">
+                <nav className="w-full flex justify-between items-center max-w-375 mx-auto max-md:flex-col max-md:items-start max-md:gap-2">
                   <Link
                     href="/"
                     className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
@@ -74,7 +75,46 @@ export default async function RootLayout({
                     <span>Bengts Bildoktor</span>
                   </Link>
 
-                  <div className="centerwrapper flex flex-row flex-nowrap gap-3">
+                {/* Categories desktop */}
+                  <div className="centerwrapper flex flex-row flex-nowrap gap-3 max-md:hidden">
+                    {groupedCategories.map(({ name }) => (
+                      <div key={name} className="relative">
+                        <Link
+                          href={`/?groupedCategory=${encodeURIComponent(name)}`}
+                          className="font-medium"
+                        >
+                          {name}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Categories responsive */}
+                  <div className="centerwrapper flex flex-col flex-nowrap gap-3 md:hidden">
+                    <div className="flex flex-row flex-nowrap gap-3">
+                        {groupedCategories.slice(0, 3).map(({ name }) => (
+                          <div key={name} className="relative">
+                            <Link
+                              href={`/?groupedCategory=${encodeURIComponent(name)}`}
+                              className="font-medium"
+                            >
+                              {name}
+                            </Link>
+                          </div>
+                        ))}
+                        </div>
+                        <div className="flex flex-row flex-nowrap gap-3">
+                        {groupedCategories.slice(4).map(({ name, categories: subCategories }) => (
+                          <div key={name} className="relative">
+                            <Link
+                              href={`/?groupedCategory=${encodeURIComponent(name)}`}
+                              className="font-medium"
+                            >
+                              {name}
+                            </Link>
+                          </div>
+                        ))}
+                    </div>
                   </div>
 
                   <Link href="/cart">

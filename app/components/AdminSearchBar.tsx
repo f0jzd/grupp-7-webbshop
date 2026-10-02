@@ -28,7 +28,7 @@ export const SearchBar = ({ categories, stock }: SearchProps) => {
       event.currentTarget.value,
     );
 
-    router.replace(`/?${params.toString()}`);
+    router.replace(`/admin-page?${params.toString()}`);
   }
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {

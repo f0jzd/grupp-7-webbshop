@@ -54,10 +54,11 @@ export interface Product {
 }
 
 export interface ProductsResponse {
-  products: Product[];
+  data: Product[];
   stats: Stats;
   total: number;
   limit: number;
   page: number;
+  items: number;
   pages: number;
 }

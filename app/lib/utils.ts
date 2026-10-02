@@ -55,7 +55,7 @@ export function buildHref(
 }
 
 // pagination components. Needs extraction as part of migration. Lives here for now.
-export type Filters = { category?: string; q?: string };
+export type Filters = { category?: string; groupedCategory?: string; q?: string };
 
 export function getPageRange(current: number, total: number): (number | "ellipsis")[] {
   const delta = 2; // how many neighbors to show around current
