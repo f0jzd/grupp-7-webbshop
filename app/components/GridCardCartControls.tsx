@@ -33,7 +33,7 @@ export function GridCardCartControls({
   if (count === 0) {
     return (
       <Button size="sm" className="w-full gap-2" onClick={handleAdd}>
-        <ShoppingBag className="h-4 w-4" />
+        <ShoppingBag className="h-4 w-4 max-[299px]:hidden" />
         Add to Cart
       </Button>
     );

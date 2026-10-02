@@ -19,57 +19,43 @@ export default function CatNav({
   closeOnSelect?: boolean;
   className?: string;
 }) {
-  // one link renderer; inside the sheet, the link itself becomes the close button
-  const navLink = (
-    key: string | number,
-    href: string,
-    cls: string,
-    label: string,
-    active = false
-  ) => {
-    const props = {
-      scroll: false,
-      href,
-      className: cls,
-      "aria-current": active ? ("true" as const) : undefined,
-    };
-    return closeOnSelect ? (
-      <SheetClose key={key} nativeButton={false} render={<Link {...props} />}>
-        {label}
-      </SheetClose>
-    ) : (
-      <Link key={key} {...props}>
-        {label}
-      </Link>
-    );
-  };
+  // "all" is just a category with no slug
+  const items: { key: string | number; slug?: string; name: string }[] = [
+    { key: "all", slug: undefined, name: "All products" },
+    ...categories.map((c) => ({ key: c.id, slug: c.slug, name: c.name })),
+  ];
+
+  const selected = category || undefined; // normalise "" to undefined
 
   return (
     <nav aria-label="Product categories">
       <ButtonGroup orientation="vertical" className={className}>
-        {navLink(
-          "all",
-          buildHref({ page, category }, { category: undefined, page: 1 }),
-          cn(
-            buttonVariants({ variant: "secondary", size: "lg" }),
-            "justify-start text-base font-semibold"
-          ),
-          "Show all products",
-          !category
-        )}
+        {items.map(({ key, slug, name }) => {
+          const active = selected === slug;
 
-        {categories.map((cat) =>
-          navLink(
-            cat.id,
-            buildHref({ page, category }, { category: cat.slug, page: 1 }),
-            cn(
-              buttonVariants({ variant: category === cat.slug ? "default" : "outline", size: "lg" }),
-              "justify-start"
+          const props = {
+            scroll: false,
+            "data-slot": "button",
+            href: buildHref({ page, category }, { category: slug, page: 1 }),
+            className: cn(
+              buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
+              "justify-start",
+              active && "border-primary"
             ),
-            cat.name,
-            category === cat.slug
-          )
-        )}
+            "aria-current": active ? ("true" as const) : undefined,
+          }
+
+          // inside the sheet, the link itself becomes the close button
+          return closeOnSelect ? (
+            <SheetClose key={key} nativeButton={false} render={<Link {...props} />}>
+              {name}
+            </SheetClose>
+          ) : (
+            <Link key={key} {...props}>
+              {name}
+            </Link>
+          );
+        })}
       </ButtonGroup>
     </nav>
   );

@@ -21,11 +21,14 @@ export default function ShopCatalog({className, data}:{className:string, data:Pr
   }
 
   return(
+    <>
+    <h1 className="hidden">Catalog</h1>
     <div className={className}>
     {
       data.map((product:Product) => (
         <GridCard key={product.id} product={product} />
       ))
     }</div>
+    </>
   )
 }
