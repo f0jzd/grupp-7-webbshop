@@ -76,7 +76,7 @@ export default async function RootLayout({
                   </Link>
 
                 {/* Categories desktop */}
-                  <div className="centerwrapper flex flex-row flex-nowrap gap-3 max-md:hidden">
+                  <div className="centerwrapper flex flex-row flex-nowrap gap-6 max-md:hidden">
                     {groupedCategories.map(({ name }) => (
                       <div key={name} className="relative">
                         <Link

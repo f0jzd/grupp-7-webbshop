@@ -1,7 +1,7 @@
 export const groupedCategories = [
   {
-    name: "Beauty & Personal Care",
-    slug: "beauty-personal-care",
+    name: "Cosmetics",
+    slug: "cosmetics",
     categories: [
       {
         id: 1,
@@ -123,8 +123,8 @@ export const groupedCategories = [
   },
 
   {
-    name: "Home & Living",
-    slug: "home-living",
+    name: "Home",
+    slug: "home",
     categories: [
       {
         id: 3,
@@ -148,8 +148,8 @@ export const groupedCategories = [
   },
 
   {
-    name: "Food & Groceries",
-    slug: "food-groceries",
+    name: "Food",
+    slug: "food",
     categories: [
       {
         id: 4,

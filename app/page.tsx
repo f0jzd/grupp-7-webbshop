@@ -118,7 +118,7 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable min-w-full">
+            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable min-w-[350px]">
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
