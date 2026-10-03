@@ -1,7 +1,7 @@
 import { FilterCard } from "../components/FilterCard";
-import type { Category, ProductsResponse, Stats } from "../types";
+import type { Category, Product, ProductsResponse, Stats } from "../types";
 import { ProductList } from "@/components/ProductList";
-import { SearchBar } from "../components/SearchBar";
+import { SearchBar } from "../components/AdminSearchBar";
 import { Pagination } from "../components/Pagination";
 import { createUrlSearchParams } from "../lib/utils";
 import { Metadata } from "next";
@@ -28,12 +28,27 @@ export default async function Home({
 
   const stock = ["In Stock", "Low Stock", "Out of Stock"];
 
-  const {
-    total: totalStock,
-    lowStock,
-    outOfStock,
-    inStock,
-  }: Stats = await fetch(`${API_URL}/products/stats`).then((res) => res.json());
+  const allProducts: Product[] = (await fetch(`${API_URL}/products`).then((res) => res.json()));
+
+  const {total:stockTotal, inStock, lowStock, outOfStock}: Stats = allProducts.reduce(
+        (acc, item) => {
+          const stock = Number(item.stock) || 0;
+          acc.total += 1;
+
+          if (stock === 0) {
+            acc.outOfStock += 1;
+          } else if (stock < 10) {
+            acc.lowStock += 1;
+          } else {
+            acc.inStock += 1;
+          }
+
+          return acc;
+        },
+        { total: 0, inStock: 0, lowStock: 0, outOfStock: 0 },
+      );
+
+
 
   // we use the fetch() method to get the products from the API
   // in this fetch we sort using _sort and _order and we limit the number of products using _limit
@@ -54,30 +69,27 @@ export default async function Home({
 
   const query = new URLSearchParams({
     _page: String(currentPage),
-    _limit: defaultLimit,
-    _sort: "id",
-    _order: "desc",
-    _expand: "category",
+    _per_page: defaultLimit
   });
 
   if (selectedCategory) {
-    query.set("categoryId", String(selectedCategory.id));
+    query.set("categoryId:eq", String(selectedCategory.id));
   }
   if (stockStatus) {
-    query.set("availabilityStatus", stockStatus);
+    query.set("availabilityStatus:eq", stockStatus);
   }
   if (search) {
-    query.set("title_like", search);
+    query.set("title:contains", search);
   }
 
-  const { products, total, page, pages, limit }: ProductsResponse = await fetch(
-    `${API_URL}/products/?${query.toString()}`,
-  ).then((res) => res.json());
+  const { data: products, pages }: ProductsResponse = (await fetch(
+    `${API_URL}/products?${query.toString()}`,
+  ).then((res) => res.json()));
 
   return (
     <main className="max-w-7xl w-full mx-auto p-4 flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row gap-2">
-        <FilterCard category="products" value={totalStock} />
+        <FilterCard category="products" value={stockTotal} />
         <FilterCard category="instock" value={inStock} />
         <FilterCard category="lowstock" value={lowStock} />
         <FilterCard category="outofstock" value={outOfStock} />
@@ -86,10 +98,8 @@ export default async function Home({
       <section className="rounded-lg border-gray-300 border overflow-hidden">
         <ProductList products={products} />
         <Pagination
-          page={page}
-          pages={pages}
-          total={total}
-          limit={limit}
+          page={Number(currentPage)}
+          pages={Number(pages)}
           urlParams={urlParams}
         />
       </section>
