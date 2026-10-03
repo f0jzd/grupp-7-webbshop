@@ -82,7 +82,7 @@ export default async function Home({
     query.set("title:contains", search);
   }
 
-  const { data: products, total, page, pages, limit }: ProductsResponse = (await fetch(
+  const { data: products, pages }: ProductsResponse = (await fetch(
     `${API_URL}/products?${query.toString()}`,
   ).then((res) => res.json()));
 

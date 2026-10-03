@@ -3,7 +3,7 @@ import Link from "next/link";
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
-import type { Category, Product } from "./types";
+import type { Category, ProductsResponse } from "./types";
 import { buildHref, getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
@@ -34,14 +34,6 @@ export const metadata: Metadata = {
 };
 
 const API_URL = "http://localhost:4000";
-
-interface ProductsResponse {
-  data: Product[];
-  total: number;
-  limit: number;
-  page: number;
-  pages: number;
-}
 
 export default async function ProductPage({
   searchParams,

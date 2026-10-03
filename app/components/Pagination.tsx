@@ -1,4 +1,3 @@
-import { ProductsResponse } from "@/types";
 import Link from "next/link";
 
 type PaginationProps = {page:number, pages:number, urlParams:URLSearchParams};
