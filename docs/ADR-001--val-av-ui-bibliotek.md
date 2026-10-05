@@ -1,8 +1,6 @@
-🏛️ Architecture Decision Record (ADR) Mall
-Vad är en ADR?
-En ADR (Architecture Decision Record) är ett kortfattat dokument som fångar ett viktigt arkitektur- eller teknikbeslut, kontexten kring beslutet och dess konsekvenser. Spara era beslut i mappen docs/ med namn som ADR-001-val-av-databas.md.
+# ADR-1: Val av UI bibliotek
 
-ADR-[1]: [Val av UI bibliotek (shadcn)]
+ADR-1: Val av UI bibliotek (shadcn)
 Status: [Beslutad]
 Datum: 2026-09-22
 Deltagare: [Georgij Li, Dmitry Alexandersson, Tomas Savela]
