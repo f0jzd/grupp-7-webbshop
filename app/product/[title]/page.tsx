@@ -18,6 +18,7 @@ import { AddToCartButton } from "@/components/AddToCartButton";
 import { Category } from "@/types";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
+import { groupedCategories } from "@/categories";
 
 export const dynamic = "auto";
 
@@ -82,11 +83,9 @@ export default async function ProductDetailPage({
 
   const averageRating = calculateAverageRating(product);
   const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
-
-  const cookieStore = await cookies();
-  const cartString = cookieStore.get("cart")?.value;
-  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
-  const cartCount = cartIds.filter((id) => id === product.id).length;
+  const groupedCategory = groupedCategories.find((gc) =>
+    gc.categories.some((c) => c.id === product.categoryId),
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -95,6 +94,14 @@ export default async function ProductDetailPage({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              href={groupedCategory ? `/?groupedCategory=${encodeURIComponent(groupedCategory.name)}` : "/"}
+            >
+              {groupedCategory?.name}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
