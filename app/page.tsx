@@ -23,6 +23,10 @@ import {
   SheetTrigger,
 } from "./components/ui/sheet";
 
+//Supabase stuff
+import { supabase } from "./lib/supabase";
+import { unstable_cache } from "next/cache";
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -41,22 +45,83 @@ interface ProductsResponse {
   pages: number;
 }
 
+// Caches categories for 1 hour so pagination never re-fetches them from the cloud
+const getCachedCategories = unstable_cache(
+  async () => {
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
+    return (data || []) as Category[];
+  },
+  ["shop-categories-cache"],
+  { revalidate: 3600 }, // 1 hour in seconds
+);
+
+// Caches products per page, category, and search query
+const getCachedProducts = unstable_cache(
+  async (
+    currentPage: number,
+    limit: number,
+    categoryId?: number,
+    q?: string,
+  ) => {
+    const from = (currentPage - 1) * limit;
+    const to = from + limit - 1;
+
+    let query = supabase
+      .from("products")
+      .select("*", { count: "exact" })
+      .range(from, to)
+      .order("id");
+
+    if (categoryId) {
+      query = query.eq("categoryId", categoryId);
+    }
+    if (q) {
+      query = query.ilike("title", `%${q}%`);
+    }
+
+    const { data, count } = await query;
+    const total = count || 0;
+    const pages = Math.ceil(total / limit) || 1;
+    const products = (data || []) as Product[];
+
+    return { products, total, pages };
+  },
+  ["shop-products-page-cache"],
+  { revalidate: 3600 }, // caches for 1 hour
+);
+
 export default async function ProductPage({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; category?: string; q?: string }>;
 }) {
-  // pagination data
   const { page = "1", category, q } = await searchParams;
-  const paginationLimit = 18; // tweak here to change page size
-  const state = { page, category, q }; // current search state, built from search params
+  const paginationLimit = 18;
+  const currentPage = Number(page) || 1;
 
-  // returns the list of categories for the catnav panel
-  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
-    (res) => res.json(),
-  );
-  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
+  // 1. Fetch categories (cached)
+  const categories = await getCachedCategories();
   const selectedCategory = categories.find((c) => c.slug === category);
+
+  // 2. Fetch products for this page (cached)
+  const { products, pages } = await getCachedProducts(
+    currentPage,
+    paginationLimit,
+    selectedCategory?.id,
+    q,
+  );
+
+  // 3. Enrich products with category info
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
+  const enrichedProducts = products.map((p) => ({
+    ...p,
+    category: categoryMap.get(p.categoryId),
+  }));
+
+  const pageRange = getPageRange(currentPage, pages);
 
   const query = new URLSearchParams({
     _page: page,
@@ -65,27 +130,9 @@ export default async function ProductPage({
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
-  const data: ProductsResponse = await fetch(
-    `${API_URL}/products?${query}`,
-  ).then((res) => res.json());
-
-  const categoryMap = new Map(categories.map((c) => [c.id, c]));
-
-  const enrichedProducts = data.products.map((p) => ({
-    ...p,
-    category: categoryMap.get(p.categoryId),
-  }));
-
-  // shadcn dynamic pagination data
-  const currentPage = Number(page); // page destruct'd at line 55 for default
-  const pageRange = getPageRange(currentPage, data.pages);
-
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
-
-
-
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
@@ -107,7 +154,10 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable">
+            <SheetContent
+              side="left"
+              className="w-64 p-4 flex flex-col scrollbar-gutter-stable"
+            >
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
@@ -129,10 +179,15 @@ export default async function ProductPage({
 
           {/* catalong wrapper */}
           <section className="flex-col w-full">
-
             {/* Search */}
-            <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-            {category && <input type="hidden" name="category" value={category} />}
+            <Form
+              action="/"
+              role="search"
+              className="max-w-150 mx-auto w-full pb-4"
+            >
+              {category && (
+                <input type="hidden" name="category" value={category} />
+              )}
               <ButtonGroup className="w-full">
                 <Input
                   key={q}
@@ -146,18 +201,29 @@ export default async function ProductPage({
               </ButtonGroup>
             </Form>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination
+              className="mb-4"
+              currentPage={currentPage}
+              totalPages={pages}
+              filters={{ category, q }}
+            />
 
             {/* Shop grid */}
-            <ShopCatalog className="
+            <ShopCatalog
+              className="
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={data.products}
+              data={enrichedProducts}
             />
 
             {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination
+              className="mt-4"
+              currentPage={currentPage}
+              totalPages={pages}
+              filters={{ category, q }}
+            />
           </section>
         </section>
       </div>
