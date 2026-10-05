@@ -8,7 +8,6 @@ import { buildHref, getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
 // shadcn
-import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import { Input } from "./components/ui/input";
