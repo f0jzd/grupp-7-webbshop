@@ -21,4 +21,5 @@ Nackdelar: Funkar inte utan autentisering. Skulle behöva implementera autentise
 Vilket alternativ valde vi och varför?
 
 Vi valde alternativ A. Cookies i webbläsaren passar väl för att spara varukorgen då det är inbyggt i webbläsare och löser våra behov.
+Sparar endast produkt id i varukorg cookien för att minska storleken på cookien.
 Man slipper implementera autentisering och kan spara varukorgen i webbläsaren då cookies automatiskt skickas med till API-anrop.
