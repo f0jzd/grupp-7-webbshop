@@ -79,15 +79,16 @@ export default async function ProductPage({
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
-  // AI block
   // sorting (json-server 0.x: _sort + _order); whitelist so the URL can't inject fields
-  if (sort && ["price", "rating", "discountPercentage"].includes(sort)) {
-    query.set("_sort", sort);
-    query.set("_order", order === "desc" ? "desc" : "asc");
-  }
+  const sortField =
+    sort && ["price", "rating", "discountPercentage"].includes(sort)
+      ? sort
+      : "title"; // default: alphabetical by name
+  query.set("_sort", sortField);
+  query.set("_order", order === "desc" ? "desc" : "asc");
+
   if (inStock === "1") query.set("availabilityStatus_ne", "Out of Stock");
   if (onSale === "1") query.set("discountPercentage_gte", "10"); // 10 is a guess, check your data
-  // AI Block/
 
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
