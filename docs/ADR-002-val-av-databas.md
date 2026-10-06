@@ -1,14 +1,4 @@
-# 🏛️ Architecture Decision Record (ADR) Mall
-
-> **Vad är en ADR?**  
-> En ADR (Architecture Decision Record) är ett kortfattat dokument som fångar ett viktigt arkitektur- eller teknikbeslut, kontexten kring beslutet och dess konsekvenser. Spara era beslut i mappen `docs/` med namn som `ADR-001-val-av-databas.md`.
-
-> ⚖️ **Tumregel: När ska vi skriva en ADR i detta projekt?**  
-> * **Skriv INTE en ADR för allt!** Ni ska **endast skriva 1 (max 2) ADR:er för hela projektet**.
-> * **Var?** Skriv den uteslutande för era **valbara fördjupningsmoduler** eller ert största tekniska vägval (t.ex. *Val av state-hantering för varukorg*, *Val av Auth-tjänst*, eller *Val av molndatabas*).
-> * **När behövs INTE en ADR?** Skriv aldrig en ADR för UI-styling, vanliga React-komponenter, sidlayouter eller buggfixar.
-
----
+# 🏛️ Architecture Decision Record (ADR)
 
 # ADR-[Val av databas för Databas Migration]:
 
