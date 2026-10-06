@@ -30,7 +30,6 @@ export async function addProductAction(formdata: FormData) {
     return "In Stock";
   };
 
-  const PRODUCTS_URL = "http://localhost:4000/products";
   const productId = formdata.get("productId")?.toString();
 
   const title = formdata.get("title") as string;
@@ -43,7 +42,7 @@ export async function addProductAction(formdata: FormData) {
 
   const availabilityStatus = getStockStatus(parseInt(stock, 10));
 
-  const newProduct = {
+  const productData = {
     title,
     price: parseInt(price, 10),
     description,
@@ -52,29 +51,28 @@ export async function addProductAction(formdata: FormData) {
     brand,
     stock,
     availabilityStatus,
+    meta: {
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    images: thumbnail ? [thumbnail] : [],
   };
 
-  try {
-    const request = new Request(
-      productId ? `${PRODUCTS_URL}/${productId}` : PRODUCTS_URL,
-      {
-        method: productId ? "PATCH" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProduct),
-      },
-    );
+  if (productId) {
+    // 1. UPDATE an existing product
+    const { error } = await supabase
+      .from("products")
+      .update(productData)
+      .eq("id", parseInt(productId, 10));
+    if (error) throw new Error(`Failed to update product: ${error.message}`);
+  } else {
+    // 2. INSERT a brand new product
+    const { error } = await supabase
+      .from("products")
+      .insert(productData);
+    if (error) throw new Error(`Failed to add product: ${error.message}`);
 
-    const response = await fetch(request);
-
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status} ${response.statusText}`);
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to create product: ${message}`);
-  }
-
+    // 3. Clear cache so the new product shows up on the homepage immediately
   revalidatePath("/");
+  }
 }
