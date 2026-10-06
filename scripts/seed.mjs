@@ -38,7 +38,7 @@ async function runImport() {
   console.log("Uploading products...");
   const { error: prodError } = await supabase
     .from("products")
-    .upsert(parsed.products);
+    .upsert(parsed.products);//UPdate + inSERT
 
   if (prodError) {
     throw new Error(`Products failed: ${prodError.message}`);

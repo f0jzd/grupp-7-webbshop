@@ -1,24 +1,22 @@
 "use server";
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from "next/cache";
-import { Product } from './types';
-
-const API_URL = "http://localhost:4000";
+import { supabase } from "./lib/supabase";
 
 export async function deleteProduct(id: number) {
-  const request = new Request(`${API_URL}/products/${id}`, {
-    method: "DELETE",
-  });
+ 
+  //Finds the row corresponding to the passed id and deletes it.
+  const{error} = await supabase 
+  .from("products")
+  .delete()
+  .eq("id",id);// SQL: DELETE FROM products WHERE id = id
 
-  const response = await fetch(request);
 
-  if (!response.ok) {
-    return {
-      message: `The product could not be deleted due to the following error: ${response.status} ${response.statusText}`,
-    };
+  if (error){
+    return {message:`Failed to delete: ${error.message}`};
   }
 
+  //Reset cache
   revalidatePath("/");
 }
 

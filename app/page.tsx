@@ -85,6 +85,7 @@ export default async function ProductPage({
 }) {
   const { page = "1", category, q } = await searchParams;
   const paginationLimit = 18;
+  //Safety Check
   const currentPage = Number(page) || 1;
 
   // 1. Fetch categories (cached)
