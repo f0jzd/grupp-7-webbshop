@@ -7,11 +7,11 @@ import type { Category, Product } from "./types";
 import { buildHref, getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
+import ShopCatalog from "./components/ShopCatalog";
 // shadcn
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import { Input } from "./components/ui/input";
-import ShopCatalog from "./components/ShopCatalog";
 import { ChevronRight } from "lucide-react";
 import {
   Sheet,
@@ -130,20 +130,25 @@ export default async function ProductPage({
           <section className="flex-col w-full">
 
             {/* Search */}
-            <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-            {category && <input type="hidden" name="category" value={category} />}
-              <ButtonGroup className="w-full">
-                <Input
-                  key={q}
-                  name="q"
-                  type="search"
-                  defaultValue={q}
-                  placeholder="Search products…"
-                  aria-label="Search products"
-                />
-                <Button type="submit">Search</Button>
-              </ButtonGroup>
-            </Form>
+            <div>
+              <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
+              {category && <input type="hidden" name="category" value={category} />}
+                <ButtonGroup className="w-full">
+                  <Input
+                    key={q}
+                    name="q"
+                    type="search"
+                    defaultValue={q}
+                    placeholder="Search products…"
+                    aria-label="Search products"
+                  />
+                  <Button type="submit">Search</Button>
+                </ButtonGroup>
+              </Form>
+              <Button>placeholder</Button>
+              <Button>placeholder</Button>
+              <Button>placeholder</Button>
+            </div>
             {/* top nav buttons */}
             <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
 
