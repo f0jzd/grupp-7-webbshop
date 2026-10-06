@@ -22,9 +22,9 @@ export default async function GridCard({ product }: GridCardProps) {
     <Card key={product.id} className="h-full">
       <Link href={`/product/${product.title}`} className="h-full">
         <CardHeader>
-          <CardTitle className="line-clamp-1">{product.title}</CardTitle>
+          <CardTitle className="line-clamp-1"><h3>{product.title}</h3></CardTitle>
           <CardDescription className="line-clamp-1">
-            {product.brand ?? "Unknown brand"}
+            <p>{product.brand ?? "Unknown brand"}</p>
           </CardDescription>
         </CardHeader>
         <CardContent>
