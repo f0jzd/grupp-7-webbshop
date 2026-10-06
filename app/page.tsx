@@ -225,7 +225,7 @@ export default async function ProductPage({
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={data.products}
+              data={products}
             />
 
             {/* Bottom nav buttons */}
