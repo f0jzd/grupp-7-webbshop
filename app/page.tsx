@@ -66,12 +66,14 @@ export default async function ProductPage({
     `${API_URL}/products?${query}`,
   ).then((res) => res.json());
 
+  const products: (Product & {category: Category | undefined})[] = data.products as unknown as (Product & {category: Category | undefined})[]; // type assertion to include category property
+
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
 
-  const enrichedProducts = data.data.map((p) => ({
-    ...p,
-    category: categoryMap.get(p.categoryId),
-  }));
+  products.map(p => {
+    p.category = categoryMap.get(p.categoryId);
+    return p;
+  })
 
   // shadcn dynamic pagination data
   const currentPage = Number(page); // page destruct'd at line 55 for default
@@ -189,7 +191,7 @@ export default async function ProductPage({
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={data.data}
+              data={products}
             />
 
             {/* Bottom nav buttons, same as line 71 */}

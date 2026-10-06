@@ -67,7 +67,7 @@ export default function ProductCard({
           alt=""
           width={300}
           height={300}
-          className="order-first my-2 border border-gray-300 rounded-sm"
+          className="order-first my-2 border border-gray-300 rounded-sm w-full h-auto"
         />
       </div>
       <p className="text-left">{brand}</p>
