@@ -21,6 +21,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
 
 export const dynamic = "force-dynamic";
 
@@ -151,11 +157,8 @@ export default async function ProductPage({
             {/* Search */}
             <div>
               <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-              {Object.entries({ category, sort, order, inStock, onSale }).map(
-              ([name, value]) =>
-                value ? <input key={name} type="hidden" name={name} value={value} /> : null,
-              )}
-                <ButtonGroup className="w-full">
+              {category && <input type="hidden" name="category" value={category} />}
+                <ButtonGroup className="w-full"> {/* Contains search field and submit btn */}
                   <Input
                     key={q}
                     name="q"
@@ -166,10 +169,62 @@ export default async function ProductPage({
                   />
                   <Button type="submit">Search</Button>
                 </ButtonGroup>
+                <Accordion>
+                  <AccordionItem value="sort-filter">
+                    <AccordionTrigger>Sort &amp; filter</AccordionTrigger>
+                    <AccordionContent>
+                      {/* key remounts the uncontrolled inputs when the URL changes,
+                          same trick as key={q} on the search input -claude*/}
+                      <div
+                        key={`${sort}-${order}-${inStock}-${onSale}`}
+                        className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
+                      >
+                        {/* sort by */}
+                        <div className="flex flex-col gap-1.5">
+                          <label htmlFor="sort" className="text-sm font-medium">
+                            Sort by
+                          </label>
+                          <select
+                            id="sort"
+                            name="sort"
+                            defaultValue={sort ?? ""}
+                            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+                          >
+                            <option value="">Default</option>
+                            <option value="price">Price</option>
+                            <option value="rating">Rating</option>
+                            <option value="discountPercentage">Discount</option>
+                          </select>
+                        </div>
+                        {/* order choice*/}
+                        <fieldset className="flex flex-col gap-1.5">
+                          <legend className="text-sm font-medium">Order</legend>
+                            <label className="flex items-center gap-1.5">
+                              <input type="radio" name="order" value="asc" defaultChecked={order !== "desc"} className="accent-primary" />
+                              Ascending
+                            </label>
+                            <label className="flex items-center gap-1.5">
+                              <input type="radio" name="order" value="desc" defaultChecked={order === "desc"} className="accent-primary" />
+                              Descending
+                            </label>
+                        </fieldset>
+                        {/* toggles */}
+                        <fieldset className="flex flex-col gap-1.5">
+                          <legend className="text-sm font-medium">Show only</legend>
+                            <label className="flex items-center gap-1.5">
+                              <input type="checkbox" name="inStock" value="1" defaultChecked={inStock === "1"} className="accent-primary" />
+                              In stock
+                            </label>
+                            <label className="flex items-center gap-1.5">
+                              <input type="checkbox" name="onSale" value="1" defaultChecked={onSale === "1"} className="accent-primary" />
+                              On sale
+                            </label>
+                        </fieldset>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </Form>
-              <Button>placeholder</Button>
-              <Button>placeholder</Button>
-              <Button>placeholder</Button>
             </div>
             {/* top nav buttons */}
             <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
