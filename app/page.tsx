@@ -43,12 +43,21 @@ interface ProductsResponse {
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; q?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    category?: string;
+    q?: string;
+    sort?: string;
+    order?: string;
+    inStock?: string;
+    onSale?: string;
+  }>;
 }) {
+
   // pagination data
-  const { page = "1", category, q } = await searchParams;
-  const paginationLimit = 18; // tweak here to change page size
-  const state = { page, category, q }; // current search state, built from search params
+  const { page = "1", category, q, sort, order, inStock, onSale } = await searchParams;
+  const paginationLimit = 18;
+  const filters: Filters = { category, q, sort, order, inStock, onSale };
 
   // returns the list of categories for the catnav panel
   const categories: Category[] = await fetch(`${API_URL}/categories`).then(
@@ -63,6 +72,16 @@ export default async function ProductPage({
   });
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
+
+  // AI block
+  // sorting (json-server 0.x: _sort + _order); whitelist so the URL can't inject fields
+  if (sort && ["price", "rating", "discountPercentage"].includes(sort)) {
+    query.set("_sort", sort);
+    query.set("_order", order === "desc" ? "desc" : "asc");
+  }
+  if (inStock === "1") query.set("availabilityStatus_ne", "Out of Stock");
+  if (onSale === "1") query.set("discountPercentage_gte", "10"); // 10 is a guess, check your data
+  // AI Block/
 
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
@@ -88,7 +107,7 @@ export default async function ProductPage({
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
-            <CatNav categories={categories} category={category} page={page} />
+            <CatNav categories={categories} category={category} filters={filters} />
           </div>
           {/* catnav mobile */}
           <Sheet>
@@ -118,7 +137,7 @@ export default async function ProductPage({
                 <CatNav
                   categories={categories}
                   category={category}
-                  page={page}
+                  filters={filters}
                   closeOnSelect
                   className="w-full pr-3"
                 />
@@ -132,7 +151,10 @@ export default async function ProductPage({
             {/* Search */}
             <div>
               <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-              {category && <input type="hidden" name="category" value={category} />}
+              {Object.entries({ category, sort, order, inStock, onSale }).map(
+              ([name, value]) =>
+                value ? <input key={name} type="hidden" name={name} value={value} /> : null,
+              )}
                 <ButtonGroup className="w-full">
                   <Input
                     key={q}
@@ -150,7 +172,7 @@ export default async function ProductPage({
               <Button>placeholder</Button>
             </div>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
 
             {/* Shop grid */}
             <ShopCatalog className="
@@ -161,7 +183,7 @@ export default async function ProductPage({
             />
 
             {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
           </section>
         </section>
       </div>
