@@ -164,8 +164,8 @@ export default async function ProductPage({
                   <AccordionItem value="sort-filter">
                     <AccordionTrigger>Sort &amp; filter</AccordionTrigger>
                     <AccordionContent>
-                      {/* key remounts the uncontrolled inputs when the URL changes,
-                          same trick as key={q} on the search input -claude*/}
+                      {/* key remounts the uncontrolled inputs when the URL changes, same trick as key={q} on the search input */}
+                      {/* effectively, by pressing Back in the browser, this prevents erroneous filter choices */}
                       <div
                         key={`${sort}-${order}-${inStock}-${onSale}`}
                         className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
@@ -228,7 +228,7 @@ export default async function ProductPage({
               data={data.products}
             />
 
-            {/* Bottom nav buttons, same as line 71 */}
+            {/* Bottom nav buttons */}
             <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
           </section>
         </section>
