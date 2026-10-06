@@ -58,11 +58,11 @@ export function buildHref(
 export type Filters = {
   category?: string;
   q?: string;
-  sort?: string;
-  order?:string;
-  inStock?: string;
-  onSale?: string;
-  topRated?: string;
+  sort?: string; // parameter for sorting, price, rating, discount, etc. default is ID iirc
+  order?:string; // asc/desc/nul for the above
+  inStock?: string; // bool filter
+  onSale?: string; // bool filter
+  topRated?: string; // bool filter, so you can still sort them by price
 };
 
 // pagination components. Needs extraction as part of migration. Lives here for now.
