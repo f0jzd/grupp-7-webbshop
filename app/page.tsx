@@ -4,11 +4,9 @@ import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
 import type { Category, Product } from "./types";
-import { buildHref, getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
 // shadcn
-import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import { Input } from "./components/ui/input";
@@ -108,8 +106,6 @@ export default async function ProductPage({
     ...p,
     category: categoryMap.get(p.categoryId),
   }));
-
-  const pageRange = getPageRange(currentPage, pages);
 
   return (
     <article className="max-w-375 m-auto">
