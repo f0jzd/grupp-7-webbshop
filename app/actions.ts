@@ -16,7 +16,8 @@ export async function deleteProduct(id: number) {
     return {message:`Failed to delete: ${error.message}`};
   }
 
-  //Reset cache
+  // Reset cache for both homepage and admin page
+  revalidatePath("/admin-page");
   revalidatePath("/");
 }
 
@@ -70,9 +71,9 @@ export async function addProductAction(formdata: FormData) {
     const { error } = await supabase
       .from("products")
       .insert(productData);
-    if (error) throw new Error(`Failed to add product: ${error.message}`);
-
-    // 3. Clear cache so the new product shows up on the homepage immediately
-  revalidatePath("/");
   }
+
+  // Clear cache for both pages
+  revalidatePath("/admin-page");
+  revalidatePath("/");
 }
