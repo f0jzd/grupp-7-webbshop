@@ -1,10 +1,9 @@
 // stock nextjs
-import Link from "next/link";
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
 import type { Category, Product } from "./types";
-import { buildHref, getPageRange, Filters } from "./lib/utils";
+import { getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
 import ShopCatalog from "./components/ShopCatalog";
@@ -63,14 +62,15 @@ export default async function ProductPage({
   // pagination data
   const { page = "1", category, q, sort, order, inStock, onSale } = await searchParams;
   const paginationLimit = 18;
+  const currentPage = Number(page);
   const filters: Filters = { category, q, sort, order, inStock, onSale };
 
-  // returns the list of categories for the catnav panel
+  // category selection
   const categories: Category[] = await fetch(`${API_URL}/categories`).then(
     (res) => res.json(),
   );
-  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
   const selectedCategory = categories.find((c) => c.slug === category);
+
 
   const query = new URLSearchParams({
     _page: page,
@@ -78,6 +78,7 @@ export default async function ProductPage({
   });
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
+
 
   // sorting (json-server 0.x: _sort + _order); whitelist so the URL can't inject fields
   const sortField =
@@ -93,17 +94,6 @@ export default async function ProductPage({
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
   ).then((res) => res.json());
-
-  const categoryMap = new Map(categories.map((c) => [c.id, c]));
-
-  const enrichedProducts = data.products.map((p) => ({
-    ...p,
-    category: categoryMap.get(p.categoryId),
-  }));
-
-  // shadcn dynamic pagination data
-  const currentPage = Number(page); // page destruct'd at line 55 for default
-  const pageRange = getPageRange(currentPage, data.pages);
 
   return (
     <article className="max-w-375 m-auto">
