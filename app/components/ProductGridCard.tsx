@@ -19,12 +19,12 @@ interface GridCardProps {
 
 export default async function GridCard({ product }: GridCardProps) {
   return (
-    <Link href={`/product/${product.title}`} className="h-full">
-      <Card key={product.id} className="h-full">
+    <Card key={product.id} className="h-full">
+      <Link href={`/product/${product.title}`} className="h-full">
         <CardHeader>
-          <CardTitle className="line-clamp-1">{product.title}</CardTitle>
+          <CardTitle className="line-clamp-1"><h3>{product.title}</h3></CardTitle>
           <CardDescription className="line-clamp-1">
-            {product.brand ?? "Unknown brand"}
+            <p>{product.brand ?? "Unknown brand"}</p>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -34,7 +34,7 @@ export default async function GridCard({ product }: GridCardProps) {
               {/* 1 = 1:1 square */}
               <Image
                 src={product.thumbnail}
-                alt="Product name"
+                alt={product.title}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -45,11 +45,11 @@ export default async function GridCard({ product }: GridCardProps) {
             {product.category?.name ?? "Uncategorized"}
           </p>
         </CardContent>
-        <CardFooter className="mt-auto w-full flex-col items-start gap-2">
-          <p className="w-full font-semibold">€{product.price}</p>
-          <GridCardCartControls product={product} />
-        </CardFooter>
-      </Card>
-    </Link>
+      </Link>
+      <CardFooter className="mt-auto w-full flex-col items-start gap-2">
+        <p className="w-full font-semibold">€{product.price}</p>
+        <GridCardCartControls product={product} />
+      </CardFooter>
+    </Card>
   );
 }

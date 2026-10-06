@@ -92,20 +92,25 @@ export default async function ProductPage({
   const categories = await getCachedCategories();
   const selectedCategory = categories.find((c) => c.slug === category);
 
-  // 2. Fetch products for this page (cached)
-  const { products, pages } = await getCachedProducts(
+  // 2. Fetch products for this page (cached from Supabase)
+  const data = await getCachedProducts(
     currentPage,
     paginationLimit,
     selectedCategory?.id,
     q,
   );
 
-  // 3. Enrich products with category info
+  const products: (Product & { category: Category | undefined })[] =
+    data.products as unknown as (Product & {
+      category: Category | undefined;
+    })[]; // type assertion to include category property
+
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
-  const enrichedProducts = products.map((p) => ({
-    ...p,
-    category: categoryMap.get(p.categoryId),
-  }));
+
+  products.map((p) => {
+    p.category = categoryMap.get(p.categoryId);
+    return p;
+  });
 
   return (
     <article className="max-w-375 m-auto">
@@ -181,7 +186,7 @@ export default async function ProductPage({
             <ShopPagination
               className="mb-4"
               currentPage={currentPage}
-              totalPages={pages}
+              totalPages={data.pages}
               filters={{ category, q }}
             />
 
@@ -191,14 +196,14 @@ export default async function ProductPage({
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={enrichedProducts}
+              data={products}
             />
 
             {/* Bottom nav buttons, same as line 71 */}
             <ShopPagination
               className="mt-4"
               currentPage={currentPage}
-              totalPages={pages}
+              totalPages={data.pages}
               filters={{ category, q }}
             />
           </section>

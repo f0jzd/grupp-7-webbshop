@@ -195,9 +195,6 @@ För att särskilja ert erbjudande och skapa extra affärsvärde har kunden list
 2. **Modul 2:** 📦 Persistent Varukorg
    * **ADR-dokument:** Länk till `docs/ADR-002-[namn].md` *(frivillig andra ADR)*  
    * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
-3. **Modul 3:** ☁️ Databasmigration  
-   * **ADR-dokument:** Länk till `docs/ADR-003-[namn].md` *(frivillig andra ADR)*  
-   * **Kort motivering:** `[Varför valde ni denna lösning och vilka alternativ valdes bort?]`
 
 ---
 
