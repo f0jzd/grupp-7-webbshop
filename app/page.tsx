@@ -1,5 +1,4 @@
 // stock nextjs
-import Link from "next/link";
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
