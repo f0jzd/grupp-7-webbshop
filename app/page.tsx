@@ -27,23 +27,11 @@ import {
 import { supabase } from "./lib/supabase";
 import { unstable_cache } from "next/cache";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Product catalog",
   description:
     "Find products by searching or filtering by category and add products to cart",
 };
-
-const API_URL = "http://localhost:4000";
-
-interface ProductsResponse {
-  products: Product[];
-  total: number;
-  limit: number;
-  page: number;
-  pages: number;
-}
 
 // Caches categories for 1 hour so pagination never re-fetches them from the cloud
 const getCachedCategories = unstable_cache(
@@ -122,13 +110,6 @@ export default async function ProductPage({
   }));
 
   const pageRange = getPageRange(currentPage, pages);
-
-  const query = new URLSearchParams({
-    _page: page,
-    _limit: String(paginationLimit),
-  });
-  if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
-  if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
   return (
     <article className="max-w-375 m-auto">
