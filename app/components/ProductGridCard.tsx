@@ -38,6 +38,7 @@ export default async function GridCard({ product }: GridCardProps) {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
+              {product.discountPercentage! > 0 && <p className="p-2 font-semibold text-green-700 text-shadow-md">-{product.discountPercentage}%</p>}
             </AspectRatio>
           </div>
           <p className="text-sm text-muted-foreground">
@@ -48,9 +49,15 @@ export default async function GridCard({ product }: GridCardProps) {
       <CardFooter className="mt-auto w-full flex-col items-start gap-2">
         <GridCardCartControls product={product} />
         {product.discountPercentage! > 0
-        ? <div className="flex flex-row flex-wrap font-semibold ">
-            <span className="pr-2 line-through text-red-500">€{product.price}</span> {/* old price */}
-            <span>€{Math.round(Number(product.price)*(1-(product.discountPercentage!/100)))-0.01}</span> {/* new price */}
+        ? <div className="flex flex-row flex-wrap font-semibold gap-1 text-shadow-sm">
+            {/* old price */}
+            <p className="line-through text-red-500">€{Math.round(product.price/(1-(product.discountPercentage!/100)))}</p>
+            {/* new price */}
+            <p className="text-green-700">€{product.price}</p>
+            {/* delta% */}
+            {/* <p>Save {product.discountPercentage}%</p> */}
+            {/* delta-flat */}
+            <p>Save €{Math.round(Number(product.price)*((product.discountPercentage!/100)))}</p>
           </div>
         : <p className="w-full font-semibold">€{product.price}</p>}
       </CardFooter>
