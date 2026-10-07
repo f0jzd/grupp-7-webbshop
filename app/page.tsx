@@ -89,7 +89,7 @@ export default async function ProductPage({
   query.set("_order", order === "desc" ? "desc" : "asc");
 
   if (inStock === "1") query.set("availabilityStatus_ne", "Out of Stock");
-  if (onSale === "1") query.set("discountPercentage_gte", "10"); // 10 is a guess, check your data
+  if (onSale === "1") query.set("discountPercentage_gte", "1"); // 10 is a guess, check your data
 
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
