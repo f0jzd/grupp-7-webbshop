@@ -53,60 +53,56 @@ const getCachedCategories = unstable_cache(
   { revalidate: 3600 }, // 1 hour in seconds
 );
 
-// Caches products per page, category, and search query
-const getCachedProducts = unstable_cache(
-  async (
-    currentPage: number,
-    limit: number,
-    categoryId?: number,
-    q?: string,
-    sort?: string,
-    order?: string,
-    inStock?: string,
-    onSale?: string,
-  ) => {
-    const from = (currentPage - 1) * limit;
-    const to = from + limit - 1;
+// Fetches products per page, category, search query, sorting and filters directly from Supabase
+async function getProducts(
+  currentPage: number,
+  limit: number,
+  categoryId?: number,
+  q?: string,
+  sort?: string,
+  order?: string,
+  inStock?: string,
+  onSale?: string,
+) {
+  const from = (currentPage - 1) * limit;
+  const to = from + limit - 1;
 
-    const sortField =
-      sort && ["price", "rating", "discountPercentage"].includes(sort)
-        ? sort
-        : "title";
-    const isAscending = order !== "desc";
+  const sortField =
+    sort && ["price", "rating", "discountPercentage"].includes(sort)
+      ? sort
+      : "title";
+  const isAscending = order !== "desc";
 
-    let query = supabase
-      .from("products")
-      .select("*", { count: "exact" })
-      .range(from, to)
-      .order(sortField, { ascending: isAscending });
+  let query = supabase
+    .from("products")
+    .select("*", { count: "exact" })
+    .range(from, to)
+    .order(sortField, { ascending: isAscending, nullsFirst: false });
 
-    if (sortField !== "id") {
-      query = query.order("id", { ascending: true });
-    }
+  if (sortField !== "id") {
+    query = query.order("id", { ascending: true });
+  }
 
-    if (categoryId) {
-      query = query.eq("categoryId", categoryId);
-    }
-    if (q) {
-      query = query.ilike("title", `%${q}%`);
-    }
-    if (inStock === "1") {
-      query = query.neq("availabilityStatus", "Out of Stock");
-    }
-    if (onSale === "1") {
-      query = query.gte("discountPercentage", 1);
-    }
+  if (categoryId) {
+    query = query.eq("categoryId", categoryId);
+  }
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (inStock === "1") {
+    query = query.neq("availabilityStatus", "Out of Stock");
+  }
+  if (onSale === "1") {
+    query = query.gte("discountPercentage", 1);
+  }
 
-    const { data, count } = await query;
-    const total = count || 0;
-    const pages = Math.ceil(total / limit) || 1;
-    const products = (data || []) as Product[];
+  const { data, count } = await query;
+  const total = count || 0;
+  const pages = Math.ceil(total / limit) || 1;
+  const products = (data || []) as Product[];
 
-    return { products, total, pages };
-  },
-  ["shop-products-page-cache"],
-  { revalidate: 3600 }, // caches for 1 hour
-);
+  return { products, total, pages };
+}
 
 export default async function ProductPage({
   searchParams,
@@ -138,8 +134,8 @@ export default async function ProductPage({
   const categories = await getCachedCategories();
   const selectedCategory = categories.find((c) => c.slug === category);
 
-  // 2. Fetch products for this page (cached from Supabase)
-  const data = await getCachedProducts(
+  // 2. Fetch products for this page from Supabase
+  const data = await getProducts(
     currentPage,
     paginationLimit,
     selectedCategory?.id,

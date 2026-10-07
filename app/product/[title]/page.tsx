@@ -142,21 +142,19 @@ export default async function ProductDetailPage({
             </h1>
 
             {/* Rating */}
-            {product.reviews && product.reviews.length > 0 && (
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
-                </span>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${i < Math.round(product.rating ?? 0) ? "fill-amber-500" : "text-muted"}`}
+                  />
+                ))}
               </div>
-            )}
+              <span className="text-sm text-muted-foreground font-medium">
+                {product.rating ?? 0} ({product.reviews?.length ?? 0})
+              </span>
+            </div>
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
