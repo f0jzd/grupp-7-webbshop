@@ -23,7 +23,10 @@ import {
   SheetTrigger,
 } from "./components/ui/sheet";
 
-export const dynamic = "force-dynamic";
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
+export const dynamic = "auto";
 
 export const metadata: Metadata = {
   title: "Product catalog",

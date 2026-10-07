@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: 'View cart and order information and create order',
 }
 
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
 export const dynamic = "auto";
 
 export default async function CartPage() {

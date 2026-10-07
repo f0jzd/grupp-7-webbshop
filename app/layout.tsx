@@ -31,7 +31,6 @@ const API_URL = "http://localhost:4000";
 
 // Change this single number to adjust the logo icon size in pixels
 const LOGO_SIZE = 64;
-export const dynamic = "auto";
 
 export default async function RootLayout({
   children,
