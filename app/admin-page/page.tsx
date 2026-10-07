@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: 'Find products by searching or filtering by category',
 }
 
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
 export const dynamic = "auto";
 
 const defaultLimit = 6;

@@ -1,7 +1,10 @@
+// stock
 import Link from "next/link";
 import { cn } from "cn";
+// inhouse
 import type { Category } from "../types";
-import { buildHref } from "../lib/utils";
+import { buildHref, type Filters } from "../lib/utils";
+// shad
 import { buttonVariants } from "./ui/button";
 import { ButtonGroup } from "./ui/button-group";
 import { SheetClose } from "./ui/sheet";
@@ -9,13 +12,13 @@ import { SheetClose } from "./ui/sheet";
 export default function CatNav({
   categories,
   category,
-  page,
+  filters,
   closeOnSelect = false,
   className,
 }: {
   categories: Category[];
   category?: string;
-  page: string;
+  filters: Filters;
   closeOnSelect?: boolean;
   className?: string;
 }) {
@@ -36,7 +39,7 @@ export default function CatNav({
           const props = {
             scroll: false,
             "data-slot": "button",
-            href: buildHref({ page, category }, { category: slug, page: 1 }),
+            href: buildHref(filters, { category: slug, page: 1 }),
             className: cn(
               buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
               "justify-start",

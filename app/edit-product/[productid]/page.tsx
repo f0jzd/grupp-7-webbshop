@@ -1,19 +1,21 @@
 import { ProductForm } from "@/components/ProductForm";
 import { Product } from "@/types";
 import { Metadata } from "next";
-
-const API_URL = "http://localhost:4000";
+import { supabase } from "@/lib/supabase";
 
 async function getProduct(id: string): Promise<Product | null> {
-  const response = await fetch(`${API_URL}/products/${id}`, {
-    cache: "no-store",
-  });
-  if (!response.ok) return null;
-  const data = await response.json();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", Number(id))
+    .maybeSingle();
 
-  return data;
+  return (data as unknown as Product) ?? null;
 }
 
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
 export const dynamic = "auto";
 
 export async function generateMetadata({

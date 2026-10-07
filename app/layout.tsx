@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -9,7 +8,7 @@ import { ContextProvider } from "./ContextProvider";
 import { Product } from "./types";
 import Link from "next/link";
 import Image from "next/image";
-import { ButtonGroup } from "./components/ui/button-group";
+import { supabase } from "./lib/supabase";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +26,8 @@ const materialSymbols = localFont({
   variable: "--font-material-symbols",
 });
 
-const API_URL = "http://localhost:4000";
-
 // Change this single number to adjust the logo icon size in pixels
 const LOGO_SIZE = 64;
-export const dynamic = "auto";
 
 export default async function RootLayout({
   children,
@@ -53,13 +49,35 @@ export default async function RootLayout({
         path.startsWith(p),
       );
 
-  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
+  let cartIds: number[] = [];
+  if (cartString) {
+    try {
+      const parsed = JSON.parse(cartString);
+      if (Array.isArray(parsed)) {
+        cartIds = parsed;
+      }
+    } catch {
+      cartIds = [];
+    }
+  }
 
-  const products: Product[] = await Promise.all(
-    cartIds.map((id) =>
-      fetch(`${API_URL}/products/${id}`).then((res) => res.json()),
-    ),
-  );
+  let products: Product[] = [];
+  if (cartIds.length > 0) {
+    const uniqueIds = Array.from(new Set(cartIds));
+    const { data } = await supabase
+      .from("products")
+      .select("*")
+      .in("id", uniqueIds);
+
+    if (data) {
+      const productMap = new Map(
+        (data as unknown as Product[]).map((p) => [p.id, p]),
+      );
+      products = cartIds
+        .map((id) => productMap.get(id))
+        .filter((p): p is Product => Boolean(p));
+    }
+  }
 
   return (
     <html
