@@ -2,29 +2,33 @@ import { ProductForm } from "@/components/ProductForm";
 import { Product } from "@/types";
 import { Metadata } from "next";
 
-import { supabase } from "@/lib/supabase";
+const API_URL = "http://localhost:4000";
 
 async function getProduct(id: string): Promise<Product | null> {
-  const { data } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", Number(id))
-    .maybeSingle();
+  const response = await fetch(`${API_URL}/products/${id}`, {
+    cache: "no-store",
+  });
+  if (!response.ok) return null;
+  const data = await response.json();
 
-  return (data as unknown as Product) ?? null;
+  return data;
 }
 
 export const dynamic = "auto";
 
-export async function generateMetadata(
-  { params }:{params: Promise<{ productid: string }>}): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ productid: string }>;
+}): Promise<Metadata> {
   const productid = (await params).productid;
   const product = await getProduct(productid);
- 
+
   return {
     title: "Admin - " + product?.title,
-    description: "Edit product and view product information like title, price, description, specifications, stock, reviews, etc.",
-  }
+    description:
+      "Edit product and view product information like title, price, description, specifications, stock, reviews, etc.",
+  };
 }
 
 type Props = {

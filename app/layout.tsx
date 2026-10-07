@@ -4,8 +4,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ShoppingCartCounter from "./components/ShoppingCartCounter";
 import { cookies } from "next/headers";
-import { headers } from 'next/headers';
-import { ContextProvider } from './ContextProvider';
+import { headers } from "next/headers";
+import { ContextProvider } from "./ContextProvider";
 import { Product } from "./types";
 import Link from "next/link";
 import Image from "next/image";
@@ -27,7 +27,7 @@ const materialSymbols = localFont({
   variable: "--font-material-symbols",
 });
 
-import { supabase } from "./lib/supabase";
+const API_URL = "http://localhost:4000";
 
 // Change this single number to adjust the logo icon size in pixels
 const LOGO_SIZE = 64;
@@ -38,81 +38,64 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies()
-    const cartString = cookieStore.get('cart')?.value;
+  const cookieStore = await cookies();
+  const cartString = cookieStore.get("cart")?.value;
 
-    const headersList = await headers();
-    const path = headersList.get('x-url')?.replace("http://localhost:3000","").split("?")[0];
+  const headersList = await headers();
+  const path = headersList
+    .get("x-url")
+    ?.replace("http://localhost:3000", "")
+    .split("?")[0];
 
-    const shouldShowHeader = !path ? true : !["/admin-page", "/add-product", "/edit-product"].some((p => path.startsWith(p)));
-  
-    let cartIds: number[] = [];
-    if (cartString) {
-      try {
-        const parsed = JSON.parse(cartString);
-        if (Array.isArray(parsed)) {
-          cartIds = parsed;
-        }
-      } catch {
-        cartIds = [];
-      }
-    }
+  const shouldShowHeader = !path
+    ? true
+    : !["/admin-page", "/add-product", "/edit-product"].some((p) =>
+        path.startsWith(p),
+      );
 
-    let products: Product[] = [];
-    if (cartIds.length > 0) {
-      const uniqueIds = Array.from(new Set(cartIds));
-      const { data } = await supabase
-        .from("products")
-        .select("*")
-        .in("id", uniqueIds);
+  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
 
-      if (data) {
-        const productMap = new Map((data as unknown as Product[]).map((p) => [p.id, p]));
-        products = cartIds
-          .map((id) => productMap.get(id))
-          .filter((p): p is Product => Boolean(p));
-      }
-    }
+  const products: Product[] = await Promise.all(
+    cartIds.map((id) =>
+      fetch(`${API_URL}/products/${id}`).then((res) => res.json()),
+    ),
+  );
 
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
-        <body className="min-h-full flex flex-col">
-          <ContextProvider cart={products}>
-            {shouldShowHeader?
-              <header className="border border-b-2 border-b-green-300 p-2">
-                <nav className="w-full flex justify-between items-center max-w-375 mx-auto">
-                  <Link
-                    href="/"
-                    className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
-                  >
-                    <Image
-                      src="/shop-logo.png"
-                      alt="webshop icon"
-                      width={LOGO_SIZE}
-                      height={LOGO_SIZE}
-                      className="object-contain"
-                    />
-                    <span>Bengts Bildoktor</span>
-                  </Link>
+      <body className="min-h-full flex flex-col">
+        <ContextProvider cart={products}>
+          {shouldShowHeader ? (
+            <header className="border border-b-2 border-b-green-300 p-2">
+              <nav className="w-full flex justify-between items-center max-w-375 mx-auto">
+                <Link
+                  href="/"
+                  className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
+                >
+                  <Image
+                    src="/shop-logo.png"
+                    alt="webshop icon"
+                    width={LOGO_SIZE}
+                    height={LOGO_SIZE}
+                    className="object-contain"
+                  />
+                  <span>Bengts Bildoktor</span>
+                </Link>
 
-                  <div className="centerwrapper flex flex-row flex-nowrap gap-3">
-                  </div>
+                <div className="centerwrapper flex flex-row flex-nowrap gap-3"></div>
 
-                  <Link href="/cart">
-                    <ShoppingCartCounter />
-                  </Link>
-                </nav>
-              </header> :
-               null
-            }
-            <main className="m-2 mt-6 mb-6">
-                {children} 
-            </main>
-            </ContextProvider>
-        </body>
+                <Link href="/cart">
+                  <ShoppingCartCounter />
+                </Link>
+              </nav>
+            </header>
+          ) : null}
+          <main className="m-2 mt-6 mb-6">{children}</main>
+        </ContextProvider>
+      </body>
     </html>
   );
 }
