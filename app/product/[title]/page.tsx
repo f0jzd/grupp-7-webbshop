@@ -147,23 +147,19 @@ export default async function ProductDetailPage({
                     />
                     </div>
                     {filled > 0 ? 
-                      <div className={`absolute top-0`} >
-                        {filled === 1 ?
+                    // width does not work without inline styling so please don't remove this or find a different solution
+                      <div className={`absolute top-0 overflow-hidden`} style={{ width: filled * 20 + 2}} >
                         <Star
                         key={i}
                         className={`h-4 fill-amber-500`}
-                      />:
-                      <StarHalf
-                        key={i}
-                        className={`h-4 fill-amber-500`}
-                      />}
+                        />
                       </div>
                     : null}
                     </div>
                   )})}
                 </div>
                 <span className="text-sm text-muted-foreground font-medium">
-                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
+                  {averageRating.toFixed(2)} ({product.reviews?.length ?? 0})
                 </span>
               </div>
             )}
