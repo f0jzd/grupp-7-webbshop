@@ -27,7 +27,7 @@ const materialSymbols = localFont({
   variable: "--font-material-symbols",
 });
 
-const API_URL = "http://localhost:4000";
+import { supabase } from "./lib/supabase";
 
 // Change this single number to adjust the logo icon size in pixels
 const LOGO_SIZE = 64;
@@ -46,9 +46,33 @@ export default async function RootLayout({
 
     const shouldShowHeader = !path ? true : !["/admin-page", "/add-product", "/edit-product"].some((p => path.startsWith(p)));
   
-    const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
+    let cartIds: number[] = [];
+    if (cartString) {
+      try {
+        const parsed = JSON.parse(cartString);
+        if (Array.isArray(parsed)) {
+          cartIds = parsed;
+        }
+      } catch {
+        cartIds = [];
+      }
+    }
 
-    const products: Product[] = await Promise.all(cartIds.map(id => fetch(`${API_URL}/products/${id}`).then(res => res.json())));
+    let products: Product[] = [];
+    if (cartIds.length > 0) {
+      const uniqueIds = Array.from(new Set(cartIds));
+      const { data } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", uniqueIds);
+
+      if (data) {
+        const productMap = new Map((data as unknown as Product[]).map((p) => [p.id, p]));
+        products = cartIds
+          .map((id) => productMap.get(id))
+          .filter((p): p is Product => Boolean(p));
+      }
+    }
 
   return (
     <html
