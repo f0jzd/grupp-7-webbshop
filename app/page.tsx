@@ -1,18 +1,16 @@
 // stock nextjs
-import Link from "next/link";
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
 import type { Category, Product } from "./types";
-import { buildHref, getPageRange, Filters } from "./lib/utils";
+import { getPageRange, Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
+import ShopCatalog from "./components/ShopCatalog";
 // shadcn
-import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import { Input } from "./components/ui/input";
-import ShopCatalog from "./components/ShopCatalog";
 import { ChevronRight } from "lucide-react";
 import {
   Sheet,
@@ -22,6 +20,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
 
 /* When using metadata titles you need to put explicit export
 dynamic = "auto" otherwise npm run build will not complete.
@@ -47,19 +51,29 @@ interface ProductsResponse {
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; q?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    category?: string;
+    q?: string;
+    sort?: string;
+    order?: string;
+    inStock?: string;
+    onSale?: string;
+  }>;
 }) {
-  // pagination data
-  const { page = "1", category, q } = await searchParams;
-  const paginationLimit = 18; // tweak here to change page size
-  const state = { page, category, q }; // current search state, built from search params
 
-  // returns the list of categories for the catnav panel
+  // pagination data
+  const { page = "1", category, q, sort, order, inStock, onSale } = await searchParams;
+  const paginationLimit = 18;
+  const currentPage = Number(page);
+  const filters: Filters = { category, q, sort, order, inStock, onSale };
+
+  // category selection
   const categories: Category[] = await fetch(`${API_URL}/categories`).then(
     (res) => res.json(),
   );
-  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
   const selectedCategory = categories.find((c) => c.slug === category);
+
 
   const query = new URLSearchParams({
     _page: page,
@@ -68,23 +82,29 @@ export default async function ProductPage({
   if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
   if (q) query.set("title_like", q); // or "search" if you add the middleware block
 
+
+  // sorting (json-server 0.x: _sort + _order); whitelist so the URL can't inject fields
+  const sortField =
+    sort && ["price", "rating", "discountPercentage"].includes(sort)
+      ? sort
+      : "title"; // default: alphabetical by name
+  query.set("_sort", sortField);
+  query.set("_order", order === "desc" ? "desc" : "asc");
+
+  if (inStock === "1") query.set("availabilityStatus_ne", "Out of Stock");
+  if (onSale === "1") query.set("discountPercentage_gte", "1"); // 10 is a guess, check your data
+
   const data: ProductsResponse = await fetch(
     `${API_URL}/products?${query}`,
   ).then((res) => res.json());
 
-  const products: (Product & {category: Category | undefined})[] = data.products as unknown as (Product & {category: Category | undefined})[]; // type assertion to include category property
-
-  const categoryMap = new Map(categories.map((c) => [c.id, c]));
-
-  products.map(p => {
-    p.category = categoryMap.get(p.categoryId);
-    return p;
-  })
-
-  // shadcn dynamic pagination data
-  const currentPage = Number(page); // page destruct'd at line 55 for default
-  const pageRange = getPageRange(currentPage, data.pages);
-
+const categoryMap = new Map(categories.map((c) => [c.id, c]));
+ 
+data.products.map(p => {
+  p.category = categoryMap.get(p.categoryId);
+  return p;
+})
+  
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
@@ -94,7 +114,7 @@ export default async function ProductPage({
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
-            <CatNav categories={categories} category={category} page={page} />
+            <CatNav categories={categories} category={category} filters={filters} />
           </div>
           {/* catnav mobile */}
           <Sheet>
@@ -124,7 +144,7 @@ export default async function ProductPage({
                 <CatNav
                   categories={categories}
                   category={category}
-                  page={page}
+                  filters={filters}
                   closeOnSelect
                   className="w-full pr-3"
                 />
@@ -136,33 +156,90 @@ export default async function ProductPage({
           <section className="flex-col w-full">
 
             {/* Search */}
-            <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-            {category && <input type="hidden" name="category" value={category} />}
-              <ButtonGroup className="w-full">
-                <Input
-                  key={q}
-                  name="q"
-                  type="search"
-                  defaultValue={q}
-                  placeholder="Search products…"
-                  aria-label="Search products"
-                />
-                <Button type="submit">Search</Button>
-              </ButtonGroup>
-            </Form>
+            <div>
+              <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
+              {category && <input type="hidden" name="category" value={category} />}
+                <ButtonGroup className="w-full"> {/* Contains search field and submit btn */}
+                  <Input
+                    key={q}
+                    name="q"
+                    type="search"
+                    defaultValue={q}
+                    placeholder="Search products…"
+                    aria-label="Search products"
+                  />
+                  <Button type="submit">Search</Button>
+                </ButtonGroup>
+                <Accordion>
+                  <AccordionItem value="sort-filter">
+                    <AccordionTrigger>Sort &amp; filter</AccordionTrigger>
+                    <AccordionContent>
+                      {/* key remounts the uncontrolled inputs when the URL changes, same trick as key={q} on the search input */}
+                      {/* effectively, by pressing Back in the browser, this prevents erroneous filter choices */}
+                      <div
+                        key={`${sort}-${order}-${inStock}-${onSale}`}
+                        className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
+                      >
+                        {/* sort by */}
+                        <div className="flex flex-col gap-1.5">
+                          <label htmlFor="sort" className="text-sm font-medium">
+                            Sort by
+                          </label>
+                          <select
+                            id="sort"
+                            name="sort"
+                            defaultValue={sort ?? ""}
+                            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+                          >
+                            <option value="">Default</option>
+                            <option value="price">Price</option>
+                            <option value="rating">Rating</option>
+                            <option value="discountPercentage">Discount</option>
+                          </select>
+                        </div>
+                        {/* order choice*/}
+                        <fieldset className="flex flex-col gap-1.5">
+                          <legend className="text-sm font-medium">Order</legend>
+                            <label className="flex items-center gap-1.5">
+                              <input type="radio" name="order" value="asc" defaultChecked={order !== "desc"} className="accent-primary" />
+                              Ascending
+                            </label>
+                            <label className="flex items-center gap-1.5">
+                              <input type="radio" name="order" value="desc" defaultChecked={order === "desc"} className="accent-primary" />
+                              Descending
+                            </label>
+                        </fieldset>
+                        {/* toggles */}
+                        <fieldset className="flex flex-col gap-1.5">
+                          <legend className="text-sm font-medium">Show only</legend>
+                            <label className="flex items-center gap-1.5">
+                              <input type="checkbox" name="inStock" value="1" defaultChecked={inStock === "1"} className="accent-primary" />
+                              In stock
+                            </label>
+                            <label className="flex items-center gap-1.5">
+                              <input type="checkbox" name="onSale" value="1" defaultChecked={onSale === "1"} className="accent-primary" />
+                              On sale
+                            </label>
+                        </fieldset>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </Form>
+            </div>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
 
             {/* Shop grid */}
             <ShopCatalog className="
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={products}
+              data={data.products}
             />
 
-            {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, q}} />
+            {/* Bottom nav buttons */}
+            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
           </section>
         </section>
       </div>
