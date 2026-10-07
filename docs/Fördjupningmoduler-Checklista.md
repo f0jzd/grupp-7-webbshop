@@ -10,7 +10,7 @@
 | - | **📨 Transaktionell E-post** | 🟢 Lätt / Medel | Fungerande kontaktformulär eller orderbekräftelse via Next.js Server Actions.<br>*(Rekommenderat: **Resend**. Extremt smidigt i Next.js och kräver inga krångliga SMTP-inställningar).* |
 | - | **🔐 Autentisering** | 🟡 Medel | Kundinloggning och skyddade rutter (*Mina sidor*, orderhistorik, favoriter).<br>*(Rekommenderat: **NextAuth**, **Kinde**, **BetterAuth** eller **Clerk** för snabbast och säkrast integration med Next.js App Router).* |
 | - | **💳 Betallösning** | 🟡 Medel | Simulera ett riktigt köpflöde i testläge.<br>*(Rekommenderat: **Stripe Hosted Checkout**. Kunden omdirigeras till Stripes säkra sida och tillbaka, vilket minimerar komplexitet).* |
-| **Planned** | **☁️ Databasmigration** | 🟡 Medel | Ersätt Fas 1:s JSON-server med en riktig molndatabas och ett modernt ORM.<br>*(Rekommenderat: **Supabase** eller **Neon PostgreSQL** kopplat med **Prisma** eller **Drizzle**).* |
+| **In progress** | **☁️ Databasmigration** | 🟡 Medel | Ersätt Fas 1:s JSON-server med en riktig molndatabas och ett modernt ORM.<br>*(Rekommenderat: **Supabase** eller **Neon PostgreSQL** kopplat med **Prisma** eller **Drizzle**).* |
 | - | **🌍 Cloud Deployment** | 🟡 Medel | Publik driftsättning i produktionsmiljö.<br>*(Rekommenderat: **Vercel**. **Obs:** Kräver att er datakälla finns online och inte på `localhost:3001`!)* |
 
 > ⚠️ **Arkitekturtips inför val av moduler:**  
