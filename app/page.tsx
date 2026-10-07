@@ -95,7 +95,12 @@ export default async function ProductPage({
     `${API_URL}/products?${query}`,
   ).then((res) => res.json());
 
-
+const categoryMap = new Map(categories.map((c) => [c.id, c]));
+ 
+data.products.map(p => {
+  p.category = categoryMap.get(p.categoryId);
+  return p;
+})
   
   return (
     <article className="max-w-375 m-auto">
