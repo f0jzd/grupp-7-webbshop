@@ -95,6 +95,8 @@ export default async function ProductPage({
     `${API_URL}/products?${query}`,
   ).then((res) => res.json());
 
+
+  
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
@@ -225,7 +227,7 @@ export default async function ProductPage({
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={products}
+              data={data.products}
             />
 
             {/* Bottom nav buttons */}
