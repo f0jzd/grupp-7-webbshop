@@ -10,7 +10,6 @@ import {
 import { AspectRatio } from "./ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { GridCardCartControls } from "./GridCardCartControls";
 
 interface GridCardProps {
@@ -47,8 +46,13 @@ export default async function GridCard({ product }: GridCardProps) {
         </CardContent>
       </Link>
       <CardFooter className="mt-auto w-full flex-col items-start gap-2">
-        <p className="w-full font-semibold">€{product.price}</p>
         <GridCardCartControls product={product} />
+        {product.discountPercentage! > 0
+        ? <div className="flex flex-row flex-wrap font-semibold ">
+            <span className="pr-2 line-through text-red-500">€{product.price}</span> {/* old price */}
+            <span>€{Math.round(Number(product.price)*(1-(product.discountPercentage!/100)))-0.01}</span> {/* new price */}
+          </div>
+        : <p className="w-full font-semibold">€{product.price}</p>}
       </CardFooter>
     </Card>
   );
