@@ -12,12 +12,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { GridCardCartControls } from "./GridCardCartControls";
+import { Star, StarHalf } from "lucide-react";
 
 interface GridCardProps {
   product: Product;
 }
 
+function calculateAverageRating(product: Product) {
+  const reviews = product?.reviews ?? [];
+
+  if (reviews.length === 0) return 0;
+
+  const totalRating = reviews.reduce(
+    (total, review) => total + review.rating,
+    0,
+  );
+
+  return totalRating / reviews.length;
+}
+
 export default async function GridCard({ product }: GridCardProps) {
+  const averageRating = calculateAverageRating(product);
   return (
     <Card key={product.id} className="h-full">
       <Link href={`/product/${product.title}`} className="h-full">
@@ -44,6 +59,41 @@ export default async function GridCard({ product }: GridCardProps) {
           <p className="text-sm text-muted-foreground">
             {product.category?.name ?? "Uncategorized"}
           </p>
+           {/* Rating */}
+            {product.reviews && product.reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center text-amber-500">
+                  {[...Array(5)].map((_, i) => {
+                    const filled = Math.max(Math.min(1,(averageRating)-(i)),0);
+                    return (
+                      <div key={i} className="relative w-4 h-4">
+                    <div className={`w-full`}>
+                    <Star
+                      key={i}
+                      className={`h-4 amber-500 fill-white z-10  }`}
+                    />
+                    </div>
+                    {filled > 0 ? 
+                      <div className={`absolute top-0`} >
+                        {filled === 1 ?
+                        <Star
+                        key={i}
+                        className={`h-4 fill-amber-500`}
+                      />:
+                      <StarHalf
+                        key={i}
+                        className={`h-4 fill-amber-500`}
+                      />}
+                      </div>
+                    : null}
+                    </div>
+                  )})}
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
+                </span>
+              </div>
+            )}
         </CardContent>
       </Link>
       <CardFooter className="mt-auto w-full flex-col items-start gap-2">
