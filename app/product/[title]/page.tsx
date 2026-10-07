@@ -19,6 +19,9 @@ import { Category } from "@/types";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
 
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
 export const dynamic = "auto";
 
 export async function generateMetadata({
