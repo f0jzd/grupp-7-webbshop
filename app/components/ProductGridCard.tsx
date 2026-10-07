@@ -73,14 +73,12 @@ export default async function GridCard({ product }: GridCardProps) {
                       className={`h-4 amber-500 fill-white z-10  }`}
                     />
                     </div>
-                    {filled > 0 ? 
-                    // width does not work without inline styling so please don't remove this or find a different solution
-                      <div className={`absolute top-0 overflow-hidden`} style={{ width: filled * 20 + 2}} >
+                    {filled > 0 ? filled === 1 ? 
                         <Star
                         key={i}
-                        className={`h-4 fill-amber-500`}
-                        />
-                      </div>
+                        className={`h-4 fill-amber-500 absolute top-0`}
+                        /> : <StarHalf key={i}
+                        className={`h-4 fill-amber-500 absolute top-0`}/>
                     : null}
                     </div>
                   )})}
