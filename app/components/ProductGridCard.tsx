@@ -50,14 +50,14 @@ export default async function GridCard({ product }: GridCardProps) {
         <GridCardCartControls product={product} />
         {product.discountPercentage! > 0
         ? <div className="flex flex-row flex-wrap font-semibold gap-1 text-shadow-sm">
-            {/* old price */}
-            <p className="line-through text-red-500">€{Math.round(product.price/(1-(product.discountPercentage!/100)))}</p>
             {/* new price */}
             <p className="text-green-700">€{product.price}</p>
+            {/* old price */}
+            <p className="line-through text-red-500 font-medium">€{Math.round(product.price/(1-(product.discountPercentage!/100)))}</p>
             {/* delta% */}
             {/* <p>Save {product.discountPercentage}%</p> */}
             {/* delta-flat */}
-            <p>Save €{Math.round(Number(product.price)*((product.discountPercentage!/100)))}</p>
+            {/* <p>Save €{Math.round(Number(product.price)*((product.discountPercentage!/100)))}</p> */}
           </div>
         : <p className="w-full font-semibold">€{product.price}</p>}
       </CardFooter>
