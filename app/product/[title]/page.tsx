@@ -38,17 +38,17 @@ export async function generateMetadata({
   };
 }
 
-const API_URL = "http://localhost:4000";
+import { supabase } from "@/lib/supabase";
 
 async function getProduct(title: string): Promise<Product | null> {
-  const response = await fetch(
-    `${API_URL}/products?title=${encodeURIComponent(title)}`,
-    { cache: "no-store" },
-  );
-  if (!response.ok) return null;
-  const data = await response.json();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .ilike("title", title)
+    .limit(1)
+    .maybeSingle();
 
-  return data.products?.[0] ?? null;
+  return (data as unknown as Product) ?? null;
 }
 
 function calculateAverageRating(product: Product) {
@@ -65,9 +65,13 @@ function calculateAverageRating(product: Product) {
 }
 
 async function getCategory(id: number | string): Promise<Category | null> {
-  const res = await fetch(`${API_URL}/categories/${id}`, { cache: "no-store" }); //
-  if (!res.ok) return null; // json-server answers 404 for an unknown id
-  return res.json();
+  const { data } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", Number(id))
+    .maybeSingle();
+
+  return (data as unknown as Category) ?? null;
 }
 
 export default async function ProductDetailPage({
