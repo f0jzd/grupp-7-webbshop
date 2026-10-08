@@ -141,7 +141,7 @@ export default async function ProductDetailPage({
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center text-amber-500">
                   {[...Array(5)].map((_, i) => {
-                    const filled = Math.max(Math.min(1,(averageRating)-(i)),0);
+                    const filled = Math.max(Math.min(1,(product.rating ?? 0)-(i)),0);
                     return (
                       <div key={i} className="relative w-4 h-4">
                     <div className={`w-full`}>
@@ -160,9 +160,6 @@ export default async function ProductDetailPage({
                     </div>
                   )})}
                 </div>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {averageRating.toFixed(2)} ({product.reviews?.length ?? 0})
-                </span>
               </div>
             )}
 

@@ -28,6 +28,7 @@ import {
 } from "./components/ui/accordion";
 import { supabase } from "./lib/supabase";
 import { unstable_cache } from "next/cache";
+import { SortFilter } from "./components/SortAndFilter";
 
 /* When using metadata titles you need to put explicit export
 dynamic = "auto" otherwise npm run build will not complete.
@@ -233,78 +234,7 @@ export default async function ProductPage({
                     <AccordionContent>
                       {/* key remounts the uncontrolled inputs when the URL changes, same trick as key={q} on the search input */}
                       {/* effectively, by pressing Back in the browser, this prevents erroneous filter choices */}
-                      <div
-                        key={`${sort}-${order}-${inStock}-${onSale}`}
-                        className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
-                      >
-                        {/* sort by */}
-                        <div className="flex flex-col gap-1.5">
-                          <label htmlFor="sort" className="text-sm font-medium">
-                            Sort by
-                          </label>
-                          <select
-                            id="sort"
-                            name="sort"
-                            defaultValue={sort ?? ""}
-                            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
-                          >
-                            <option value="">Default</option>
-                            <option value="price">Price</option>
-                            <option value="rating">Rating</option>
-                            <option value="discountPercentage">Discount</option>
-                          </select>
-                        </div>
-                        {/* order choice*/}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">Order</legend>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="radio"
-                              name="order"
-                              value="asc"
-                              defaultChecked={order !== "desc"}
-                              className="accent-primary"
-                            />
-                            Ascending
-                          </label>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="radio"
-                              name="order"
-                              value="desc"
-                              defaultChecked={order === "desc"}
-                              className="accent-primary"
-                            />
-                            Descending
-                          </label>
-                        </fieldset>
-                        {/* toggles */}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">
-                            Show only
-                          </legend>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="checkbox"
-                              name="inStock"
-                              value="1"
-                              defaultChecked={inStock === "1"}
-                              className="accent-primary"
-                            />
-                            In stock
-                          </label>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="checkbox"
-                              name="onSale"
-                              value="1"
-                              defaultChecked={onSale === "1"}
-                              className="accent-primary"
-                            />
-                            On sale
-                          </label>
-                        </fieldset>
-                      </div>
+                      <SortFilter sort={sort} order={order} inStock={inStock} onSale={onSale}/>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
