@@ -38,17 +38,17 @@ export async function generateMetadata({
   };
 }
 
-const API_URL = "http://localhost:4000";
+import { supabase } from "@/lib/supabase";
 
 async function getProduct(title: string): Promise<Product | null> {
-  const response = await fetch(
-    `${API_URL}/products?title=${encodeURIComponent(title)}`,
-    { cache: "no-store" },
-  );
-  if (!response.ok) return null;
-  const data = await response.json();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .ilike("title", title)
+    .limit(1)
+    .maybeSingle();
 
-  return data.products?.[0] ?? null;
+  return (data as unknown as Product) ?? null;
 }
 
 function calculateAverageRating(product: Product) {
@@ -65,9 +65,13 @@ function calculateAverageRating(product: Product) {
 }
 
 async function getCategory(id: number | string): Promise<Category | null> {
-  const res = await fetch(`${API_URL}/categories/${id}`, { cache: "no-store" }); //
-  if (!res.ok) return null; // json-server answers 404 for an unknown id
-  return res.json();
+  const { data } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", Number(id))
+    .maybeSingle();
+
+  return (data as unknown as Category) ?? null;
 }
 
 export default async function ProductDetailPage({
@@ -138,21 +142,19 @@ export default async function ProductDetailPage({
             </h1>
 
             {/* Rating */}
-            {product.reviews && product.reviews.length > 0 && (
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
-                </span>
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${i < Math.round(product.rating ?? 0) ? "fill-amber-500" : "text-muted"}`}
+                  />
+                ))}
               </div>
-            )}
+              <span className="text-sm text-muted-foreground font-medium">
+                {product.rating ?? 0} ({product.reviews?.length ?? 0})
+              </span>
+            </div>
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
