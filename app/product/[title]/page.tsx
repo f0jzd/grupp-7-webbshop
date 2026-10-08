@@ -1,4 +1,4 @@
-import { Star, ShieldCheck, UserCircle, Package } from "lucide-react";
+import { Star, ShieldCheck, UserCircle, Package, StarHalf } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -90,11 +90,6 @@ export default async function ProductDetailPage({
   const averageRating = calculateAverageRating(product);
   const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
 
-  const cookieStore = await cookies();
-  const cartString = cookieStore.get("cart")?.value;
-  const cartIds: number[] = cartString ? JSON.parse(cartString) : [];
-  const cartCount = cartIds.filter((id) => id === product.id).length;
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* 1. Breadcrumbs */}
@@ -142,19 +137,34 @@ export default async function ProductDetailPage({
             </h1>
 
             {/* Rating */}
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${i < Math.round(product.rating ?? 0) ? "fill-amber-500" : "text-muted"}`}
-                  />
-                ))}
+            {product.reviews && product.reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center text-amber-500">
+                  {[...Array(5)].map((_, i) => {
+                    const filled = Math.max(Math.min(1,(averageRating)-(i)),0);
+                    return (
+                      <div key={i} className="relative w-4 h-4">
+                    <div className={`w-full`}>
+                    <Star
+                      key={i}
+                      className={`h-4 amber-500 fill-white z-10  }`}
+                    />
+                    </div>
+                    {filled > 0 ? filled === 1 ? 
+                        <Star
+                        key={i}
+                        className={`h-4 fill-amber-500 absolute top-0`}
+                        /> : <StarHalf key={i}
+                        className={`h-4 fill-amber-500 absolute top-0`}/>
+                    : null}
+                    </div>
+                  )})}
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {averageRating.toFixed(2)} ({product.reviews?.length ?? 0})
+                </span>
               </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                {product.rating ?? 0} ({product.reviews?.length ?? 0})
-              </span>
-            </div>
+            )}
 
             {/* Price */}
             <div className="mt-4 flex items-baseline gap-3">
