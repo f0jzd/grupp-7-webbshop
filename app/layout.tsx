@@ -9,6 +9,7 @@ import { Product } from "./types";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "./lib/supabase";
+import { groupedCategories } from "./categories";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,33 +85,61 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${materialSymbols.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <ContextProvider cart={products}>
-          {shouldShowHeader ? (
-            <header className="border border-b-2 border-b-green-300 p-2">
-              <nav className="w-full flex justify-between items-center max-w-375 mx-auto">
-                <Link
-                  href="/"
-                  className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
-                >
-                  <Image
-                    src="/shop-logo.png"
-                    alt="webshop icon"
-                    width={LOGO_SIZE}
-                    height={LOGO_SIZE}
-                    className="object-contain"
-                  />
-                  <span>Bengts Bildoktor</span>
-                </Link>
+        <body className="min-h-full flex flex-col">
+          <ContextProvider cart={products}>
+            {shouldShowHeader?
+              <header className="border border-b-2 border-b-green-300 p-2">
+                <nav className="w-full flex justify-between items-center max-w-375 mx-auto max-md:flex-col max-md:items-start max-md:gap-2">
+                  <Link
+                    href="/"
+                    className="flex items-center font-semibold text-lg hover:opacity-85 transition-opacity"
+                  >
+                    <Image
+                      src="/shop-logo.png"
+                      alt="webshop icon"
+                      width={LOGO_SIZE}
+                      height={LOGO_SIZE}
+                      className="object-contain"
+                    />
+                    <span>Bengts Bildoktor</span>
+                  </Link>
 
-                <div className="centerwrapper flex flex-row flex-nowrap gap-3"></div>
+                {/* Categories desktop */}
+                  <div className="centerwrapper flex flex-row flex-nowrap gap-6 max-md:hidden">
+                    {groupedCategories.map(({ name }) => (
+                      <div key={name} className="relative">
+                        <Link
+                          href={`/?groupedCategory=${encodeURIComponent(name)}`}
+                          className="font-medium"
+                        >
+                          {name}
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Categories responsive */}
+                  <div className="centerwrapper flex flex-col flex-nowrap md:hidden">
+                    <div className="flex flex-row flex-wrap gap-4">
+                        {groupedCategories.map(({ name }) => (
+                          <div key={name} className="relative">
+                            <Link
+                              href={`/?groupedCategory=${encodeURIComponent(name)}`}
+                              className="font-medium text-nowrap"
+                            >
+                              {name}
+                            </Link>
+                          </div>
+                        ))}
+                        </div>
+                  </div>
 
                 <Link href="/cart">
                   <ShoppingCartCounter />
                 </Link>
               </nav>
             </header>
-          ) : null}
+           : null}
           <main className="m-2 mt-6 mb-6">{children}</main>
         </ContextProvider>
       </body>

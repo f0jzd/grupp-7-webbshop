@@ -1,7 +1,7 @@
 import { FilterCard } from "../components/FilterCard";
 import type { Category, Product, Stats } from "../types";
 import { ProductList } from "@/components/ProductList";
-import { SearchBar } from "../components/SearchBar";
+import { SearchBar } from "../components/AdminSearchBar";
 import { Pagination } from "../components/Pagination";
 import { createUrlSearchParams } from "../lib/utils";
 import { Metadata } from "next";
@@ -110,8 +110,6 @@ export default async function Home({
         <Pagination
           page={pageNum}
           pages={pages}
-          total={total}
-          limit={defaultLimit}
           urlParams={urlParams}
         />
       </section>

@@ -18,6 +18,7 @@ import { AddToCartButton } from "@/components/AddToCartButton";
 import { Category } from "@/types";
 import { cookies } from "next/headers";
 import { Metadata } from "next";
+import { groupedCategories } from "@/categories";
 
 /* When using metadata titles you need to put explicit export
 dynamic = "auto" otherwise npm run build will not complete.
@@ -89,6 +90,9 @@ export default async function ProductDetailPage({
 
   const averageRating = calculateAverageRating(product);
   const category = await getCategory(product.categoryId); //grabs the relevant cateogy object found by matching active products ID
+  const groupedCategory = groupedCategories.find((gc) =>
+    gc.categories.some((c) => c.id === product.categoryId),
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -97,6 +101,14 @@ export default async function ProductDetailPage({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              href={groupedCategory ? `/?groupedCategory=${encodeURIComponent(groupedCategory.name)}` : "/"}
+            >
+              {groupedCategory?.name}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

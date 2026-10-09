@@ -2,6 +2,8 @@
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
+import type {  ProductsResponse } from "./types";
+import { buildHref, getPageRange } from "./lib/utils";
 import type { Category, Product } from "./types";
 import { Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
@@ -20,6 +22,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet";
+import { groupedCategories } from "./categories";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./components/ui/breadcrumb";
 import {
   Accordion,
   AccordionContent,
@@ -59,6 +63,7 @@ async function getProducts(
   currentPage: number,
   limit: number,
   categoryId?: number,
+  groupedCategory?: string,
   q?: string,
   sort?: string,
   order?: string,
@@ -82,6 +87,11 @@ async function getProducts(
 
   if (sortField !== "id") {
     query = query.order("id", { ascending: true });
+  }
+
+  if(groupedCategory){
+    const categories = groupedCategories.find(gc => gc.name === decodeURIComponent(groupedCategory))?.categories
+    query = query.or(categories!.map(c => `categoryId.eq.`+c.id).join(","));
   }
 
   if (categoryId) {
@@ -111,6 +121,7 @@ export default async function ProductPage({
   searchParams: Promise<{
     page?: string;
     category?: string;
+    groupedCategory?: string;
     q?: string;
     sort?: string;
     order?: string;
@@ -122,6 +133,7 @@ export default async function ProductPage({
     page = "1",
     category,
     q,
+    groupedCategory,
     sort,
     order,
     inStock,
@@ -129,7 +141,7 @@ export default async function ProductPage({
   } = await searchParams;
   const paginationLimit = 18;
   const currentPage = Number(page) || 1;
-  const filters: Filters = { category, q, sort, order, inStock, onSale };
+  const filters: Filters = { category, q, sort, order, inStock, onSale, groupedCategory };
 
   // 1. Fetch categories (cached)
   const categories = await getCachedCategories();
@@ -140,6 +152,7 @@ export default async function ProductPage({
     currentPage,
     paginationLimit,
     selectedCategory?.id,
+    groupedCategory,
     q,
     sort,
     order,
@@ -154,6 +167,12 @@ export default async function ProductPage({
       category: categoryMap.get(p.categoryId),
     }));
 
+  const pageTitle = groupedCategory
+    ? `${decodeURIComponent(groupedCategory)}`
+    : category
+    ? `${categories.find(c => c.slug === category)?.name}`
+    : "All products";
+
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
@@ -161,6 +180,8 @@ export default async function ProductPage({
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
             <CatNav
+              groupedCategories={groupedCategories}
+              groupedCategory={groupedCategory}
               categories={categories}
               category={category}
               filters={filters}
@@ -182,10 +203,7 @@ export default async function ProductPage({
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent
-              side="left"
-              className="w-64 p-4 flex flex-col scrollbar-gutter-stable"
-            >
+            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable min-w-[350px]">
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
@@ -195,6 +213,8 @@ export default async function ProductPage({
 
               <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
                 <CatNav
+                  groupedCategories={groupedCategories}
+                  groupedCategory={groupedCategory}
                   categories={categories}
                   category={category}
                   filters={filters}
@@ -216,6 +236,9 @@ export default async function ProductPage({
               >
                 {category && (
                   <input type="hidden" name="category" value={category} />
+                )}
+                {groupedCategory && (
+                  <input type="hidden" name="groupedCategory" value={groupedCategory} />
                 )}
                 <ButtonGroup className="w-full">
                   <Input
@@ -239,6 +262,36 @@ export default async function ProductPage({
                   </AccordionItem>
                 </Accordion>
               </Form>
+              
+            <Breadcrumb className="mb-6 mt-4">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Products</BreadcrumbLink>
+                </BreadcrumbItem>
+                {category || groupedCategory ?<>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                {!groupedCategory ? 
+                  <BreadcrumbLink
+                    href={!groupedCategory ? `?groupedCategory=${encodeURIComponent(groupedCategories.find(gc => gc.categories.some(c => c.slug === category))!.name)}` : `?category=` + category}
+                  >
+                    {!groupedCategory ? groupedCategories.find(gc => gc.categories.some(c => c.slug === category))?.name : decodeURIComponent(groupedCategory)}
+                  </BreadcrumbLink>
+                  : <BreadcrumbPage>{decodeURIComponent(groupedCategory)}</BreadcrumbPage>
+                }
+                </BreadcrumbItem>
+                {!groupedCategory ? <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{categories.find(c => c.slug === category)?.name}</BreadcrumbPage>
+                </BreadcrumbItem> </> : null
+    } 
+    </>: null}
+              </BreadcrumbList>
+            </Breadcrumb>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
+              {pageTitle}
+            </h2>
             </div>
             {/* top nav buttons */}
             <ShopPagination
@@ -264,6 +317,7 @@ export default async function ProductPage({
               totalPages={data.pages}
               filters={filters}
             />
+
           </section>
         </section>
       </div>

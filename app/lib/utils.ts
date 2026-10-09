@@ -58,6 +58,7 @@ export function buildHref(
 export type Filters = {
   category?: string;
   q?: string;
+  groupedCategory?: string;
   sort?: string; // parameter for sorting, price, rating, discount, etc. default is ID iirc
   order?:string; // asc/desc/nul for the above
   inStock?: string; // bool filter

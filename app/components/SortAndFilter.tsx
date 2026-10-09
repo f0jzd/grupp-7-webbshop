@@ -31,7 +31,7 @@ export function SortFilter({sort, order, inStock, onSale}: {
                         className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
                       >
                         {/* sort by */}
-                        <div className="flex flex-col gap-1.5">
+                        <div className="flex flex-col gap-1.5 self-start">
                           <label htmlFor="sort" className="text-sm font-medium">
                             Sort by
                           </label>
