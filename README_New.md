@@ -35,9 +35,9 @@ Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), w
 ## Demo / screenshots
 
 <!--todo-->
-| Catalog | Mobile | Product page | Admin |
-| --- | --- | --- | --- |
-| _screenshot_ | _screenshot_ | _screenshot_ | _screenshot_ |
+### Catalog 
+
+![Demo catalog](demo_assets/demo_catalog.PNG)
 
 ## Requirements
 
