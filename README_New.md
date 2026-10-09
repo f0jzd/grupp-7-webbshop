@@ -36,8 +36,32 @@ Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), w
 
 <!--todo-->
 ### Catalog 
-
+<details open>
+<summary>Click to hide demo images</summary>
 ![Demo catalog](demo_assets/demo_catalog.PNG)
+</details>
+
+<details open>
+<summary>Click to hide demo images</summary>
+![Demo product page](demo_assets/demo_productpage.PNG)
+</details>
+
+<details open>
+<summary>Click to hide demo images</summary>
+![Demo cart](demo_assets/demo_cart.PNG)
+</details>
+
+<details open>
+<summary>Click to hide demo images</summary>
+![Demo admin](demo_assets/demo_admin.PNG)
+</details>
+
+<!-- ### Product page 
+![Demo product page](demo_assets/demo_productpage.PNG)
+### Cart 
+![Demo cart](demo_assets/demo_cart.PNG)
+### Admin interface
+![Demo admin](demo_assets/demo_admin.PNG) -->
 
 ## Requirements
 
