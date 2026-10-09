@@ -39,7 +39,7 @@ export default function CatNav({
   const allProductsOptionProps = {
     scroll: false,
     "data-slot": "button",
-    href: buildHref({ }, { category: allProductsOption.slug, page: 1 }),
+    href: buildHref({ }, {...filters, category: "", groupedCategory:"", q:"", page: 1 }),
     className: cn(
       buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
       "justify-start",
