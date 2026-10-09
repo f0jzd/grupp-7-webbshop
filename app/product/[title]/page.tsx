@@ -1,4 +1,4 @@
-import { Star, ShieldCheck, UserCircle, Package } from "lucide-react";
+import { Star, ShieldCheck, UserCircle, Package, StarHalf } from "lucide-react";
 
 // Shadcn UI components
 import {
@@ -20,6 +20,9 @@ import { cookies } from "next/headers";
 import { Metadata } from "next";
 import { groupedCategories } from "@/categories";
 
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
 export const dynamic = "auto";
 
 export async function generateMetadata({
@@ -36,17 +39,17 @@ export async function generateMetadata({
   };
 }
 
-const API_URL = "http://localhost:4000";
+import { supabase } from "@/lib/supabase";
 
 async function getProduct(title: string): Promise<Product | null> {
-  const response = await fetch(
-    `${API_URL}/products?title=${encodeURIComponent(title)}`,
-    { cache: "no-store" },
-  );
-  if (!response.ok) return null;
-  const data = await response.json();
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .ilike("title", title)
+    .limit(1)
+    .maybeSingle();
 
-  return data[0] ?? null;
+  return (data as unknown as Product) ?? null;
 }
 
 function calculateAverageRating(product: Product) {
@@ -63,9 +66,13 @@ function calculateAverageRating(product: Product) {
 }
 
 async function getCategory(id: number | string): Promise<Category | null> {
-  const res = await fetch(`${API_URL}/categories/${id}`, { cache: "no-store" }); //
-  if (!res.ok) return null; // json-server answers 404 for an unknown id
-  return res.json();
+  const { data } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", Number(id))
+    .maybeSingle();
+
+  return (data as unknown as Category) ?? null;
 }
 
 export default async function ProductDetailPage({
@@ -145,16 +152,26 @@ export default async function ProductDetailPage({
             {product.reviews && product.reviews.length > 0 && (
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center text-amber-500">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => {
+                    const filled = Math.max(Math.min(1,(product.rating ?? 0)-(i)),0);
+                    return (
+                      <div key={i} className="relative w-4 h-4">
+                    <div className={`w-full`}>
                     <Star
                       key={i}
-                      className={`h-4 w-4 ${i < Math.round(averageRating) ? "fill-amber-500" : "text-muted"}`}
+                      className={`h-4 amber-500 fill-white z-10  }`}
                     />
-                  ))}
+                    </div>
+                    {filled > 0 ? filled === 1 ? 
+                        <Star
+                        key={i}
+                        className={`h-4 fill-amber-500 absolute top-0`}
+                        /> : <StarHalf key={i}
+                        className={`h-4 fill-amber-500 absolute top-0`}/>
+                    : null}
+                    </div>
+                  )})}
                 </div>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {averageRating.toFixed(1)} ({product.reviews?.length ?? 0})
-                </span>
               </div>
             )}
 

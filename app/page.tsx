@@ -1,18 +1,18 @@
 // stock nextjs
-import Link from "next/link";
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
-import type { Category, ProductsResponse } from "./types";
-import { buildHref, getPageRange, Filters } from "./lib/utils";
+import type {  ProductsResponse } from "./types";
+import { buildHref, getPageRange } from "./lib/utils";
+import type { Category, Product } from "./types";
+import { Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
+import ShopCatalog from "./components/ShopCatalog";
 // shadcn
-import { buttonVariants } from "./components/ui/button";
 import { Button } from "./components/ui/button";
 import { ButtonGroup } from "./components/ui/button-group";
 import { Input } from "./components/ui/input";
-import ShopCatalog from "./components/ShopCatalog";
 import { ChevronRight } from "lucide-react";
 import {
   Sheet,
@@ -24,8 +24,20 @@ import {
 } from "./components/ui/sheet";
 import { groupedCategories } from "./categories";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./components/ui/breadcrumb";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
+import { supabase } from "./lib/supabase";
+import { unstable_cache } from "next/cache";
+import { SortFilter } from "./components/SortAndFilter";
 
-export const dynamic = "force-dynamic";
+/* When using metadata titles you need to put explicit export
+dynamic = "auto" otherwise npm run build will not complete.
+I think this is a next.js bug */
+export const dynamic = "auto";
 
 export const metadata: Metadata = {
   title: "Product catalog",
@@ -33,51 +45,118 @@ export const metadata: Metadata = {
     "Find products by searching or filtering by category and add products to cart",
 };
 
-const API_URL = "http://localhost:4000";
+// Caches categories for 1 hour so pagination never re-fetches them from the cloud
+const getCachedCategories = unstable_cache(
+  async () => {
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
+    return (data || []) as Category[];
+  },
+  ["shop-categories-cache"],
+  { revalidate: 3600 }, // 1 hour in seconds
+);
+
+// Fetches products per page, category, search query, sorting and filters directly from Supabase
+async function getProducts(
+  currentPage: number,
+  limit: number,
+  categoryId?: number,
+  q?: string,
+  sort?: string,
+  order?: string,
+  inStock?: string,
+  onSale?: string,
+) {
+  const from = (currentPage - 1) * limit;
+  const to = from + limit - 1;
+
+  const sortField =
+    sort && ["price", "rating", "discountPercentage"].includes(sort)
+      ? sort
+      : "title";
+  const isAscending = order !== "desc";
+
+  let query = supabase
+    .from("products")
+    .select("*", { count: "exact" })
+    .range(from, to)
+    .order(sortField, { ascending: isAscending, nullsFirst: false });
+
+  if (sortField !== "id") {
+    query = query.order("id", { ascending: true });
+  }
+
+  if (categoryId) {
+    query = query.eq("categoryId", categoryId);
+  }
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (inStock === "1") {
+    query = query.neq("availabilityStatus", "Out of Stock");
+  }
+  if (onSale === "1") {
+    query = query.gte("discountPercentage", 1);
+  }
+
+  const { data, count } = await query;
+  const total = count || 0;
+  const pages = Math.ceil(total / limit) || 1;
+  const products = (data || []) as Product[];
+
+  return { products, total, pages };
+}
 
 export default async function ProductPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; category?: string; q?: string; groupedCategory?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    category?: string;
+    q?: string;
+    sort?: string;
+    order?: string;
+    inStock?: string;
+    onSale?: string;
+  }>;
 }) {
-  // pagination data
-  const { page = "1", category: categoryParam, q, groupedCategory: groupedCategoryParam } = await searchParams;
-  const category = categoryParam ? decodeURIComponent(categoryParam) : undefined;
-  const groupedCategory = groupedCategoryParam ? decodeURIComponent(groupedCategoryParam) : undefined;
-  const paginationLimit = 18; // tweak here to change page size
-  const state = { page, category, q, groupedCategory }; // current search state, built from search params
+  const {
+    page = "1",
+    category,
+    q,
+    sort,
+    order,
+    inStock,
+    onSale,
+  } = await searchParams;
+  const paginationLimit = 18;
+  const currentPage = Number(page) || 1;
+  const filters: Filters = { category, q, sort, order, inStock, onSale };
 
-  // returns the list of categories for the catnav panel
-  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
-    (res) => res.json(),
-  );
-  // ↓↓↓ This one reads the category param and returns the corresponding category object from the slug (string) to be used in the next block
+  // 1. Fetch categories (cached)
+  const categories = await getCachedCategories();
   const selectedCategory = categories.find((c) => c.slug === category);
 
-  const query = new URLSearchParams({
-    _page: page,
-    _per_page: String(paginationLimit),
-  });
-  if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
-  if (groupedCategory) query.set("categoryId:in", String(groupedCategories.find((gc) => gc.name === groupedCategory)?.categories.map((c) => c.id)));
-  if (q) query.set("title:contains", q); // or "search" if you add the middleware block
-
-  const data: ProductsResponse = await fetch(
-    `${API_URL}/products?${query}`,
-  ).then((res) => res.json());
-
-  const products: (Product & {category: Category | undefined})[] = data.products as unknown as (Product & {category: Category | undefined})[]; // type assertion to include category property
+  // 2. Fetch products for this page from Supabase
+  const data = await getProducts(
+    currentPage,
+    paginationLimit,
+    selectedCategory?.id,
+    q,
+    sort,
+    order,
+    inStock,
+    onSale,
+  );
 
   const categoryMap = new Map(categories.map((c) => [c.id, c]));
-
-  products.map(p => {
-    p.category = categoryMap.get(p.categoryId);
-    return p;
-  })
-
-  // shadcn dynamic pagination data
-  const currentPage = Number(page); // page destruct'd at line 55 for default
-  const pageRange = getPageRange(currentPage, data.pages);
+  const products: (Product & { category: Category | undefined })[] =
+    data.products.map((p) => ({
+      ...p,
+      category: categoryMap.get(p.categoryId),
+    }));
 
   const pageTitle = groupedCategory
     ? `${groupedCategory}`
@@ -88,13 +167,14 @@ export default async function ProductPage({
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
-
-
-
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
-            <CatNav groupedCategories={groupedCategories} categories={categories} category={category} groupedCategory={groupedCategory} page={page} />
+            <CatNav
+              categories={categories}
+              category={category}
+              filters={filters}
+            />
           </div>
           {/* catnav mobile */}
           <Sheet>
@@ -126,7 +206,7 @@ export default async function ProductPage({
                   groupedCategory={groupedCategory}
                   categories={categories}
                   category={category}
-                  page={page}
+                  filters={filters}
                   closeOnSelect
                   className="w-full pr-3"
                 />
@@ -136,24 +216,39 @@ export default async function ProductPage({
 
           {/* catalong wrapper */}
           <section className="flex-col w-full">
-
             {/* Search */}
-            <Form action={"/"} role="search" className="max-w-150 mx-auto w-full pb-4">
-            {category && <input type="hidden" name="category" value={category} />}
-            {groupedCategory && <input type="hidden" name="groupedCategory" value={groupedCategory} />}
-              <ButtonGroup className="w-full">
-                <Input
-                  key={q}
-                  name="q"
-                  type="search"
-                  defaultValue={q}
-                  placeholder="Search products…"
-                  aria-label="Search products"
-                />
-                <Button type="submit">Search</Button>
-              </ButtonGroup>
-            </Form>
-            {category || groupedCategory ?
+            <div>
+              <Form
+                action="/"
+                role="search"
+                className="max-w-150 mx-auto w-full pb-4"
+              >
+                {category && (
+                  <input type="hidden" name="category" value={category} />
+                )}
+                <ButtonGroup className="w-full">
+                  <Input
+                    key={q}
+                    name="q"
+                    type="search"
+                    defaultValue={q}
+                    placeholder="Search products…"
+                    aria-label="Search products"
+                  />
+                  <Button type="submit">Search</Button>
+                </ButtonGroup>
+                <Accordion>
+                  <AccordionItem value="sort-filter">
+                    <AccordionTrigger>Sort &amp; filter</AccordionTrigger>
+                    <AccordionContent>
+                      {/* key remounts the uncontrolled inputs when the URL changes, same trick as key={q} on the search input */}
+                      {/* effectively, by pressing Back in the browser, this prevents erroneous filter choices */}
+                      <SortFilter sort={sort} order={order} inStock={inStock} onSale={onSale}/>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </Form>
+              {category || groupedCategory ?
             <Breadcrumb className="mb-6 mt-4">
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -182,20 +277,36 @@ export default async function ProductPage({
             <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
               {pageTitle}
             </h2>
-
+            </div>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
+            <ShopPagination
+              className="mb-4"
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={filters}
+            />
 
             {/* Shop grid */}
-            <ShopCatalog className="
+            <ShopCatalog
+              className="
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
               data={products}
             />
 
+<<<<<<< HEAD
             {/* Bottom nav buttons, same as line 71 */}
             <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
+=======
+            {/* Bottom nav buttons */}
+            <ShopPagination
+              className="mt-4"
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={filters}
+            />
+>>>>>>> origin/main
           </section>
         </section>
       </div>

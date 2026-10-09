@@ -54,9 +54,19 @@ export function buildHref(
   return qs ? `?${qs}` : "?"; // i hate manual string building
 }
 
-// pagination components. Needs extraction as part of migration. Lives here for now.
-export type Filters = { category?: string; groupedCategory?: string; q?: string };
+// main type for searchparams and their propagation through components
+export type Filters = {
+  category?: string;
+  q?: string;
+  groupedCategory?: string;
+  sort?: string; // parameter for sorting, price, rating, discount, etc. default is ID iirc
+  order?:string; // asc/desc/nul for the above
+  inStock?: string; // bool filter
+  onSale?: string; // bool filter
+  topRated?: string; // bool filter, so you can still sort them by price
+};
 
+// pagination components. Needs extraction as part of migration. Lives here for now.
 export function getPageRange(current: number, total: number): (number | "ellipsis")[] {
   const delta = 2; // how many neighbors to show around current
   const range: (number | "ellipsis")[] = [];

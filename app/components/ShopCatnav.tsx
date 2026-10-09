@@ -1,7 +1,10 @@
+// stock
 import Link from "next/link";
 import { cn } from "cn";
+// inhouse
 import type { Category } from "../types";
-import { buildHref } from "../lib/utils";
+import { buildHref, type Filters } from "../lib/utils";
+// shad
 import { buttonVariants } from "./ui/button";
 import { ButtonGroup } from "./ui/button-group";
 import { SheetClose } from "./ui/sheet";
@@ -12,6 +15,7 @@ export default function CatNav({
   category,
   groupedCategory,
   page,
+  filters,
   closeOnSelect = false,
   className,
   groupedCategories
@@ -20,6 +24,7 @@ export default function CatNav({
   category?: string;
   groupedCategory?: string;
   page: string;
+  filters: Filters;
   closeOnSelect?: boolean;
   className?: string;
   groupedCategories: { name: string; categories: Category[] }[];

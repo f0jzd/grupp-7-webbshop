@@ -12,7 +12,7 @@ interface Category {
   image: string;
 }
 
-const API_URL = "http://localhost:4000";
+import { supabase } from "../lib/supabase";
 
 const emptyProduct: Product = {
   id: 0,
@@ -37,13 +37,23 @@ interface ProductFormProps {
 }
 
 export const ProductForm = async ({ productId }: ProductFormProps) => {
-  const product = productId
-    ? await fetch(`${API_URL}/products/${productId}`).then((res) => res.json())
-    : emptyProduct;
+  let product = emptyProduct;
+  if (productId) {
+    const { data: prodData } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .single();
+    if (prodData) {
+      product = prodData as unknown as Product;
+    }
+  }
 
-  const categories = await fetch(`${API_URL}/categories`).then((res) =>
-    res.json(),
-  );
+  const { data: categoriesData } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name");
+  const categories = categoriesData || [];
 
   return (
     <article className="flex flex-col m-auto max-w-7xl w-full p-4 items-center">
