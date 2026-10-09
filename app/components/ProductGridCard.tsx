@@ -10,7 +10,6 @@ import {
 import { AspectRatio } from "./ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { GridCardCartControls } from "./GridCardCartControls";
 
 interface GridCardProps {
@@ -23,9 +22,9 @@ export default async function GridCard({ product }: GridCardProps) {
       <Link href={`/product/${product.title}`} className="h-full">
         <CardHeader>
           <CardTitle className="line-clamp-1"><h3>{product.title}</h3></CardTitle>
-          <CardDescription className="line-clamp-1">
-            <p>{product.brand ?? "Unknown brand"}</p>
-          </CardDescription>
+          {/* <CardDescription className="line-clamp-1">
+            <p>{product.brand ?? "Bengts bildoktor"}</p>
+          </CardDescription> */}
         </CardHeader>
         <CardContent>
           <div className="w-full overflow-hidden rounded-t-lg bg-muted">
