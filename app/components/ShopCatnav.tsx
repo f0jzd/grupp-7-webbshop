@@ -66,7 +66,7 @@ export default function CatNav({
           const props = {
             scroll: false,
             "data-slot": "button",
-            href: buildHref({ }, { groupedCategory: encodeURIComponent(name), page: 1 }),
+            href: buildHref({ }, { ...filters, groupedCategory: encodeURIComponent(name), page: 1, category: "",q:"" }),
             className: cn(
               buttonVariants({ variant: active ? "default" : "outline" }),
               "justify-start",
@@ -93,7 +93,7 @@ export default function CatNav({
             const props = {
             scroll: false,
             "data-slot": "button",
-            href: buildHref({ }, { category: slug, page: 1 }),
+            href: buildHref({ }, {...filters, category: slug, page: 1, groupedCategory:"", q:"" }),
             className: cn(
               buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
               "justify-start",

@@ -133,7 +133,7 @@ export default async function ProductPage({
     page = "1",
     category,
     q,
-    groupedCategory: groupedCategoryURIEncoded,
+    groupedCategory,
     sort,
     order,
     inStock,
@@ -141,7 +141,6 @@ export default async function ProductPage({
   } = await searchParams;
   const paginationLimit = 18;
   const currentPage = Number(page) || 1;
-  const groupedCategory = decodeURIComponent(groupedCategoryURIEncoded ?? "");
   const filters: Filters = { category, q, sort, order, inStock, onSale, groupedCategory };
 
   // 1. Fetch categories (cached)
@@ -169,7 +168,7 @@ export default async function ProductPage({
     }));
 
   const pageTitle = groupedCategory
-    ? `${groupedCategory}`
+    ? `${decodeURIComponent(groupedCategory)}`
     : category
     ? `${categories.find(c => c.slug === category)?.name}`
     : "All products";
@@ -276,9 +275,9 @@ export default async function ProductPage({
                   <BreadcrumbLink
                     href={!groupedCategory ? `?groupedCategory=${encodeURIComponent(groupedCategories.find(gc => gc.categories.some(c => c.slug === category))!.name)}` : `?category=` + category}
                   >
-                    {!groupedCategory ? groupedCategories.find(gc => gc.categories.some(c => c.slug === category))?.name : groupedCategory}
+                    {!groupedCategory ? groupedCategories.find(gc => gc.categories.some(c => c.slug === category))?.name : decodeURIComponent(groupedCategory)}
                   </BreadcrumbLink>
-                  : <BreadcrumbPage>{groupedCategory}</BreadcrumbPage>
+                  : <BreadcrumbPage>{decodeURIComponent(groupedCategory)}</BreadcrumbPage>
                 }
                 </BreadcrumbItem>
                 {!groupedCategory ? <>
