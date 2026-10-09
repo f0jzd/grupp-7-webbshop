@@ -51,13 +51,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 ### Completed
 
-- [x] Visual interface for product list view
-- [x] Functional pagination for product lists
-- [x] API calls to mock server (`json-server`)
-- [x] Add product functionality
-- [x] Edit product functionality
-- [x] Error handling / loading states
-- [x] Responsive UI
+- [] Write readme
 
 ### Planned
 

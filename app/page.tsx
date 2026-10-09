@@ -2,8 +2,10 @@
 import Form from "next/form";
 import type { Metadata } from "next";
 // custom/inhouse
+import type {  ProductsResponse } from "./types";
+import { buildHref, getPageRange } from "./lib/utils";
 import type { Category, Product } from "./types";
-import { getPageRange, Filters } from "./lib/utils";
+import { Filters } from "./lib/utils";
 import ShopPagination from "./components/ShopPagination";
 import CatNav from "./components/ShopCatnav";
 import ShopCatalog from "./components/ShopCatalog";
@@ -20,12 +22,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet";
+import { groupedCategories } from "./categories";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./components/ui/breadcrumb";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "./components/ui/accordion";
+import { supabase } from "./lib/supabase";
+import { unstable_cache } from "next/cache";
+import { SortFilter } from "./components/SortAndFilter";
 
 /* When using metadata titles you need to put explicit export
 dynamic = "auto" otherwise npm run build will not complete.
@@ -38,14 +45,74 @@ export const metadata: Metadata = {
     "Find products by searching or filtering by category and add products to cart",
 };
 
-const API_URL = "http://localhost:4000";
+// Caches categories for 1 hour so pagination never re-fetches them from the cloud
+const getCachedCategories = unstable_cache(
+  async () => {
+    const { data } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name");
+    return (data || []) as Category[];
+  },
+  ["shop-categories-cache"],
+  { revalidate: 3600 }, // 1 hour in seconds
+);
 
-interface ProductsResponse {
-  products: Product[];
-  total: number;
-  limit: number;
-  page: number;
-  pages: number;
+// Fetches products per page, category, search query, sorting and filters directly from Supabase
+async function getProducts(
+  currentPage: number,
+  limit: number,
+  categoryId?: number,
+  groupedCategory?: string,
+  q?: string,
+  sort?: string,
+  order?: string,
+  inStock?: string,
+  onSale?: string,
+) {
+  const from = (currentPage - 1) * limit;
+  const to = from + limit - 1;
+
+  const sortField =
+    sort && ["price", "rating", "discountPercentage"].includes(sort)
+      ? sort
+      : "title";
+  const isAscending = order !== "desc";
+
+  let query = supabase
+    .from("products")
+    .select("*", { count: "exact" })
+    .range(from, to)
+    .order(sortField, { ascending: isAscending, nullsFirst: false });
+
+  if (sortField !== "id") {
+    query = query.order("id", { ascending: true });
+  }
+
+  if(groupedCategory){
+    const categories = groupedCategories.find(gc => gc.name === decodeURIComponent(groupedCategory))?.categories
+    query = query.or(categories!.map(c => `categoryId.eq.`+c.id).join(","));
+  }
+
+  if (categoryId) {
+    query = query.eq("categoryId", categoryId);
+  }
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (inStock === "1") {
+    query = query.neq("availabilityStatus", "Out of Stock");
+  }
+  if (onSale === "1") {
+    query = query.gte("discountPercentage", 1);
+  }
+
+  const { data, count } = await query;
+  const total = count || 0;
+  const pages = Math.ceil(total / limit) || 1;
+  const products = (data || []) as Product[];
+
+  return { products, total, pages };
 }
 
 export default async function ProductPage({
@@ -54,6 +121,7 @@ export default async function ProductPage({
   searchParams: Promise<{
     page?: string;
     category?: string;
+    groupedCategory?: string;
     q?: string;
     sort?: string;
     order?: string;
@@ -61,60 +129,63 @@ export default async function ProductPage({
     onSale?: string;
   }>;
 }) {
-
-  // pagination data
-  const { page = "1", category, q, sort, order, inStock, onSale } = await searchParams;
+  const {
+    page = "1",
+    category,
+    q,
+    groupedCategory,
+    sort,
+    order,
+    inStock,
+    onSale,
+  } = await searchParams;
   const paginationLimit = 18;
-  const currentPage = Number(page);
-  const filters: Filters = { category, q, sort, order, inStock, onSale };
+  const currentPage = Number(page) || 1;
+  const filters: Filters = { category, q, sort, order, inStock, onSale, groupedCategory };
 
-  // category selection
-  const categories: Category[] = await fetch(`${API_URL}/categories`).then(
-    (res) => res.json(),
-  );
+  // 1. Fetch categories (cached)
+  const categories = await getCachedCategories();
   const selectedCategory = categories.find((c) => c.slug === category);
 
+  // 2. Fetch products for this page from Supabase
+  const data = await getProducts(
+    currentPage,
+    paginationLimit,
+    selectedCategory?.id,
+    groupedCategory,
+    q,
+    sort,
+    order,
+    inStock,
+    onSale,
+  );
 
-  const query = new URLSearchParams({
-    _page: page,
-    _limit: String(paginationLimit),
-  });
-  if (selectedCategory) query.set("categoryId", String(selectedCategory.id));
-  if (q) query.set("title_like", q); // or "search" if you add the middleware block
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
+  const products: (Product & { category: Category | undefined })[] =
+    data.products.map((p) => ({
+      ...p,
+      category: categoryMap.get(p.categoryId),
+    }));
 
+  const pageTitle = groupedCategory
+    ? `${decodeURIComponent(groupedCategory)}`
+    : category
+    ? `${categories.find(c => c.slug === category)?.name}`
+    : "All products";
 
-  // sorting (json-server 0.x: _sort + _order); whitelist so the URL can't inject fields
-  const sortField =
-    sort && ["price", "rating", "discountPercentage"].includes(sort)
-      ? sort
-      : "title"; // default: alphabetical by name
-  query.set("_sort", sortField);
-  query.set("_order", order === "desc" ? "desc" : "asc");
-
-  if (inStock === "1") query.set("availabilityStatus_ne", "Out of Stock");
-  if (onSale === "1") query.set("discountPercentage_gte", "1"); // 10 is a guess, check your data
-
-  const data: ProductsResponse = await fetch(
-    `${API_URL}/products?${query}`,
-  ).then((res) => res.json());
-
-const categoryMap = new Map(categories.map((c) => [c.id, c]));
- 
-data.products.map(p => {
-  p.category = categoryMap.get(p.categoryId);
-  return p;
-})
-  
   return (
     <article className="max-w-375 m-auto">
       <div className="flex flex-col items-center">
-
-
-
         <section className="flex flex-row w-full">
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
-            <CatNav categories={categories} category={category} filters={filters} />
+            <CatNav
+              groupedCategories={groupedCategories}
+              groupedCategory={groupedCategory}
+              categories={categories}
+              category={category}
+              filters={filters}
+            />
           </div>
           {/* catnav mobile */}
           <Sheet>
@@ -132,7 +203,7 @@ data.products.map(p => {
               <ChevronRight />
             </SheetTrigger>
 
-            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable">
+            <SheetContent side="left" className="w-64 p-4 flex flex-col scrollbar-gutter-stable min-w-[350px]">
               <SheetHeader className="p-0">
                 <SheetTitle>Categories</SheetTitle>
                 <SheetDescription className="sr-only">
@@ -142,6 +213,8 @@ data.products.map(p => {
 
               <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
                 <CatNav
+                  groupedCategories={groupedCategories}
+                  groupedCategory={groupedCategory}
                   categories={categories}
                   category={category}
                   filters={filters}
@@ -154,12 +227,20 @@ data.products.map(p => {
 
           {/* catalong wrapper */}
           <section className="flex-col w-full">
-
             {/* Search */}
             <div>
-              <Form action="/" role="search" className="max-w-150 mx-auto w-full pb-4">
-              {category && <input type="hidden" name="category" value={category} />}
-                <ButtonGroup className="w-full"> {/* Contains search field and submit btn */}
+              <Form
+                action="/"
+                role="search"
+                className="max-w-150 mx-auto w-full pb-4"
+              >
+                {category && (
+                  <input type="hidden" name="category" value={category} />
+                )}
+                {groupedCategory && (
+                  <input type="hidden" name="groupedCategory" value={groupedCategory} />
+                )}
+                <ButtonGroup className="w-full">
                   <Input
                     key={q}
                     name="q"
@@ -176,70 +257,67 @@ data.products.map(p => {
                     <AccordionContent>
                       {/* key remounts the uncontrolled inputs when the URL changes, same trick as key={q} on the search input */}
                       {/* effectively, by pressing Back in the browser, this prevents erroneous filter choices */}
-                      <div
-                        key={`${sort}-${order}-${inStock}-${onSale}`}
-                        className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
-                      >
-                        {/* sort by */}
-                        <div className="flex flex-col gap-1.5">
-                          <label htmlFor="sort" className="text-sm font-medium">
-                            Sort by
-                          </label>
-                          <select
-                            id="sort"
-                            name="sort"
-                            defaultValue={sort ?? ""}
-                            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
-                          >
-                            <option value="">Default</option>
-                            <option value="price">Price</option>
-                            <option value="rating">Rating</option>
-                            <option value="discountPercentage">Discount</option>
-                          </select>
-                        </div>
-                        {/* order choice*/}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">Order</legend>
-                            <label className="flex items-center gap-1.5">
-                              <input type="radio" name="order" value="asc" defaultChecked={order !== "desc"} className="accent-primary" />
-                              Ascending
-                            </label>
-                            <label className="flex items-center gap-1.5">
-                              <input type="radio" name="order" value="desc" defaultChecked={order === "desc"} className="accent-primary" />
-                              Descending
-                            </label>
-                        </fieldset>
-                        {/* toggles */}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">Show only</legend>
-                            <label className="flex items-center gap-1.5">
-                              <input type="checkbox" name="inStock" value="1" defaultChecked={inStock === "1"} className="accent-primary" />
-                              In stock
-                            </label>
-                            <label className="flex items-center gap-1.5">
-                              <input type="checkbox" name="onSale" value="1" defaultChecked={onSale === "1"} className="accent-primary" />
-                              On sale
-                            </label>
-                        </fieldset>
-                      </div>
+                      <SortFilter sort={sort} order={order} inStock={inStock} onSale={onSale}/>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               </Form>
+              
+            <Breadcrumb className="mb-6 mt-4">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Products</BreadcrumbLink>
+                </BreadcrumbItem>
+                {category || groupedCategory ?<>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                {!groupedCategory ? 
+                  <BreadcrumbLink
+                    href={!groupedCategory ? `?groupedCategory=${encodeURIComponent(groupedCategories.find(gc => gc.categories.some(c => c.slug === category))!.name)}` : `?category=` + category}
+                  >
+                    {!groupedCategory ? groupedCategories.find(gc => gc.categories.some(c => c.slug === category))?.name : decodeURIComponent(groupedCategory)}
+                  </BreadcrumbLink>
+                  : <BreadcrumbPage>{decodeURIComponent(groupedCategory)}</BreadcrumbPage>
+                }
+                </BreadcrumbItem>
+                {!groupedCategory ? <>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{categories.find(c => c.slug === category)?.name}</BreadcrumbPage>
+                </BreadcrumbItem> </> : null
+    } 
+    </>: null}
+              </BreadcrumbList>
+            </Breadcrumb>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
+              {pageTitle}
+            </h2>
             </div>
             {/* top nav buttons */}
-            <ShopPagination className="mb-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
+            <ShopPagination
+              className="mb-4"
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={filters}
+            />
 
             {/* Shop grid */}
-            <ShopCatalog className="
+            <ShopCatalog
+              className="
               grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6
               gap-4
               *:w-full"
-              data={data.products}
+              data={products}
             />
 
             {/* Bottom nav buttons */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={filters} />
+            <ShopPagination
+              className="mt-4"
+              currentPage={currentPage}
+              totalPages={data.pages}
+              filters={filters}
+            />
+
           </section>
         </section>
       </div>

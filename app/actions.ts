@@ -1,24 +1,23 @@
 "use server";
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from "next/cache";
-import { Product } from './types';
-
-const API_URL = "http://localhost:4000";
+import { supabase } from "./lib/supabase";
 
 export async function deleteProduct(id: number) {
-  const request = new Request(`${API_URL}/products/${id}`, {
-    method: "DELETE",
-  });
+ 
+  //Finds the row corresponding to the passed id and deletes it.
+  const{error} = await supabase 
+  .from("products")
+  .delete()
+  .eq("id",id);// SQL: DELETE FROM products WHERE id = id
 
-  const response = await fetch(request);
 
-  if (!response.ok) {
-    return {
-      message: `The product could not be deleted due to the following error: ${response.status} ${response.statusText}`,
-    };
+  if (error){
+    return {message:`Failed to delete: ${error.message}`};
   }
 
+  // Reset cache for both homepage and admin page
+  revalidatePath("/admin-page");
   revalidatePath("/");
 }
 
@@ -32,7 +31,6 @@ export async function addProductAction(formdata: FormData) {
     return "In Stock";
   };
 
-  const PRODUCTS_URL = "http://localhost:4000/products";
   const productId = formdata.get("productId")?.toString();
 
   const title = formdata.get("title") as string;
@@ -45,7 +43,7 @@ export async function addProductAction(formdata: FormData) {
 
   const availabilityStatus = getStockStatus(parseInt(stock, 10));
 
-  const newProduct = {
+  const productData = {
     title,
     price: parseInt(price, 10),
     description,
@@ -54,29 +52,28 @@ export async function addProductAction(formdata: FormData) {
     brand,
     stock,
     availabilityStatus,
+    meta: {
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+    images: thumbnail ? [thumbnail] : [],
   };
 
-  try {
-    const request = new Request(
-      productId ? `${PRODUCTS_URL}/${productId}` : PRODUCTS_URL,
-      {
-        method: productId ? "PATCH" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProduct),
-      },
-    );
-
-    const response = await fetch(request);
-
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status} ${response.statusText}`);
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to create product: ${message}`);
+  if (productId) {
+    // 1. UPDATE an existing product
+    const { error } = await supabase
+      .from("products")
+      .update(productData)
+      .eq("id", parseInt(productId, 10));
+    if (error) throw new Error(`Failed to update product: ${error.message}`);
+  } else {
+    // 2. INSERT a brand new product
+    const { error } = await supabase
+      .from("products")
+      .insert(productData);
   }
 
+  // Clear cache for both pages
+  revalidatePath("/admin-page");
   revalidatePath("/");
 }
