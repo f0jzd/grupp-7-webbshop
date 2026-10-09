@@ -2,36 +2,35 @@
 
 An online storefront featuring full UX, responsive styling, a 10/10 AIM score, etc/todo<!--todo: other good shit-->
 
-Developed as part of Lexicons frontend program by a 3-man taem over the course of 3 weeks. 
+Developed as part of Lexicons frontend program by a 3-man team over the course of 3 weeks. 
 
 <!-- todo: Screenshot or GIF of the catalog goes here -->
 
 ## Key features
 
-- **Paginated product catalog** driven entirely by URL, thus bookmarkable queries.
+- **Paginated product catalog** driven entirely by URL, thus bookmarkable queries
 - **Powerful search** across a wide range of metadata
-- **Two level category navigation** with an elegant mobile view.
-- **Full UX chain** from the initial visit all the way to checkout through product and cart pages.
-- **Clientside cart functionality** built with cookies, as such persisting across sessions.
+- **Two level category navigation** with an elegant mobile view
+- **Full UX chain** from the initial visit all the way to checkout through product and cart pages
+- **Clientside cart functionality** built with cookies, as such persisting across sessions
 - **Admin interface** for manually editing source data
 - **Loading and error states**, and a layout that works from phone to desktop
-- **Accessibility-minded UI**, evaluated by [WAVE](todo)
-<!--todo: brag about more shit-->
+- **Accessibility-minded UI**, evaluated by [WAVE](https://wave.webaim.org/)
+- **Database connectivity** for using external inventories
 
 ## Tech stack
 
-<!--todo: outdated, talks about json server, probably missing stuff-->
 | Technology | What it does | Why we chose it |
 | --- | --- | --- |
-| [Next.js](https://nextjs.org) (App Router) | User interface and server-rendered pages | Fast page loads, and URL-based navigation makes catalog views shareable |
-| TypeScript | Type safety | Catches mistakes early, which matters when four people share a codebase |
-| Tailwind CSS | Styling | Quick, consistent styling without a pile of custom CSS |
-| [shadcn/ui](https://ui.shadcn.com) | UI components (buttons, pagination, sheets, accordions) | Accessible building blocks; the project brief asked for default shadcn styling |
-| [json-server](https://github.com/typicode/json-server/tree/v0.17.4) 0.17.4 | Mock REST API | Lets the frontend be built against a realistic backend without writing one |
-| GitHub Projects | Sprint board | Planning and tracking work in an Agile workflow |
-| Supabase | something | something |
+| [Next.js](https://nextjs.org) (App Router) | User interface and server-rendered pages | Fast page loads, and URL-based navigation makes catalog views shareable. |
+| TypeScript | Type safety | Catches mistakes early, which matters when four people share a codebase. |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling | Quick, consistent styling without a pile of custom CSS. |
+| [shadcn/ui](https://ui.shadcn.com) | UI components (buttons, pagination, sheets, accordions) | Accessible building blocks; the project brief asked for default shadcn styling. |
+| [json-server](https://github.com/typicode/json-server/tree/v0.17.4) 0.17.4 | Mock REST API | Lets the frontend be built against a realistic backend without writing one. This functionality was later migrated to Supabase. |
+| [Supabase](https://supabase.com/) | Data storage solution | Provides a managed PostgreSQL database, drastically speeding up development without vendor lock-in. |
+| GitHub Projects | Sprint board | Planning and tracking work in an Agile workflow. |
 
-Product data comes from [dummyjson.com](https://dummyjson.com/docs/products), modified to fit this project. Most endpoints mirror the ones in its documentation.
+Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), with minor changes.
 
 ## Demo / screenshots
 
@@ -162,7 +161,7 @@ Found a bug or have a question? Please [open an issue](https://github.com/f0jzd/
 ## Acknowledgements
 
 **Team (Group 7)**
-
+<!--todo: link to the older repo for the admin page and acknowledge whoever made that one for good measure-->
 
 **Built with:** [Next.js](https://nextjs.org), [Tailwind CSS](https://tailwindcss.com), [shadcn/ui](https://ui.shadcn.com), [json-server](https://github.com/typicode/json-server). Product data adapted from [DummyJSON](https://dummyjson.com).
 
