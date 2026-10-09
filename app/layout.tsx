@@ -139,7 +139,7 @@ export default async function RootLayout({
                 </Link>
               </nav>
             </header>
-          ) : null}
+           : null}
           <main className="m-2 mt-6 mb-6">{children}</main>
         </ContextProvider>
       </body>

@@ -63,6 +63,7 @@ async function getProducts(
   currentPage: number,
   limit: number,
   categoryId?: number,
+  groupedCategory?: string,
   q?: string,
   sort?: string,
   order?: string,
@@ -86,6 +87,11 @@ async function getProducts(
 
   if (sortField !== "id") {
     query = query.order("id", { ascending: true });
+  }
+
+  if(groupedCategory){
+    const categories = groupedCategories.find(gc => gc.name === decodeURIComponent(groupedCategory))?.categories
+    query = query.or(categories!.map(c => `categoryId.eq.`+c.id).join(","));
   }
 
   if (categoryId) {
@@ -115,6 +121,7 @@ export default async function ProductPage({
   searchParams: Promise<{
     page?: string;
     category?: string;
+    groupedCategory?: string;
     q?: string;
     sort?: string;
     order?: string;
@@ -126,6 +133,7 @@ export default async function ProductPage({
     page = "1",
     category,
     q,
+    groupedCategory: groupedCategoryURIEncoded,
     sort,
     order,
     inStock,
@@ -133,7 +141,8 @@ export default async function ProductPage({
   } = await searchParams;
   const paginationLimit = 18;
   const currentPage = Number(page) || 1;
-  const filters: Filters = { category, q, sort, order, inStock, onSale };
+  const groupedCategory = decodeURIComponent(groupedCategoryURIEncoded ?? "");
+  const filters: Filters = { category, q, sort, order, inStock, onSale, groupedCategory };
 
   // 1. Fetch categories (cached)
   const categories = await getCachedCategories();
@@ -144,6 +153,7 @@ export default async function ProductPage({
     currentPage,
     paginationLimit,
     selectedCategory?.id,
+    groupedCategory,
     q,
     sort,
     order,
@@ -171,6 +181,8 @@ export default async function ProductPage({
           {/* catnav desktop */}
           <div className="hidden md:block mr-4">
             <CatNav
+              groupedCategories={groupedCategories}
+              groupedCategory={groupedCategory}
               categories={categories}
               category={category}
               filters={filters}
@@ -226,6 +238,9 @@ export default async function ProductPage({
                 {category && (
                   <input type="hidden" name="category" value={category} />
                 )}
+                {groupedCategory && (
+                  <input type="hidden" name="groupedCategory" value={groupedCategory} />
+                )}
                 <ButtonGroup className="w-full">
                   <Input
                     key={q}
@@ -248,12 +263,13 @@ export default async function ProductPage({
                   </AccordionItem>
                 </Accordion>
               </Form>
-              {category || groupedCategory ?
+              
             <Breadcrumb className="mb-6 mt-4">
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink href="/">Products</BreadcrumbLink>
                 </BreadcrumbItem>
+                {category || groupedCategory ?<>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                 {!groupedCategory ? 
@@ -270,10 +286,10 @@ export default async function ProductPage({
                 <BreadcrumbItem>
                   <BreadcrumbPage>{categories.find(c => c.slug === category)?.name}</BreadcrumbPage>
                 </BreadcrumbItem> </> : null
-    }
+    } 
+    </>: null}
               </BreadcrumbList>
             </Breadcrumb>
-            : null}
             <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
               {pageTitle}
             </h2>
@@ -295,10 +311,6 @@ export default async function ProductPage({
               data={products}
             />
 
-<<<<<<< HEAD
-            {/* Bottom nav buttons, same as line 71 */}
-            <ShopPagination className="mt-4" currentPage={currentPage} totalPages={data.pages} filters={{category, groupedCategory, q}} />
-=======
             {/* Bottom nav buttons */}
             <ShopPagination
               className="mt-4"
@@ -306,7 +318,7 @@ export default async function ProductPage({
               totalPages={data.pages}
               filters={filters}
             />
->>>>>>> origin/main
+
           </section>
         </section>
       </div>

@@ -14,7 +14,6 @@ export default function CatNav({
   categories,
   category,
   groupedCategory,
-  page,
   filters,
   closeOnSelect = false,
   className,
@@ -23,7 +22,6 @@ export default function CatNav({
   categories: Category[];
   category?: string;
   groupedCategory?: string;
-  page: string;
   filters: Filters;
   closeOnSelect?: boolean;
   className?: string;
@@ -41,7 +39,7 @@ export default function CatNav({
   const allProductsOptionProps = {
     scroll: false,
     "data-slot": "button",
-    href: buildHref({ page }, { category: allProductsOption.slug, page: 1 }),
+    href: buildHref({ }, { category: allProductsOption.slug, page: 1 }),
     className: cn(
       buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
       "justify-start",
@@ -68,7 +66,7 @@ export default function CatNav({
           const props = {
             scroll: false,
             "data-slot": "button",
-            href: buildHref({ page }, { groupedCategory: name, page: 1 }),
+            href: buildHref({ }, { groupedCategory: encodeURIComponent(name), page: 1 }),
             className: cn(
               buttonVariants({ variant: active ? "default" : "outline" }),
               "justify-start",
@@ -95,7 +93,7 @@ export default function CatNav({
             const props = {
             scroll: false,
             "data-slot": "button",
-            href: buildHref({ page }, { category: slug, page: 1 }),
+            href: buildHref({ }, { category: slug, page: 1 }),
             className: cn(
               buttonVariants({ variant: active ? "default" : "outline", size: "lg" }),
               "justify-start",

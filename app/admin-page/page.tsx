@@ -110,8 +110,6 @@ export default async function Home({
         <Pagination
           page={pageNum}
           pages={pages}
-          total={total}
-          limit={defaultLimit}
           urlParams={urlParams}
         />
       </section>
