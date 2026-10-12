@@ -1,10 +1,8 @@
 # Webshop
 
-An online storefront featuring full UX, responsive styling, a 10/10 AIM score, etc/todo<!--todo: other good shit-->
+An online storefront featuring full UX, responsive styling, a 10/10 AIM score, etc/todo
 
 Developed as part of Lexicons frontend program by a 3-man team over the course of 3 weeks. 
-
-<!-- todo: Screenshot or GIF of the catalog goes here -->
 
 ## Key features
 
@@ -120,16 +118,43 @@ who created the project structure and built the admin page.
 
 Created as part of the frontend program at Lexicon.
 
-
-
-
 <!-- possible chapters -->
 ## AI-policy
-vilka modeller, program... Antigravity, gemini, claude
-Alla AI-skrivna kodsnuttar granskades, och AIn ansvarade inte för arkitektur, enbart lokala lösningar.
 
-## Mer om projektledning
-Någonting om scrum, 3st sprints på 1 arbetsvecka var, roterande scrum masters, ~~ingen PO~~
-/docs för mer info
+### AI models that assisted in the development of this project:
+* Claude Code (Sonnet 5.5)
+* Github Copilot (Auto selects between GPT-6 Luna, Claude Opus 4.8, etc.)
+* OpenAI ChatGPT (GPT-5.5, GPT-6)
+* [Google Antigravity (Gemini 3.8, Claude Opus/Sonnet 5.5)](https://antigravity.google/)
 
-## 
+### AI-tools used within the project:
+* Repository-Aware Code Generation using Antigravity and ChatGPT
+* [In-line Suggestions](https://code.visualstudio.com/docs/editing/ai-powered-suggestions) with Github Copilot
+
+Our policy for this project, as stated in the contract, was to not vibe-code scrutinize all AI-inputs. We use AI to generate code but review it and whoever uses code by AI should be able to explain it to the other team members. Thanks to that, the architecture of this project is primarily human.
+
+
+## 📋 Project Management & Methodology
+This project was developed over an intensive **4-week timeframe** by a 3-person team using an adapted **Agile / Scrum** framework.
+### 👥 Team & Rotating Scrum Master
+To ensure equal ownership and gain experience across roles, the **Scrum Master** role rotated weekly, while all members contributed continuously to development:
+| Week | Scrum Master | Focus / Milestone |
+| :--- | :--- | :--- |
+| **Week 1** | [Tomas Savela](https://github.com/f0jzd) | Project setup, architecture definition, MVP backlog creation |
+| **Week 2** | Dmitry | Core feature implementation, Create webshop UI and components for the UI. |
+| **Week 3** | [Georgij Li](https://github.com/f0jzd) | Polish, bug fixing, documentation, deployment to Supabase & final review |
+| **Week 4** | [Tomas Savela]((https://github.com/f0jzd)) | Product delivery & demo preparation and presentation|
+### ⏱️ Sprint Cadence & Ceremonies
+Given the 4-week constraint, we operated in accelerated 1-week sprint cycles:
+- **Daily Standups (Async / Sync):** Short check-ins to share progress, upcoming tasks, and identify blockers.
+- **Sprint Planning (Mondays):** Backlog refinement, story point estimation, and task assignment.
+- **Sprint Review & Retrospective (Friday):** Demo of working increments, reflection on process improvements, and role handover for the next Scrum Master.
+### 🛠️ Tools & Tracking
+- **Board & Backlog:** [GitHub Projects Kanban Board](https://github.com/users/f0jzd/projects/2) with *Backlog*, *Sprint Backlog*, *In Progress*, *In Review*, and *Done*.
+- **Communication:** Microsoft teams for asynchronous coordination and quick blocker resolution.
+
+
+
+<!--TODO Add somewhere: tankesättet kring hur AI användes och till vilken grad, t.ex. minimalistiskt i mitt fall
+Sno citatet från avtalet om AI-policy och beskriv strategin på ett presentabelt sätt och just hur den följdes.
+-Dmitry  -->
