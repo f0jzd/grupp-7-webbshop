@@ -31,39 +31,28 @@ Developed as part of Lexicons frontend program by a 3-man team over the course o
 Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), with minor changes.
 
 ## Demo / screenshots
-
-<!--todo: possibly broken layout - check on github proper-->
-### Catalog 
-
-<details markdown="1">
-<summary>button</summary>
-<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_admin.PNG" alt="Application screenshot" width="600">
+### Catalog page
+<details>
+<summary>Click to open preview</summary>
+<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_catalog.PNG" alt="Screenshot of the catalog page" width="700">
 </details>
 
-
-# space 
-
-<details markdown="1" open>
-
+### Product page
+<details>
 <summary>Click to hide demo images</summary>
-<br>
-![Mystuff](demo_assets/demo_catalog.PNG)
-</details>
-<br>
-
-<details markdown="1" open>
-<summary>Click to hide demo images</summary>
-![Demo product page](demo_assets/demo_productpage.PNG)
+<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_productpage.PNG" alt="Screenshot of the product page" width="700">
 </details>
 
-<details markdown="1" open>
+### Cart page
+<details>
 <summary>Click to hide demo images</summary>
-![Demo cart](demo_assets/demo_cart.PNG)
+<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_cart.PNG" alt="Screenshot of the cart page" width="700">
 </details>
 
-<details markdown="1" open>
+### Admin page
+<details >
 <summary>Click to hide demo images</summary>
-![Demo admin](demo_assets/demo_admin.PNG)
+<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_admin.PNG" alt="Screenshot of the admin page" width="700">
 </details>
 
 ## Documentation
