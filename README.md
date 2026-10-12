@@ -34,22 +34,22 @@ Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), w
 
 <!--todo: possibly broken layout - check on github proper-->
 ### Catalog 
-<details open>
+<details markdown="1" open>
 <summary>Click to hide demo images</summary>
 ![Demo catalog](demo_assets/demo_catalog.PNG)
 </details>
 
-<details open>
+<details markdown="1" open>
 <summary>Click to hide demo images</summary>
 ![Demo product page](demo_assets/demo_productpage.PNG)
 </details>
 
-<details open>
+<details markdown="1" open>
 <summary>Click to hide demo images</summary>
 ![Demo cart](demo_assets/demo_cart.PNG)
 </details>
 
-<details open>
+<details markdown="1" open>
 <summary>Click to hide demo images</summary>
 ![Demo admin](demo_assets/demo_admin.PNG)
 </details>
