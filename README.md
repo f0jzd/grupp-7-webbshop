@@ -99,7 +99,7 @@ Possible future work: `Adding authentication using supabase, create and save ord
 
 ### Main storefront team
 - Georgij Li ([@geoli96](https://github.com/geoli96))
-- Dmitry
+- Dimitri Alexanderson ([@dkalexanderson](https://github.com/dkalexanderson))
 - Tomas Savela ([@f0jzd](https://github.com/f0jzd))
 
 
