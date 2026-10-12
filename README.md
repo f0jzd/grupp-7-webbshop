@@ -34,10 +34,22 @@ Product data seeded from [dummyjson.com](https://dummyjson.com/docs/products), w
 
 <!--todo: possibly broken layout - check on github proper-->
 ### Catalog 
-<details markdown="1" open>
-<summary>Click to hide demo images</summary>
-![Demo catalog](demo_assets/demo_catalog.PNG)
+
+<details markdown="1">
+<summary>button</summary>
+<img src="https://github.com/f0jzd/grupp-7-webbshop/blob/documentation/62-readme/demo_assets/demo_admin.PNG" alt="Application screenshot" width="600">
 </details>
+
+
+# space 
+
+<details markdown="1" open>
+
+<summary>Click to hide demo images</summary>
+<br>
+![Mystuff](demo_assets/demo_catalog.PNG)
+</details>
+<br>
 
 <details markdown="1" open>
 <summary>Click to hide demo images</summary>
