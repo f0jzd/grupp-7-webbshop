@@ -48,7 +48,7 @@ export function SortFilter({sort, order, inStock, onSale}: {
                               items={sortItems}
                               defaultValue={sort || "title"}
                               onValueChange={v => {
-                                updateParams("sort", v!, v === "title");
+                                updateParams("sort", v!);
                               }}>
                                   <SelectTrigger >
                                     <SelectValue />
