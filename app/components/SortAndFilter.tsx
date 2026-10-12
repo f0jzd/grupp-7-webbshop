@@ -26,7 +26,7 @@ export function SortFilter({sort, order, inStock, onSale}: {
     router.replace(`/?${params.toString()}`);
   }
 
-  const items = [
+  const sortItems = [
   { label: "Title", value: "title" },
   { label: "Price", value: "price" },
   { label: "Rating", value: "rating" },
@@ -45,7 +45,7 @@ export function SortFilter({sort, order, inStock, onSale}: {
                             <Select 
                               id="sort"
                               name="sort"
-                              items={items}
+                              items={sortItems}
                               defaultValue={sort || "title"}
                               onValueChange={v => {
                                 updateParams("sort", v!, v === "title");
@@ -55,7 +55,7 @@ export function SortFilter({sort, order, inStock, onSale}: {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectGroup>
-                                    {items.map((item) => (
+                                    {sortItems.map((item) => (
                                       <SelectItem key={item.value} value={item.value}>
                                         {item.label}
                                       </SelectItem>
