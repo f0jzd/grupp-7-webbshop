@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Modal } from "@/components/Modal";
-import Link from "next/link";
-import { updateFilter } from "@/utils/updateFilter";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Label} from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Field } from "./ui/field";
 
 export function SortFilter({sort, order, inStock, onSale}: {
     sort?: string; order?: string
@@ -25,82 +26,78 @@ export function SortFilter({sort, order, inStock, onSale}: {
     router.replace(`/?${params.toString()}`);
   }
 
+  const sortItems = [
+  { label: "Title", value: "title" },
+  { label: "Price", value: "price" },
+  { label: "Rating", value: "rating" },
+  { label: "Discount", value: "discountPercentage" },
+]
+
   return (
     <div
                         key={`${sort}-${order}-${inStock}-${onSale}`}
-                        className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-end"
+                        className="flex flex-col items-start gap-4 pt-2 sm:flex-row sm:flex-wrap "
                       >
                         {/* sort by */}
-                        <div className="flex flex-col gap-1.5 self-start">
-                          <label htmlFor="sort" className="text-sm font-medium">
-                            Sort by
-                          </label>
-                          <select
-                            id="sort"
-                            name="sort"
-                            defaultValue={sort ?? ""}
-                            onChange={(e) => updateParams("sort", e.target.value)}
-                            className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
-                          >
-                            <option value="">Title</option>
-                            <option value="price">Price</option>
-                            <option value="rating">Rating</option>
-                            <option value="discountPercentage">Discount</option>
-                          </select>
-                        </div>
-                        {/* order choice*/}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">Order</legend>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="radio"
-                              name="order"
-                              value="asc"
-                              defaultChecked={order !== "desc"}
-                              onChange={(e) => updateParams("order", "asc")}
-                              className="accent-primary"
-                            />
-                            Ascending
-                          </label>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="radio"
-                              name="order"
-                              value="desc"
-                              defaultChecked={order === "desc"}
-                              onChange={(e) => updateParams("order", "desc")}
-                              className="accent-primary"
-                            />
-                            Descending
-                          </label>
+                        <fieldset>
+                          <legend className="font-medium">Sort by</legend>
+                          <div className="flex flex-col mt-1.5">
+                            <Select 
+                              id="sort"
+                              name="sort"
+                              items={sortItems}
+                              defaultValue={sort || "title"}
+                              onValueChange={v => {
+                                updateParams("sort", v!);
+                              }}>
+                                  <SelectTrigger >
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                    {sortItems.map((item) => (
+                                      <SelectItem key={item.value} value={item.value}>
+                                        {item.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                  </SelectContent>
+                            </Select>
+                          </div>
                         </fieldset>
-                        {/* toggles */}
-                        <fieldset className="flex flex-col gap-1.5">
-                          <legend className="text-sm font-medium">
-                            Show only
-                          </legend>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="checkbox"
-                              name="inStock"
-                              value="1"
-                              defaultChecked={inStock === "1"}
-                              onChange={(e) => updateParams("inStock", Number(e.target.checked).toString(), !e.target.checked)}
-                              className="accent-primary"
-                            />
-                            In stock
-                          </label>
-                          <label className="flex items-center gap-1.5">
-                            <input
-                              type="checkbox"
-                              name="onSale"
-                              value="1"
-                              defaultChecked={onSale === "1"}
-                              onChange={(e) => updateParams("onSale", Number(e.target.checked).toString(), !e.target.checked)}
-                              className="accent-primary"
-                            />
-                            On sale
-                          </label>
+
+                        {/* order choice*/}
+                        <fieldset>
+                          <legend className="font-medium">Order</legend>
+                          <div className="flex flex-col mt-1.5">
+                            <RadioGroup onValueChange={(v) => updateParams("order", v)} defaultValue={order ?? "asc"} className="w-fit flex flex-col gap-2">
+                            <div className="flex items-center gap-3">
+                              <RadioGroupItem value="asc" id="asc" />
+                              <Label htmlFor="asc">Ascending</Label>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <RadioGroupItem value="desc" id="desc" />
+                              <Label htmlFor="desc">Descending</Label>
+                            </div>
+                          </RadioGroup>
+                          </div>
+                        </fieldset>
+
+                        {/* Show only*/}
+                        <fieldset>
+	<legend className="font-medium">Show only</legend>
+                        <div className="flex flex-col ">
+                          <div className="flex flex-col gap-2 mt-1.5">
+                            <Field orientation="horizontal">
+                              <Checkbox defaultChecked={inStock === "1"} onCheckedChange={(v) => updateParams("inStock", Number(v).toString(), !v)} id="in-stock-checkbox" name="in-stock-checkbox" />
+                              <Label htmlFor="in-stock-checkbox">In stock</Label>
+                            </Field>
+                            <Field orientation="horizontal">
+                              <Checkbox defaultChecked={onSale === "1"} onCheckedChange={(v) => updateParams("onSale", Number(v).toString(), !v)} id="on-sale-checkbox" name="on-sale-checkbox" />
+                              <Label htmlFor="on-sale-checkbox">On sale</Label>
+                            </Field>
+                            </div>
+                        </div>
                         </fieldset>
                       </div>
   );
